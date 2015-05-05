@@ -1,0 +1,57 @@
+
+%ul{id: "searchList"}
+  %dl.accordion{"data-accordion" => ""}
+    %dd.accordion-navigation
+      - @groups.each do | group_id, group|
+        %a{href: "#"+group_id} 
+          = group["name"]
+          #group_id.content
+            %dl.row{style: "text-align: left;"}
+              - group["methods"].each do |method| 
+                %li.small-9.columns.small-centered{id:method["name"], style:"padding-bottom: 10px;"}
+                  - unless method["em_class"]
+                    %a.tip-right.text-center{href:"#", "data-reveal-id"=>method["id"], "data-tooltip"=>"", title:method["description"], style:"padding-left: 0px; padding-right: 0px; display: block; padding-top: 10px; border: 1px solid rgb(213,213,213); border-radius: 6px; padding-bottom: 7px;background-color: #F5F5F5;"}
+                      %img{src: method["image"]}
+                      %hr{style:"margin: 5px 0px;"}
+                      %span{style: "padding: 0"}= method["name"]
+                  - else
+                    %a.tip-right.text-center{href: "#", title: method["description"], "em-class" => method["em_class"], "data-reveal-id"=> method["id"], "data-tooltip" =>"", style: "padding-left: 0px; padding-right: 0px; display: block; padding-top: 10px; border: 1px solid rgb(213,213,213); border-radius: 6px; padding-bottom: 7px;background-color: #F5F5F5;"}
+                      %img{src: method["image"]}
+                      %hr{style: "margin: 5px 0px;"}
+                      %span{style: "padding: 0;"}= method["name"]
+
+- @methods.each do |method|
+ 
+  = method
+  - if method == "interaction"
+    = render "/../visualisation_methods/#{method}/modal"
+
+- content_for :javascript do
+  :javascript
+    $(document).foundation({
+      accordion: {
+        //specify the class used for active (or open) accordion panels
+        active_class: 'active',
+        // allow multiple accordion panels to be active at the same time
+        multi_expand: true,
+        // allow accordion panels to be closed by clicking on their headers
+        // setting to false only closes accordion panels when another is opened
+        toggleable: true
+      }
+    });
+    $("#searchList dd>div").addClass("active");
+
+    function update_moes(){
+      var moes = $(".moes");
+      var moes_values = moes.children().map(function() { return $(this).attr("value"); }).toArray();
+      $.getJSON('prefix/moes?id=#{@experimentId}', function(data){
+        data.map(function(d){
+          if(moes_values.indexOf(d.id)<0){
+            var option = "<option value=" + d.id + ">" + d.label + "</option";
+            moes.append(option);
+          }
+        });
+      });
+    }
+    setInterval(update_moes, 30000);
+  });

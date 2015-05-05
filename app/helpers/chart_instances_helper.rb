@@ -1,0 +1,2 @@
+module ChartInstancesHelper
+end
