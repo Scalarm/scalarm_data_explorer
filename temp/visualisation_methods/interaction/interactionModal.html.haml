@@ -1,3 +1,6 @@
+-#- parameters = @experiment.get_parameter_ids
+- parameters = %w(a b)
+
 #interactionModal.reveal-modal(data-reveal="true")
   %section#interaction_chart_form.panel.radius.analysis-chart
     %a.close-reveal-madal &#215
@@ -8,24 +11,24 @@
           %label.inline="Select first parameter"
         .small-7.columns
           %select.firstParam
-            -@parameters.each do |parameter|
-              %option{:value => parameter.id}=parameter.label
+            -parameters.each do |parameter|
+              %option{:value => parameter}=parameter # TODO: label
 
       .row
         .small-5.columns
           %label.inline="Select second parameter"
         .small-7.columns
           %select.secondParam
-            -@parameters.each do |parameter|
-              %option{:value => parameter.id}=parameter.label
+            -parameters.each do |parameter|
+              %option{:value => parameter}=parameter
 
       .row
         .small-5.columns
           %label.inline="Select output parameter"
         .small-7.columns
           %select.outputParam.moes
-            -@parameters.each do |output|
-              %option{:value => output.id}=output.label
+            -parameters.each do |output|
+              %option{:value => output}=output
 
 
 
