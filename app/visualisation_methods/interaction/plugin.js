@@ -85,3 +85,4 @@ module.exports = {
 	info: info,
 	get_handler: function(dao) { return handler(dao); }
 }
+

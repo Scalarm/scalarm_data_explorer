@@ -8,9 +8,9 @@ class DataRetriever
 	#return array not function 
 	def GetData(id, convertData)
 
-		filter = {is_done: true, is_error: {'$exists': false}};
+		#filter = {is_done: true, is_error: {'$exists' :false}};
 		fields = {fields: {arguments: 1, values: 1, result: 1}};
-		Array = db.collection(COLLECTION_NAME+id).find(filter, fields).toArray();
+		#Array = db.collection(COLLECTION_NAME+id).find(filter, fields).toArray();
 
 		if array.length==0
 					raise "No such experiment or no runs done";
@@ -22,7 +22,8 @@ class DataRetriever
 				values = data.values.split(',');
 
 					new_args = {};
-					for(var i = 0; i<args.length; i++){
+					for(var i = 0; i<args.length; i++) {
+					end
 						new_args[args[i]] = parseFloat(values[i]); //parseInt
 					}
 

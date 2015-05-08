@@ -21,7 +21,6 @@
                       %span{style: "padding: 0;"}= method["name"]
 
 - @methods.each do |method|
- 
   = method
   - if method == "interaction"
     = render "/../visualisation_methods/#{method}/modal"
