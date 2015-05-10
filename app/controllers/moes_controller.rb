@@ -3,13 +3,14 @@ class MoesController < ApplicationController
 
       experiment_id = params[:id].to_s
       @experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
-    
-  	  if @experiment.visible_to(params[:userID])
-  	    @parameters = @experiment.get_parameter_ids
+      filter = {is_done: true, is_error: {'$exists': false}};
+	  fields = {fields: {result: 1}};
+  	  #if @experiment.visible_to(params[:userID])
+  	  @parameters = @experiment.simulation_runs.find(filter,fields)
   	    #JSON.stringify(data.result));
-  	  else
-  	    raise 'Not authorised'
-  	  end
+  	  #else
+  	   # raise 'Not authorised'
+  	  #end
 	end
 
 end

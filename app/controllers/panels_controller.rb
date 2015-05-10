@@ -22,7 +22,6 @@ class PanelsController < ApplicationController
 
   def show
   
-  	
     #render file: Rails.root.join( 
   end
 end

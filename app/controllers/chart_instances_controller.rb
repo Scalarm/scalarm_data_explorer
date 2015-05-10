@@ -9,7 +9,7 @@ class ChartInstancesController < ApplicationController
     #paramaters["moes"] = moes?
   # paramaters ?
   	if @experiment.visible_to(params[:userID])
-  	  render :file  Rails.root.join('app','visualisation_methods', params[:id], "#{params[:id]}_chart.html.haml") 
+  	  render :file => Rails.root.join('app','visualisation_methods', params[:id], "#{params[:id]}_chart.html.haml") 
   	 
   	else
   	  raise 'Not authorised'
