@@ -1,7 +1,7 @@
-class Interaction
+class Plugin
 
   INFO = {
-      'name' => 'Interaction',
+      'name' => 'Plugin',
       'id' => 'interactionModal',
       'group' => 'params',
       'image' => '/chart/images/material_design/interaction_icon.png',
