@@ -1,7 +1,6 @@
 class ScriptController < ApplicationController
+ 
   def show
-		# params[:id]
-		render html: "<script type=\"text/javascript\" src=\"/scripts/#{params[:id]}/\">"
-# src=http://localhost/scripts/3d 
-	end
+    render file: Rails.root.join('app','visualisation_methods', params[:id], "#{params[:id]}_chart.js") or raise not_found
+  end
 end

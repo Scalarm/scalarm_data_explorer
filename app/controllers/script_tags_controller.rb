@@ -1,7 +1,12 @@
 class ScriptTagsController < ApplicationController
-  
-  
-	def show
-	  render file: Rails.root.join('app','visualisation_methods', params[:id], "#{params[:id]}_chart.js") or raise not_found
+  def show
+    @PREFIX = "/"
+    if(params.has_key?(:base_url))
+      @PREFIX = params[:base_url]
+    end
+
+    render html: "<script type=\"text/javascript\" src=\"#{@PREFIX}scripts/#{params[:id]}/\">"
+# src=http://localhost/scripts/3d 
 	end
+	
 end

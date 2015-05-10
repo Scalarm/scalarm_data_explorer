@@ -5,9 +5,9 @@ class Panels
   def initialize
 
   	file = File.read("config/methods.json")
-  	Rails.logger.info file
+  	#Rails.logger.info file
   	content = JSON.parse(file)
-	Rails.logger.info content
+	  #Rails.logger.info content
     @methods = content["methods"]
     @groups = content["groups"]
   #   @methods.each do |name|
