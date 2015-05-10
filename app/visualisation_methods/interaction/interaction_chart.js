@@ -4,7 +4,7 @@ function interaction_main(i, param1, param2, data) {
 			renderTo: $('#interaction_chart_'+ i + " .chart")[0]
 		},
 		title: {
-			text: "Interaction chart"
+			text: "Plugin chart"
 		},
 		xAxis: {
 			title: {

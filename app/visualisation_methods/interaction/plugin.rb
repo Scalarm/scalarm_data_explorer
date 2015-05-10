@@ -13,7 +13,7 @@ class Plugin
     output += "\nvar data = " + JSON.stringify(data) + ";"
     output += "\ninteraction_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", data);";
     output += "\n})();</script>";
-    return output
+    output
 
   end
 
@@ -22,7 +22,7 @@ class Plugin
     # dane parameters success error
     if parameters["id"] && parameters["chart_id"] && parameters["param1"] && parameters["param2"] && parameters["output"]
       object = content[prepare_interaction_chart_content(parameters, data)]
-      getInteraction(experiment, id, param1, param2, outputParam, success, error)
+      getInteraction(experiment, id, param1, param2, outputParam, success(object), error)
     else
       error('Request parameters missing');
     end
@@ -52,8 +52,8 @@ class Plugin
                   high_low.result[outputParam],
                   high_high.result[outputParam])
       data = {}
-      data[param1] = max { |mins[param1]; maxes[param1]|} # domain
-      data[param2] = max { |mins[param2]; maxes[param2]|}
+      #data[param1] = domain { |mins[param1]; maxes[param1]|} # domain
+      #data[param2] = domain { |mins[param2]; maxes[param2]|}
     end
 
                              #data.effects = result;
