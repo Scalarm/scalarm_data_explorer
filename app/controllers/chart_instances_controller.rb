@@ -8,6 +8,7 @@ class ChartInstancesController < ApplicationController
     @input_parameters = @experiment.get_parameter_ids
     #paramaters["moes"] = moes?
   # paramaters ?
+   #user =  User.find(session[:user_id])
   	if @experiment.visible_to(params[:userID])
   	  render :file => Rails.root.join('app','visualisation_methods', params[:id], "#{params[:id]}_chart.html.haml") 
   	 

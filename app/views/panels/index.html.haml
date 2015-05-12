@@ -2,8 +2,8 @@
 %ul{id: "searchList"}
   %dl.accordion{"data-accordion" => ""}
     %dd.accordion-navigation
-      - @groups.each do | group_id, group|
-        %a{href: "#"+group_id} 
+      - @groups.each do | group_id, group| # na razie groupid na stale i tak trzeba zmienic strukture
+        %a{href: "#experiment-analysis-modal"} 
           = group["name"]
           #group_id.content
             %dl.row{style: "text-align: left;"}
