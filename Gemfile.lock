@@ -1,5 +1,5 @@
 PATH
-  remote: /home/kliput/Programowanie/scalarm/scalarm-database
+  remote: ../scalarm-database
   specs:
     scalarm-database (0.1.1)
       activesupport
