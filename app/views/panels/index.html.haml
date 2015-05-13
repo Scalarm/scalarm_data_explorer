@@ -21,56 +21,55 @@
                       %span{style: "padding: 0;"}= method["name"]
 
 - @methods.each do |method|
-  - if method == "interaction"
-    = render "/../visualisation_methods/#{method}/modal"
+  = render "/../visualisation_methods/#{method}/modal" if method == 'interaction'
 
--#- content_for :javascript do
--#  :javascript
--#
--#    $("#searchList li a").mouseenter(function() {
--#      $(this).css("background-color", "#EEE");
--#    });
--#    $("#searchList li a").mouseleave(function() {
--#      $(this).css("background-color", "#f5f5f5");
--#    });
--#
--#    var ids = [];
--#    $('#searchList li').each(function(){
--#      ids.push($(this).attr("id"));
--#    });
--#
--#    $("#searchList [data-reveal-id=experiment-analysis-modal]").on("click", function(event){
--#      var modalIdName = $(event.currentTarget).attr('data-reveal-id');
--#      var className = $(event.currentTarget).attr('em-class');
--#
--#      $("#" + modalIdName + " .content").hide();
--#      $("#" + modalIdName + " ." + className + "-content").show();
--#    })
--#
--#    $(document).foundation({
--#      accordion: {
--#        //specify the class used for active (or open) accordion panels
--#        active_class: 'active',
--#        // allow multiple accordion panels to be active at the same time
--#        multi_expand: true,
--#        // allow accordion panels to be closed by clicking on their headers
--#        // setting to false only closes accordion panels when another is opened
--#        toggleable: true
--#      }
--#    });
--#    $("#searchList dd>div").addClass("active");
--#
--#    function update_moes(){
--#      var moes = $(".moes");
--#      var moes_values = moes.children().map(function() { return $(this).attr("value"); }).toArray();
--#      $.getJSON('#{@PREFIX}moes?id=#{@experiment.id}', function(data){
--#        data.map(function(d){
--#          if(moes_values.indexOf(d.id)<0){
--#            var option = "<option value=" + d.id + ">" + d.label + "</option";
--#            moes.append(option);
--#          }
--#        });
--#      });
--#    }
--#    setInterval(update_moes, 30000);
--#  });
+- content_for :javascript do
+  :javascript
+
+    $("#searchList li a").mouseenter(function() {
+      $(this).css("background-color", "#EEE");
+    });
+    $("#searchList li a").mouseleave(function() {
+      $(this).css("background-color", "#f5f5f5");
+    });
+
+    var ids = [];
+    $('#searchList li').each(function(){
+      ids.push($(this).attr("id"));
+    });
+
+    $("#searchList [data-reveal-id=experiment-analysis-modal]").on("click", function(event){
+      var modalIdName = $(event.currentTarget).attr('data-reveal-id');
+      var className = $(event.currentTarget).attr('em-class');
+
+      $("#" + modalIdName + " .content").hide();
+      $("#" + modalIdName + " ." + className + "-content").show();
+    })
+
+    $(document).foundation({
+      accordion: {
+        //specify the class used for active (or open) accordion panels
+        active_class: 'active',
+        // allow multiple accordion panels to be active at the same time
+        multi_expand: true,
+        // allow accordion panels to be closed by clicking on their headers
+        // setting to false only closes accordion panels when another is opened
+        toggleable: true
+      }
+    });
+    $("#searchList dd>div").addClass("active");
+
+    function update_moes(){
+      var moes = $(".moes");
+      var moes_values = moes.children().map(function() { return $(this).attr("value"); }).toArray();
+      $.getJSON('#{@PREFIX}moes?id=#{@experiment.id}', function(data){
+        data.map(function(d){
+          if(moes_values.indexOf(d.id)<0){
+            var option = "<option value=" + d.id + ">" + d.label + "</option";
+            moes.append(option);
+          }
+        });
+      });
+    }
+    setInterval(update_moes, 30000);
+  });
