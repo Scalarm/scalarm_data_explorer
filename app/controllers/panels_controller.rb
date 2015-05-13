@@ -3,9 +3,6 @@ require 'scalarm/database/core'
 
 class PanelsController < ApplicationController
   def index
-    unless Scalarm::Database::MongoActiveRecord.connected?
-      Scalarm::Database::MongoActiveRecord.connection_init('172.16.67.56', 'scalarm_db')
-    end
     #add prefix
 
     @PREFIX = "/"
