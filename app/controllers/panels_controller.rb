@@ -2,13 +2,14 @@ require 'scalarm/database/model'
 require 'scalarm/database/core'
 
 class PanelsController < ApplicationController
-  def index
-    #add prefix
 
-    @PREFIX = "/"
-    if(params.has_key?(:base_url))
-      @PREFIX = params[:base_url]
-    end
+  PREFIX = '/'
+
+  def index
+
+    # TODO: security
+    @prefix = params[:base_url] || PREFIX
+
   	panels = Panels.new()
   	@methods = panels.methods
   	@groups = panels.groups
@@ -16,6 +17,7 @@ class PanelsController < ApplicationController
     @experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
     Rails.logger.info @experiment
     #params = @experiment.get_parameter_ids controler or model?
+    render :index, :layout => false
   end
 
   def show

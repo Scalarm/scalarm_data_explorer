@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+#gem 'thin'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.1'
@@ -48,4 +49,4 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem 'scalarm-database', path: '/home/kliput/Programowanie/scalarm/scalarm-database'
+gem 'scalarm-database', path: '../scalarm-database'
