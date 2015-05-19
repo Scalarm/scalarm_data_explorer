@@ -24,7 +24,9 @@ class Plugin
 
   def getLineDev (experiment, id, param1, param2, success)
     experiment = Scalarm::Database::Model::Experiment.new({})
-    array = experiment.simulation_runs
+    array = experiment.simulation_runs.to_a
+    #TODO nil check
+    array.first.arguments.split(',')
 
     # ...
 

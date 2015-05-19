@@ -31,7 +31,9 @@ class Plugin
 
   def getInteraction(experiment, id, param1, param2, outputParam, success, error)
     experiment = Scalarm::Database::Model::Experiment.new({})
-    array = experiment.simulation_runs
+    array = experiment.simulation_runs.to_a
+    #TODO nil check
+    array.first.arguments.split(',')
 
     # ...
 
@@ -52,8 +54,9 @@ class Plugin
                   high_low.result[outputParam],
                   high_high.result[outputParam])
       data = {}
-      #data[param1] = domain { |mins[param1]; maxes[param1]|} # domain
-      #data[param2] = domain { |mins[param2]; maxes[param2]|}
+      data[param1] = {domain: [mins[param1], maxes[param1]]}
+      data[param2] = {domain: [mins[param1], maxes[param1]]}
+
     end
 
                              #data.effects = result;
