@@ -32,8 +32,39 @@ class Plugin
 
 
   def get3d(experiment, id, param1, param2, param3, success)
-    data = Array.apply(null, new Array(array.length)).map(Number.prototype.valueOf,0)
-    args = []
+    #dao.getData(id, function(array, args, mins, maxes){
+
+    experiment = Scalarm::Database::Model::Experiment.new({})
+    array = experiment.simulation_runs.to_a
+    if array.length == 0
+      error("No such experiment or no runs done")
+    end
+
+    args = array.first.arguments.split(',')
+
+
+    array = array.map do |data|
+      values = data.values.split(',')
+      new_args = {}
+      args.each do |i|
+        new_args[args[i]] = Float(values[i])
+      end
+      data.arguments = new_args
+      remove_instance_variable(data.values)
+      data.result.each do |key|
+        data.result[key] = Float(data.result[key]) unless data.result[key].is_a? Float
+      end
+    end
+
+    mins = []
+    maxes = []
+    args.each do |i|
+      mins[args[i]] = min { |array, args|}
+      maxes[args[i]] = max { |array, args|}
+    end
+
+    data = []
+    data.map { |Number.prototype.valueOf|}
     if args.index(param1) != -1
       data.each do |i|
         data[i] = array[i].arguments[param1]

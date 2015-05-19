@@ -23,43 +23,65 @@ class Plugin
 
 
   def getLineDev (experiment, id, param1, param2, success)
+    #dao.getData(id, function(array, args, mins, maxes){
     experiment = Scalarm::Database::Model::Experiment.new({})
     array = experiment.simulation_runs.to_a
-    #TODO nil check
-    array.first.arguments.split(',')
+    if array.length == 0
+      error("No such experiment or no runs done")
+    end
 
-    # ...
+    args = array.first.arguments.split(',')
 
+    array = array.map do |data|
+      values = data.values.split(',')
+      new_args = {}
+      args.each do |i|
+        new_args[args[i]] = Float(values[i])
+      end
+      data.arguments = new_args
+      remove_instance_variable(data.values)
+      data.result.each do |key|
+        data.result[key] = Float(data.result[key]) unless data.result[key].is_a? Float
+      end
+    end
 
-    # dane id array args mins maxes
+    mins = []
+    maxes = []
+    args.each do |i|
+      mins[args[i]] = min { |array, args|}
+      maxes[args[i]] = max { |array, args|}
+    end
+
     get_param1 = getter(param1, args)
     get_param2 = getter(param2, args)
     grouped_by_param1 = {}
 
-    if grouped_by_param1.include? get_param1
-      grouped_by_param1[get_param1].push(get_param2)
-    else grouped_by_param1[get_param1] = get_param2
+    array.map do |obj|
+      if grouped_by_param1.include? get_param1(obj)
+        grouped_by_param1[get_param1(obj)].push(get_param2(obj))
+      else grouped_by_param1[get_param1(obj)] = get_param2(obj)
+      end
     end
 
     values = []
     grouped_by_param1.each do |index|
-      sum = grouped_by_param1[index].reduce(a+b, 0)#reduce?
+      sum = grouped_by_param1[index].reduce(1, :+)
       mean = sum/grouped_by_param1[index].length
-      values.push(index, mean)
+      values.push(Float(index, mean))
     end
-    values = values.sort(a[0]-b[0]);#sort
+    values = values.sort_by{|e| e}
     with_stddev = []
     grouped_by_param1.each do |index|
-      sum = grouped_by_param1[index].reduce(a+b, 0)
+      sum = grouped_by_param1[index].reduce(1, :+)
       mean = sum/grouped_by_param1[index].length
       partial_sd = 0
       grouped_by_param1[index].each do |i|
         partial_sd += **(grouped_by_param1[index][i]-mean)
       end
       sd = Math.sqrt(partial_sd/grouped_by_param1[index].length)
-      with_stddev.push([index, mean-sd, mean+sd])
+      with_stddev.push(Float([index, mean-sd, mean+sd]))
     end
-    with_stddev = with_stddev.sort(a[0] - b[0])
+    with_stddev = with_stddev.sort_by{|e| e}
 
     success([values, with_stddev])
   end

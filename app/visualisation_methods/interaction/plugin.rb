@@ -32,12 +32,32 @@ class Plugin
   def getInteraction(experiment, id, param1, param2, outputParam, success, error)
     experiment = Scalarm::Database::Model::Experiment.new({})
     array = experiment.simulation_runs.to_a
-    #TODO nil check
-    array.first.arguments.split(',')
+    if array.length == 0
+      error("No such experiment or no runs done")
+    end
 
-    # ...
+    args = array.first.arguments.split(',')
 
-    # dane id array args mins maxes
+    array = array.map do |data|
+      values = data.values.split(',')
+      new_args = {}
+      args.each do |i|
+        new_args[args[i]] = Float(values[i])
+      end
+      data.arguments = new_args
+      remove_instance_variable(data.values)
+      data.result.each do |key|
+        data.result[key] = Float(data.result[key]) unless data.result[key].is_a? Float
+      end
+    end
+
+    mins = []
+    maxes = []
+    args.each do |i|
+      mins[args[i]] = min { |array, args|}
+      maxes[args[i]] = max { |array, args|}
+    end
+
     low_low = array.select(param1 == mins[param1]).select(param2 == mins[param2])[0]
     low_high = array.select(param1 == mins[param1]).select(param2 == maxes[param2])[0]
     high_low = array.select(param1 == maxes[param1]).select(param2 == mins[param2])[0]
@@ -59,13 +79,7 @@ class Plugin
 
     end
 
-                             #data.effects = result;
-                             #//console.log(data);
-                             #success(data);
-                             #}
-                             #}, error);
-                             #};
-
+    data.effects = result
   end
 
 end
