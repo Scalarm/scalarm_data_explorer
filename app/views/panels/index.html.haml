@@ -3,9 +3,9 @@
   %dl.accordion{"data-accordion" => ""}
     %dd.accordion-navigation
       - @groups.each do | group_id, group| # na razie groupid na stale i tak trzeba zmienic strukture
-        %a{href: "#experiment-analysis-modal"} 
+        %a{href: "#"+group["name"]} 
           = group["name"]
-          #group_id.content
+          #content{id:group_id}
             %dl.row{style: "text-align: left;"}
               - group["methods"].each do |method| 
                 %li.small-9.columns.small-centered{id:method["name"], style:"padding-bottom: 10px;"}
