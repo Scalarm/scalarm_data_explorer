@@ -3,85 +3,85 @@
 - prefix = '/'
 
 #treeDModal.reveal-modal(data-reveal="data-reveal")
-    %section.panel.radius.analysis-chart
-        %a.close-reveal-modal ='&#215'
-        %h3.subheader="3d scatter plot charts"
-        %form
-            .small-5.columns
-                %label.inline="Select first parameter"
-                .small-7.columns
-                    %select.firstParam
-                        %optgroup{:label => "Parameters"}
+  %section.panel.radius.analysis-chart
+    %a.close-reveal-modal ='&#215'
+    %h3.subheader="3d scatter plot charts"
+    %form
+      .small-5.columns
+        %label.inline="Select first parameter"
+        .small-7.columns
+          %select.firstParam
+            %optgroup{:label => "Parameters"}
 
-                        %optgroup{:label => "MoEs"}
+            %optgroup{:label => "MoEs"}
 
-            .row
-                .small-5.columns
-                    %label.inline="Select second parameter"
-                .small-7.columns
-                    %select.secondParam
-                        %optgroup{:label => "Parameters"}
+      .row
+        .small-5.columns
+          %label.inline="Select second parameter"
+        .small-7.columns
+          %select.secondParam
+            %optgroup{:label => "Parameters"}
 
-                        %optgroup{:label => "MoEs"}
+            %optgroup{:label => "MoEs"}
 
-            .row
-                .small-5.columns
-                    %label.inline="Select third parameter"
-                .small-7.columns
-                    %select.thirdParam
-                        %optgroup{:label => "Parameters"}
+      .row
+        .small-5.columns
+          %label.inline="Select third parameter"
+        .small-7.columns
+          %select.thirdParam
+            %optgroup{:label => "Parameters"}
 
-                        %optgroup{:label => "MoEs"}
+            %optgroup{:label => "MoEs"}
 
-            .row
-                %ul
-                    %li
-                        %button Load chart
-                    %li
-                        %a.img
-    //%img(src='#{prefix}/images/loading.gif' id='busy_3d' size='16x16')
+      .row
+        %ul
+          %li
+            %button Load chart
+          %li
+            %a.img
+  //%img(src='#{prefix}/images/loading.gif' id='busy_3d' size='16x16')
 
-    .charts
-        .scripts
+  .charts
+    .scripts
 
 - content_for :javascript do
-    :javascript
-      $(function() {
-      $("#threeDModal").foundation("reveal", "close");
-      var three_d_chart_counter = 0;
-      var scripts_loaded = false;
-        var load_chart = function() {
-        var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
-        $("#threeDModal .charts").prepend(three_d_chart_div);
-          //TODO - if there's nothing to select -> do nothing
-        var x_axis = $("#threeDModal .firstParam option:selected").val();
-        var y_axis = $("#threeDModal .secondParam option:selected").val();
-        var z_axis = $("#threeDModal .thirdParam option:selected").val();
-        var query_params = "id=#{@experiment.id}";
-        query_params += "&param1="+x_axis;
-        query_params += "&param2="+y_axis;
-        query_params += "&param3="+z_axis;
-        query_params += "&chart_id="+three_d_chart_counter;
-        $(three_d_chart_div).load("#{prefix}/chart_instances/3d?"+query_params, function(){
-            $("#busy_3d").hide();
+  :javascript
+  $(function() {
+    $("#threeDModal").foundation("reveal", "close");
+    var three_d_chart_counter = 0;
+    var scripts_loaded = false;
+    var load_chart = function() {
+    var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
+    $("#threeDModal .charts").prepend(three_d_chart_div);
+      //TODO - if there's nothing to select -> do nothing
+    var x_axis = $("#threeDModal .firstParam option:selected").val();
+    var y_axis = $("#threeDModal .secondParam option:selected").val();
+    var z_axis = $("#threeDModal .thirdParam option:selected").val();
+    var query_params = "id=#{@experiment.id}";
+    query_params += "&param1="+x_axis;
+    query_params += "&param2="+y_axis;
+    query_params += "&param3="+z_axis;
+    query_params += "&chart_id="+three_d_chart_counter;
+    $(three_d_chart_div).load("#{prefix}/chart_instances/3d?"+query_params, function(){
+      $("#busy_3d").hide();
 
-            var targetOffset = $(this).offset().top;
-            $('html,body').animate({ scrollTop: targetOffset }, 1000);
-        });
-        three_d_chart_counter++;
-        }
+      var targetOffset = $(this).offset().top;
+      $('html,body').animate({ scrollTop: targetOffset }, 1000);
+    });
+    three_d_chart_counter++;
+    }
 
-        $("#threeDModal button").bind("click", function() {
-        $("#busy_3d").show();
-        if(!scripts_loaded) {
-        $("#threeDModal .scripts").load("#{prefix}/script_tags/3d?base_url=#{prefix}", function() {
-        load_chart();
-        scripts_loaded = true;
-        });
-        }
-        else {
-        load_chart();
-        }
-        return false;
-        })
-        })
+    $("#threeDModal button").bind("click", function() {
+    $("#busy_3d").show();
+    if(!scripts_loaded) {
+    $("#threeDModal .scripts").load("#{prefix}/script_tags/3d?base_url=#{prefix}", function() {
+    load_chart();
+    scripts_loaded = true;
+    });
+    }
+    else {
+    load_chart();
+    }
+    return false;
+    })
+    })

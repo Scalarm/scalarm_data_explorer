@@ -4,7 +4,7 @@ var info = {
     group: "params",
     image: "/chart/images/material_design/pareto_icon.png",
     description: "Shows significance of parameters (or interaction)"
-}
+};
 
 function handler(dao){
 	return function(parameters, success, error){

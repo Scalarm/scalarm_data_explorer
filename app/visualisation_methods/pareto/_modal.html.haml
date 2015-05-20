@@ -1,4 +1,7 @@
 - parameters = @experiment.get_parameter_ids
+-# TODO uzupenic
+- outputs = []
+
 -# parameters = %w(a b)
 - prefix = '/'
 
@@ -6,7 +9,7 @@
   %section#lindev_charts_form.panel.radius.analysis-chart
     %a.close-reveal-madal &#215
     %h3.subheader="Line charts with standard deviation"
-      %form
+    %form
       .row
         .small-5.columns
           %label.inline="Select first parameter"
@@ -42,7 +45,6 @@
 
 - content_for :javascript do
   :javascript
-
     $(function(){
     $("#paretoModal").foundation("reveal", "close");
 

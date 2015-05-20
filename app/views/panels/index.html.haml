@@ -21,7 +21,7 @@
                       %span{style: "padding: 0;"}= method["name"]
 
 - @methods.each do |method|
-  = render "/../visualisation_methods/#{method}/modal" if method == 'interaction'
+  = render "/../visualisation_methods/#{method}/modal" #if method == 'interaction'
 
 - content_for :javascript do
   :javascript
@@ -62,7 +62,7 @@
     function update_moes(){
       var moes = $(".moes");
       var moes_values = moes.children().map(function() { return $(this).attr("value"); }).toArray();
-      $.getJSON('#{@PREFIX}moes?id=#{@experiment.id}', function(data){
+      $.getJSON('#{@prefix}moes?id=#{@experiment.id}', function(data){
         data.map(function(d){
           if(moes_values.indexOf(d.id)<0){
             var option = "<option value=" + d.id + ">" + d.label + "</option";
