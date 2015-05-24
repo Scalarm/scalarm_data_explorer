@@ -1,12 +1,10 @@
 class ScriptTagsController < ApplicationController
+  PREFIX = "/"
   def show
-    @PREFIX = "/"
-    if(params.has_key?(:base_url))
-      @PREFIX = params[:base_url]
-    end
+    #rendering hmtl script for experiment
+    @prefix = params[:base_url] || PREFIX
+    render html: "<script type=\"text/javascript\" src=\"#{@prefix}scripts/#{params[:id]}/\">"
 
-    render html: "<script type=\"text/javascript\" src=\"#{@PREFIX}scripts/#{params[:id]}/\">"
-# src=http://localhost/scripts/3d 
 	end
 	
 end
