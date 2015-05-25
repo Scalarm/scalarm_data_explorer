@@ -5,20 +5,6 @@
 -# parameters = %w(a b)
 - prefix = '/'
 
-#lindevModal.reveal-modal(data-reveal="true")
-  %section#lindev_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-madal &#215
-    %h3.subheader="Line charts with standard deviation"
-    %form
-      .row
-        .small-5.columns
-          %label.inline="Select first parameter"
-        .small-7.columns
-          %select.firstParam
-            -parameters.each do |parameter|
-              %option{:value => parameter}=parameter # TODO: label
-
-
 #paretoModal.reveal-modal(data-reveal="true")
   %section#pareto_charts_form.panel.radius.analysis-chart
     %a.close-reveal-modal &#215
@@ -33,12 +19,14 @@
               %option{:value => output.id}=output.label
 
       .row
-        %ul
+        %ul.inline-list
           %li
-            %button Load chart
+            %button.radius Load chart
           %li
-            %a.img
-  //%img(src='#{prefix}/images/loading.gif', id='busy_pareto', size='16x16', style='display: none')
+            %a.img(src='#{prefix}/images/loading.gif' id='busy_pareto' size='16x16' style='display: none')
+
+
+
 
   .charts
     .scripts
