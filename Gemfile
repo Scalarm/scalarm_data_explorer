@@ -1,11 +1,13 @@
 source 'https://rubygems.org'
 
-#gem 'thin'
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.1'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+# TODO: user rails ~> 4.1.x
+gem 'rails', '4.1.1'
+
+# use puma as the app server
+gem 'puma'
+
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -15,8 +17,6 @@ gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 
-# Use jQuery as the JavaScript library
-gem 'jquery-rails', '~> 4.0.0.beta2'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -24,8 +24,11 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
+# Use jquery as the JavaScript library
+gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery-tmpl-rails'
+gem 'jit-rails'
 gem 'haml'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -46,7 +49,18 @@ group :development, :test do
   gem 'spring'
 end
 
+group :test do
+  gem 'mocha'
+end
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem 'scalarm-database', path: '../scalarm-database'
+# for local development - set path to scalarm-database
+#gem 'scalarm-database', path: '/home/jliput/Scalarm/scalarm-database'
+gem 'scalarm-database', '>= 0.2', git: 'git://github.com/Scalarm/scalarm-database.git'
+
+# for local development - set path to scalarm-core
+#gem 'scalarm-service_core', path: '/home/jliput/Scalarm/scalarm-service_core'
+gem 'scalarm-service_core', '>= 0.1', git: 'git://github.com/Scalarm/scalarm-service_core.git'
+
