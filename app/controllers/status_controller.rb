@@ -6,8 +6,8 @@ class StatusController < ApplicationController
   # Simple welcome response
   def welcome
     respond_to do |format|
-      format.html { render html: 'Welcome to SclarmChartService', status: :success }
-      format.json { render json: {status: 'ok', message: 'Welcome to ScalarmChartService' } }
+      format.html { render html: 'Welcome to ScalarmDataExplorer', status: :success }
+      format.json { render json: {status: 'ok', message: 'Welcome to ScalarmDataExplorer' } }
     end
   end
 

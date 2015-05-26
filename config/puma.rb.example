@@ -2,7 +2,7 @@ environment 'development'
 daemonize
 
 bind 'tcp://0.0.0.0:25001'
-# bind 'unix:/tmp/scalarm_chart_service.sock'
+# bind 'unix:/tmp/scalarm_data_explorer.sock'
 
 stdout_redirect 'log/puma.log', 'log/puma.log.err', true
 pidfile 'puma.pid'
