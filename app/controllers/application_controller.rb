@@ -27,6 +27,9 @@ class ApplicationController < ActionController::Base
   end
 
   def add_cors_header
-    response['Access-Control-Allow-Origin'] = '*'
-  end  
+    response['Access-Control-Allow-Origin'] = request.env['HTTP_ORIGIN']
+    response['Access-Control-Allow-Credentials'] = 'true'
+  end
+
+  protected :authentication_failed, :add_cors_header
 end
