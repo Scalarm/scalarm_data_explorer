@@ -1,3 +1,5 @@
+require 'scalarm/service_core/utils'
+
 class StatusController < ApplicationController
 
   ##
@@ -10,7 +12,7 @@ class StatusController < ApplicationController
   end
 
   def status
-    tests = Utils.parse_json_if_string(params[:tests])
+    tests = Scalarm::ServiceCore::Utils.parse_json_if_string(params[:tests])
 
     status = 'ok'
     message = ''

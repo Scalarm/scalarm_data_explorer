@@ -73,7 +73,7 @@ namespace :service do
   desc 'Downloading and installing dependencies'
   task :setup, [:debug] => [:environment] do
     puts 'Setup started'
-    install_r_libraries
+    # install_r_libraries
 
     _validate_service
     puts 'Setup finished'

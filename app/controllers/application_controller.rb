@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
 
-  before_filter :authenticate
+  before_filter :authenticate, except: :status
   rescue_from Scalarm::ServiceCore::AuthenticationError, with: :authentication_failed
 
   before_filter :add_cors_header
