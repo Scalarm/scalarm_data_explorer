@@ -1,0 +1,11 @@
+environment 'development'
+daemonize
+
+bind 'tcp://0.0.0.0:25001'
+# bind 'unix:/tmp/scalarm_chart_service.sock'
+
+stdout_redirect 'log/puma.log', 'log/puma.log.err', true
+pidfile 'puma.pid'
+
+threads 1,4     # 1-4 threads
+# workers 2       # 2 processes

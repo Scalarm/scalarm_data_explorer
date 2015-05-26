@@ -1,4 +1,4 @@
-class Visualisation < ActiveRecord::Base
+class Visualisation
   attr_reader :methods
   attr_reader :groups
 
