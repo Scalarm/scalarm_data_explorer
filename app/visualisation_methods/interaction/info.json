@@ -2,6 +2,6 @@
   "name": "Interaction",
   "id": "interactionModal",
   "group": "params",
-  "image": "/images/material_design/interaction_icon.png",
+  "image": "/assets/images/material_design/interaction_icon.png",
   "description": "Shows interaction between 2 input parameters"
 }
