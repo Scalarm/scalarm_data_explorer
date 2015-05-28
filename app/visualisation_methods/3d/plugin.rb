@@ -9,10 +9,10 @@ class Plugin
   }
 
   def prepare_3d_chart_content(parameters, data)
-    output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";";
+    output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + JSON.stringify(data) + ";"
-    output += "\nthreeD_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", \"" + parameters["param3"] + "\", data);";
-    output += "\n})();</script>";
+    output += "\nthreeD_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", \"" + parameters["param3"] + "\", data);"
+    output += "\n})();</script>"
     output
 
   end
