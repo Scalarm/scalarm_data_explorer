@@ -18,72 +18,74 @@ class Plugin
 
 
   def getter(param, args)
-    (args.indexOf(param) < 0) ? return result[param] : return arguments[param]
+    (args.indexOf(param) < 0) ? result[param] : arguments[param]
   end
 
 
   def getLineDev (experiment, id, param1, param2, success)
     #dao.getData(id, function(array, args, mins, maxes){
-    experiment = Scalarm::Database::Model::Experiment.new({})
-    array = experiment.simulation_runs.to_a
-    if array.length == 0
-      error("No such experiment or no runs done")
-    end
 
-    args = array.first.arguments.split(',')
-
-    array = array.map do |data|
-      values = data.values.split(',')
-      new_args = {}
-      args.each do |i|
-        new_args[args[i]] = Float(values[i])
-      end
-      data.arguments = new_args
-      remove_instance_variable(data.values)
-      data.result.each do |key|
-        data.result[key] = Float(data.result[key]) unless data.result[key].is_a? Float
-      end
-    end
-
-    mins = []
-    maxes = []
-    args.each do |i|
-      mins[args[i]] = min { |array, args|}
-      maxes[args[i]] = max { |array, args|}
-    end
-
-    get_param1 = getter(param1, args)
-    get_param2 = getter(param2, args)
-    grouped_by_param1 = {}
-
-    array.map do |obj|
-      if grouped_by_param1.include? get_param1(obj)
-        grouped_by_param1[get_param1(obj)].push(get_param2(obj))
-      else grouped_by_param1[get_param1(obj)] = get_param2(obj)
-      end
-    end
-
-    values = []
-    grouped_by_param1.each do |index|
-      sum = grouped_by_param1[index].reduce(1, :+)
-      mean = sum/grouped_by_param1[index].length
-      values.push(Float(index, mean))
-    end
-    values = values.sort_by{|e| e}
-    with_stddev = []
-    grouped_by_param1.each do |index|
-      sum = grouped_by_param1[index].reduce(1, :+)
-      mean = sum/grouped_by_param1[index].length
-      partial_sd = 0
-      grouped_by_param1[index].each do |i|
-        partial_sd += **(grouped_by_param1[index][i]-mean)
-      end
-      sd = Math.sqrt(partial_sd/grouped_by_param1[index].length)
-      with_stddev.push(Float([index, mean-sd, mean+sd]))
-    end
-    with_stddev = with_stddev.sort_by{|e| e}
-
-    success([values, with_stddev])
+    ## TODO
+    # experiment = Scalarm::Database::Model::Experiment.new({})
+    # array = experiment.simulation_runs.to_a
+    # if array.length == 0
+    #   error("No such experiment or no runs done")
+    # end
+    #
+    # args = array.first.arguments.split(',')
+    #
+    # array = array.map do |data|
+    #   values = data.values.split(',')
+    #   new_args = {}
+    #   args.each do |i|
+    #     new_args[args[i]] = Float(values[i])
+    #   end
+    #   data.arguments = new_args
+    #   remove_instance_variable(data.values)
+    #   data.result.each do |key|
+    #     data.result[key] = Float(data.result[key]) unless data.result[key].is_a? Float
+    #   end
+    # end
+    #
+    # mins = []
+    # maxes = []
+    # args.each do |i|
+    #   mins[args[i]] = min { |array, args|}
+    #   maxes[args[i]] = max { |array, args|}
+    # end
+    #
+    # get_param1 = getter(param1, args)
+    # get_param2 = getter(param2, args)
+    # grouped_by_param1 = {}
+    #
+    # array.map do |obj|
+    #   if grouped_by_param1.include? get_param1(obj)
+    #     grouped_by_param1[get_param1(obj)].push(get_param2(obj))
+    #   else grouped_by_param1[get_param1(obj)] = get_param2(obj)
+    #   end
+    # end
+    #
+    # values = []
+    # grouped_by_param1.each do |index|
+    #   sum = grouped_by_param1[index].reduce(1, :+)
+    #   mean = sum/grouped_by_param1[index].length
+    #   values.push(Float(index, mean))
+    # end
+    # values = values.sort_by{|e| e}
+    # with_stddev = []
+    # grouped_by_param1.each do |index|
+    #   sum = grouped_by_param1[index].reduce(1, :+)
+    #   mean = sum/grouped_by_param1[index].length
+    #   partial_sd = 0
+    #   grouped_by_param1[index].each do |i|
+    #     partial_sd += **(grouped_by_param1[index][i]-mean)
+    #   end
+    #   sd = Math.sqrt(partial_sd/grouped_by_param1[index].length)
+    #   with_stddev.push(Float([index, mean-sd, mean+sd]))
+    # end
+    # with_stddev = with_stddev.sort_by{|e| e}
+    #
+    # success([values, with_stddev])
   end
 
 

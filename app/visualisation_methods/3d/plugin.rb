@@ -64,7 +64,8 @@ class Plugin
     end
 
     data = []
-    data.map { |Number.prototype.valueOf|}
+    # TODO?
+    #data.map { |Number.prototype.valueOf|}
     if args.index(param1) != -1
       data.each do |i|
         data[i] = array[i].arguments[param1]
