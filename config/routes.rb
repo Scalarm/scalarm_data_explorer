@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   resources :scripts, only: [:show]
   resources :moes, only: [:show]
 
+  match '*path' => 'application#cors_preflight_check', via: :options
+
   # default readme in this file has been deleted
 
 end
