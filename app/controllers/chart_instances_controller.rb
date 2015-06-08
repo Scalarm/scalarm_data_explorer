@@ -1,17 +1,38 @@
 class ChartInstancesController < ApplicationController
   PREFIX = "/"
   def show
-    experiment_id = params[:id].to_s
+    chart_id = params[:id].to_s #nazwa metody
+    experiment_id = params[:exp_id].to_s
     @experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
-
     @prefix = params[:base_url] || PREFIX
-    @input_parameters = @experiment.get_parameter_ids
-    #paramaters["moes"] = moes?
-  # paramaters ?
-   #user =  User.find(session[:user_id])
+    output = params[:output].to_s
+    chart_counter = params[:chart_id].to_s
+    type=  params[:type].to_s
+    param1 = params[:param1].to_s
+    param2 = params[:param2].to_s
 
-  	if @experiment.visible_to(params[:userID])
-  	  render :file => Rails.root.join('app','visualisation_methods', params[:id], "#{params[:id]}_chart.html.haml")
+    parameters = { "id" => chart_id }
+    parameters["param1"] = param1
+    parameters["param2"] = param2
+    parameters["chart_id"] = chart_counter
+    parameters["output"] = output
+    parameters["type"] = type
+
+
+    require("visualisation_methods/#{chart_id}/#{chart_id}")
+
+
+  	if @experiment.visible_to(@current_user.id)
+      path = Rails.root.join('app','visualisation_methods',"#{chart_id}","#{chart_id}")
+      require(path)
+      classname = chart_id.camelize.constantize.new
+      classname.experiment = @experiment
+      classname.parameters = parameters
+      content = classname.handler
+      if(!parameters["type"] || parameters["type"]=="scalarm")
+  	    render :file => Rails.root.join('app','visualisation_methods', chart_id, "#{chart_id}Chart.html.haml")
+      end
+      render :text => content
   	else
   	  raise 'Not authorised'
   	end
