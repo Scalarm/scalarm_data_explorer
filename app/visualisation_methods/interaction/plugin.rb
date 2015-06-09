@@ -1,4 +1,4 @@
-class Plugin
+class Interaction
 
   INFO = {
       'name' => 'Plugin',
