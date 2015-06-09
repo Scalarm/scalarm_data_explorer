@@ -2,7 +2,7 @@ class ChartInstancesController < ApplicationController
   PREFIX = "/"
   def show
     chart_id = params[:id].to_s #nazwa metody
-    experiment_id = params[:exp_id].to_s
+    experiment_id = params[:experiment_id].to_s
     @experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
     @prefix = params[:base_url] || PREFIX
     output = params[:output].to_s
@@ -19,7 +19,17 @@ class ChartInstancesController < ApplicationController
     parameters["type"] = type
 
 
-    require("visualisation_methods/#{chart_id}/#{chart_id}")
+    path = Rails.root.join('app','visualisation_methods',"#{chart_id}","#{chart_id}")
+    require(path)
+    classname = chart_id.camelize.constantize.new
+    classname.experiment = @experiment
+    classname.parameters = parameters
+
+
+
+
+
+    #require("visualisation_methods/#{chart_id}/#{chart_id}")
 
 
   	if @experiment.visible_to(@current_user.id)
@@ -28,11 +38,12 @@ class ChartInstancesController < ApplicationController
       classname = chart_id.camelize.constantize.new
       classname.experiment = @experiment
       classname.parameters = parameters
-      content = classname.handler
+      object = classname.handler
+      chart_header =""
       if(!parameters["type"] || parameters["type"]=="scalarm")
-  	    render :file => Rails.root.join('app','visualisation_methods', chart_id, "#{chart_id}Chart.html.haml")
+        chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, "#{chart_id}_chart.html.haml")
       end
-      render :text => content
+      render :text => chart_header + object[:content]
   	else
   	  raise 'Not authorised'
   	end
