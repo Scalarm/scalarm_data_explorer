@@ -19,7 +19,7 @@ class ChartInstancesController < ApplicationController
     parameters["type"] = type
 
 
-    path = Rails.root.join('app','visualisation_methods',"#{chart_id}","#{chart_id}")
+    path = Rails.root.join('app','visualisation_methods',"#{chart_id}","plugin")
     require(path)
     classname = chart_id.camelize.constantize.new
     classname.experiment = @experiment
@@ -32,8 +32,8 @@ class ChartInstancesController < ApplicationController
     #require("visualisation_methods/#{chart_id}/#{chart_id}")
 
 
-  	if @experiment.visible_to(@current_user.id)
-      path = Rails.root.join('app','visualisation_methods',"#{chart_id}","#{chart_id}")
+  	#if @experiment.visible_to(@current_user.id)
+      path = Rails.root.join('app','visualisation_methods',"#{chart_id}","plugin")
       require(path)
       classname = chart_id.camelize.constantize.new
       classname.experiment = @experiment
@@ -41,11 +41,11 @@ class ChartInstancesController < ApplicationController
       object = classname.handler
       chart_header =""
       if(!parameters["type"] || parameters["type"]=="scalarm")
-        chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, "#{chart_id}_chart.html.haml")
+        chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, "chart.html.haml")
       end
       render :text => chart_header + object[:content]
-  	else
-  	  raise 'Not authorised'
-  	end
+  	#else
+  	#  raise 'Not authorised'
+  	#end
   end
 end

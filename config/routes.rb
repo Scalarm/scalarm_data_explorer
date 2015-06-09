@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :panels, only: [:index, :show]
   resources :scripts, only: [:show]
   resources :moes, only: [:show]
+  resources :chart_instances, only: [:show]
 
   match '*path' => 'application#cors_preflight_check', via: :options
 

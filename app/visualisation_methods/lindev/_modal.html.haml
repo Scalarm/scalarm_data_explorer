@@ -1,94 +1,160 @@
 - parameters = @experiment.get_parameter_ids
 -# parameters = %w(a b)
 - parameters_labels=['A','B']
--outputs = []
-- prefix = '/'
+
+
+- experiment_id = params[:id].to_s
+- experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = experiment.simulation_runs.where(filter, fields).first.result
+
+- outputs = []
+- outputs.push(result.first[0])
 
 
 
 #lindevModal.reveal-modal(data-reveal="true")
   %section#lindev_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-madal &#215
+    %a.close-reveal-modal &#215
     %h3.subheader="Line charts with standard deviation"
-    //%h3 @experiment.simulation_runs.where(filter, values).first.resul
-    //experiment.simulation_runs.where(filter, fields).first.result
-    %form
-      .row
-        .small-5.columns
-          %label.inline="Select first parameter"
-        .small-7.columns
-          %select.firstParam
-            %optgroup{:label => "Parameters"}
-              -parameters_labels.each do |parameter|
-                %option{value:parameter} #{parameter}
+    %h3 #{}
+    .row
+      .small-5.columns
+        %label.inline="Select first parameter"
+      .small-7.columns
+        %select.firstParam
+          %optgroup{:label => "Parameters"}
+            -parameters_labels.each do |parameter|
+              %option{value:parameter} #{parameter}
 
 
-            %optgroup{:label => "MoEs"}
-              -outputs.each do |output|
-                %option{:value => outputs} output
+          %optgroup{:label => "MoEs"}
+            -outputs.each do |output|
+              %option{value:output} #{output}
 
-      .row
-        .small-5.columns
-          %label.inline="Select second parameter"
-        .small-7.columns
-          %select.secondParam
-            %optgroup{:label => "Parameters"}
-              -parameters_labels.each do |parameter|
-                %option{value:parameter} #{parameter}
-
-
-            %optgroup{:label => "MoEs"}
+    .row
+      .small-5.columns
+        %label.inline="Select second parameter"
+      .small-7.columns
+        %select.secondParam
+          %optgroup{:label => "Parameters"}
+            -parameters_labels.each do |parameter|
+              %option{value:parameter} #{parameter}
 
 
-      .row
-        %ul.inline-list
-          %li
-            %button.radius Load chart
-          %li
-            %a.img(src='#{prefix}/images/loading.gif' id='busy_lindev' size='16x16' style='display: none')
+          %optgroup{:label => "MoEs"}
+            -outputs.each do |output|
+              %option{value:output} #{output}
+
+
+    .row
+      %ul.inline-list
+        %li
+          %button.radius Load chart
+        %li
+          %a.img(src="#{@prefix}/images/loading.gif" id='busy_lindev' size='16x16' style='display: none')
 
   .charts
     .scripts
 
+:javascript
 
-- content_for :javascript do
-  :javascript
 
-    $(function() {
-    $("#lindevModal").foundation("reveal", "close");
-    var chart_counter = 0;
+  $(function(){
+    $('#lindevModal').foundation('reveal', 'close');
+    var sessionGetJSON = function(url, onSuccess, onError) {
+      return $.ajax({
+        dataType: "json",
+        url: url,
+        xhrFields: {
+          withCredentials: true
+        },
+        success: onSuccess,
+        error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
+          console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
+        }
+      });
+    };
     var scripts_loaded = false;
+    var chart_counter = 0;
+
     var load_chart = function() {
-      var chart_div = $("<div id=\"lindev_chart_"+chart_counter+"\">")[0];
+      window.alert("chart should be loaded");
+      var chart_div = $("<div id=\"chart_"+chart_counter+"\">")[0];
       $("#lindevModal .charts").prepend(chart_div);
       var x_axis = $("#lindevModal .firstParam option:selected").val();
-      var y_axis = $("#lindevModal .(src='#{prefix}/images/loading.gif' id='busy_interaction' size='16x16')secondParam option:selected").val();
-      var query_params = "id=#{@experiment.id}";
+      var y_axis = $("#lindevModal .secondParam option:selected").val();
+      var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param1="+x_axis;
       query_params += "&param2="+y_axis;
       query_params += "&chart_id="+chart_counter;
-      //TODO? Query string with prefix?
-      $(chart_div).load("#{prefix}/chart_instances/lindev?"+query_params, function(){
-        $("#busy_lindev").hide();
-        var targetOffset = $(this).offset().top;
-        $('html,body').animate({ scrollTop: targetOffset }, 1000);
-      });
-      chart_counter++;
-    }
 
-    $("#lindevModal button").bind("click", function() {
+      var url = "#{@prefix}/chart_instances/lindev?"+query_params;
+
+      var handler = function(data) {
+        $("#busy_lindev").hide();
+
+        //var targetOffset = $(this).offset().top;
+        //$('html,body').animate({ scrollTop: targetOffset }, 1000);
+
+        $(chart_div).html(data);
+      };
+      sessionGetJSON(url, {}, handler);
+      chart_counter++;
+
+    };
+
+    $("#lindevModal").find("button").bind("click", function() {
       $("#busy_lindev").show();
       if(!scripts_loaded) {
-        $("#lindevModal .scripts").load("#{prefix}/script_tags/lindev?base_url=#{prefix}", function(){
+        var url = "#{@prefix}/script_tags/lindev?base_url=#{@prefix}";
+        var handler = function(data) {
           load_chart();
           scripts_loaded = true;
-        });
+          $("#lindevModal").find(".scripts").html(data);
+        };
+        sessionGetJSON(url, {}, handler);
       }
-
-      else{
-        load_chart();
-      }
-
-      return false;
-    })
-    })
+    });
+  });
+-#:javascript
+-#
+-#  $(function() {
+-#  $("#lindevModal").foundation("reveal", "close");
+-#  var chart_counter = 0;
+-#  var scripts_loaded = false;
+-#  var load_chart = function() {
+-#    var chart_div = $("<div id=\"lindev_chart_"+chart_counter+"\">")[0];
+-#    $("#lindevModal .charts").prepend(chart_div);
+-#    var x_axis = $("#lindevModal .firstParam option:selected").val();
+-#    var y_axis = $("#lindevModal .(src='#{prefix}/images/loading.gif' id='busy_interaction' size='16x16')secondParam option:selected").val();
+-#    var query_params = "id=#{@experiment.id}";
+-#    query_params += "&param1="+x_axis;
+-#    query_params += "&param2="+y_axis;
+-#    query_params += "&chart_id="+chart_counter;
+-#    //TODO? Query string with prefix?
+-#    $(chart_div).load("#{prefix}/chart_instances/lindev?"+query_params, function(){
+-#      $("#busy_lindev").hide();
+-#      var targetOffset = $(this).offset().top;
+-#      $('html,body').animate({ scrollTop: targetOffset }, 1000);
+-#    });
+-#    chart_counter++;
+-#  }
+-#
+-#  $("#lindevModal button").bind("click", function() {
+-#    $("#busy_lindev").show();
+-#    if(!scripts_loaded) {
+-#      $("#lindevModal .scripts").load("#{prefix}/script_tags/lindev?base_url=#{prefix}", function(){
+-#        load_chart();
+-#        scripts_loaded = true;
+-#      });
+-#    }
+-#
+-#    else{
+-#      load_chart();
+-#    }
+-#
+-#    return false;
+-#  })
+-#  })
