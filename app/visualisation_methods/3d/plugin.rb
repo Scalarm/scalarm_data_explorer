@@ -1,4 +1,4 @@
-class Plugin
+class ThreeD
 
   INFO = {
       'name' => '3D chart',

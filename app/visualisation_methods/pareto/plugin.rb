@@ -1,4 +1,4 @@
-class Plugin
+class Pareto
 
   INFO = {
       'name' => 'Pareto',
