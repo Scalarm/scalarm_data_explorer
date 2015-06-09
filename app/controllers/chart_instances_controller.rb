@@ -18,17 +18,6 @@ class ChartInstancesController < ApplicationController
     parameters["output"] = output
     parameters["type"] = type
 
-
-    path = Rails.root.join('app','visualisation_methods',"#{chart_id}","plugin")
-    require(path)
-    classname = chart_id.camelize.constantize.new
-    classname.experiment = @experiment
-    classname.parameters = parameters
-
-
-
-
-
     #require("visualisation_methods/#{chart_id}/#{chart_id}")
 
 
