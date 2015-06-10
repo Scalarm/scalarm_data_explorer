@@ -19,17 +19,19 @@ class ChartInstancesController < ApplicationController
     @parameters["chart_id"] = chart_counter
     @parameters["output"] = output
     @parameters["type"] = type
+    #moes and input parameters
     @parameters["moes"] = @experiment.simulation_runs.where(filter, fields).first.result
+    #add labels to method in scalarm_database -> experiment
     @parameters["input_parameters"]= @experiment.get_parameter_ids
     #require("visualisation_methods/#{chart_id}/#{chart_id}")
 
-# dodac moes oraz input parameters
+
   	#if @experiment.visible_to(@current_user.id)
       path = Rails.root.join('app','visualisation_methods',"#{chart_id}","plugin")
       require(path)
       classname = chart_id.camelize.constantize.new
       classname.experiment = @experiment
-      classname.parameters = parameters
+      classname.parameters = @parameters
       object = classname.handler
       chart_header =""
       if(!parameters["type"] || parameters["type"]=="scalarm")
