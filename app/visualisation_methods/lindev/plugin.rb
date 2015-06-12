@@ -35,7 +35,6 @@ class Lindev
     #dao.getData(id, function(array, args, mins, maxes){
 
     ## TODO
-    experiment = Scalarm::Database::Model::Experiment.new({})
     array = experiment.simulation_runs.to_a
 
     # if array.length == 0
@@ -74,9 +73,10 @@ class Lindev
           grouped_by_param1[get_param1(obj)].push(get_param2(obj))
         else grouped_by_param1[get_param1(obj)] = get_param2(obj)
         end
+        array
       end
-    array
-    #
+
+
     # values = []
     # grouped_by_param1.each do |index|
     #   sum = grouped_by_param1[index].reduce(1, :+)

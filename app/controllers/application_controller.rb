@@ -11,7 +11,10 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate, except: :status
   rescue_from Scalarm::ServiceCore::AuthenticationError, with: :authentication_failed
 
+  before_filter :get_prefix
+
   after_filter :add_cors_header
+  PREFIX = '/'
 
   def authentication_failed
     Rails.logger.debug('[authentication] failed -> 401')
@@ -45,6 +48,10 @@ class ApplicationController < ActionController::Base
 
       render :text => '', :content_type => 'text/plain'
     end
+  end
+
+  def get_prefix
+    @prefix = (params[:base_url].to_s) || PREFIX
   end
 
   protected :authentication_failed, :add_cors_header
