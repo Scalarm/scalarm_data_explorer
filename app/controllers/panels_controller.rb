@@ -3,7 +3,7 @@ require 'scalarm/database/core'
 
 class PanelsController < ApplicationController
 
-
+  PREFIX = '/'
 
   # TODO: will be removed some day
   def index
@@ -17,6 +17,8 @@ class PanelsController < ApplicationController
   def handle_panel_for_experiment
 
     # TODO: security
+
+    @prefix = params[:base_url] || PREFIX
 
     panels = Panels.new
     @methods = panels.methods

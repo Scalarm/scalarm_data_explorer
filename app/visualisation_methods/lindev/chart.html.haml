@@ -1,6 +1,6 @@
 %section.panel.radius.plot
 %h3.subheader
-  = "Line chart #{@parameters["param1"]} vs. #{@parameters["param2"]}"
+  = "Line chart - '%(param1)' vs. '%(param2)'"
   .row
 %button= 'Hide chart'
 %br
@@ -19,14 +19,14 @@
   .small-5.columns.end
     %select#new_series_lindev_chart_undefined
       %optgroup{:label => "Parameters"}
-        -@parameters["input_parameters"].each do |parameter|
-          %option{:value => parameter}= parameter
+        -@parameter.each do |parameter|
+          %option{:value => parameter.id}= parameter.label
       %optgroup.moes{:label => "MoEs"}
-        -@parameters["moes"].each do |output|
-          %option{:value => output }= output
+        -@outputs.each do |output|
+          %option{:value => output.id }= output.label
   .small-2.columns.end
-    %span.add_series.button.radius.tiny Add series
-
+    //%span.add_series.button.radius.tiny Add series
+    %button="Add series"
 
 
 -# TODO: sessionGetJSON - move to separate partial or something
