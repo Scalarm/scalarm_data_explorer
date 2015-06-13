@@ -1,31 +1,32 @@
-%section.panel.radius.plot
-%h3.subheader
-  = "Line chart #{@parameters["param1"]} vs. #{@parameters["param2"]}"
-  .row
-%button= 'Hide chart'
-%br
-  .chart
 
-.row
-  .small-offset-1.small-3.columns
-    %label.inline{:for => "choose_axis_lindev_chart_undefined"} Select axis to add series:
-  .small-5.columns.end
-    %select#choose_axis_lindev_chart_undefined
-      %option{:value => "x"} Axis X
-      %option{:value => "y"} Axis Y
-.row
-  .small-offset-1.small-3.columns
-    %label.inline{:for => "new_series_lindev_chart_undefined"} Add new series:
-  .small-5.columns.end
-    %select#new_series_lindev_chart_undefined
-      %optgroup{:label => "Parameters"}
-        -@parameters["input_parameters"].each do |parameter|
-          %option{:value => parameter}= parameter
-      %optgroup.moes{:label => "MoEs"}
-        -@parameters["moes"].each do |output|
-          %option{:value => output }= output
-  .small-2.columns.end
-    %span.add_series.button.radius.tiny Add series
+
+%section#lindev_chart_form.panel.radius.plot
+  %h3.subheader Line chart #{@parameters["param1"]} vs. #{@parameters["param2"]}
+  .row
+  %span.button.hide= 'Hide chart'
+  %br
+    .chart
+
+  .row
+    .small-offset-1.small-3.columns
+      %label.inline{:for => "choose_axis_lindev_chart_undefined"} Select axis to add series:
+    .small-5.columns.end
+      %select#choose_axis_lindev_chart_undefined
+        %option{:value => "x"} Axis X
+        %option{:value => "y"} Axis Y
+  .row
+    .small-offset-1.small-3.columns
+      %label.inline{:for => "new_series_lindev_chart_undefined"} Add new series:
+    .small-5.columns.end
+      %select#new_series_lindev_chart_undefined
+        %optgroup{:label => "Parameters"}
+          -@parameters["input_parameters"].each do |parameter|
+            %option{:value => parameter}= parameter
+        %optgroup.moes{:label => "MoEs"}
+          -@parameters["moes"].each do |output|
+            %option{:value => output }= output.first
+    .small-2.columns.end
+      %span.add_series.button.radius.tiny Add series
 
 
 
