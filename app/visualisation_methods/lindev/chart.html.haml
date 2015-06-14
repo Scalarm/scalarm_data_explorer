@@ -1,5 +1,3 @@
-
-
 %section#lindev_chart_form.panel.radius.plot
   %h3.subheader Line chart #{@parameters["param1"]} vs. #{@parameters["param2"]}
   .row
@@ -32,7 +30,7 @@
 
 -# TODO: sessionGetJSON - move to separate partial or something
 :javascript
-  var sessionGetJSON = function(url, onSuccess, onError) {
+  var sessionGetJSON = function(url,params, onSuccess, onError) {
     return $.ajax({
       dataType: "json",
       url: url,
@@ -71,12 +69,12 @@
         sessionGetJSON(url, params, handler);
       }
       else if(setAxis=="y") {
-        var url = "#{@prefix}/chart_instances/lindev"
+        var url = "#{@prefix}/chart_instances/lindev";
         var params = {
           "type": "data",
           "param1": $(div_id + " .chart").highcharts().userOptions.xAxis.title.text,
           "param2": axis, "id": "#{@experiment_id}"
-        },
+        };
         var handler = function(data) {
           var chart = $(div_id + " .chart").highcharts();
           chart.addAxis({ id: axis, title: { text: axis_label } }, true);
@@ -86,7 +84,7 @@
         sessionGetJSON(url, params, handler);
       }
     });
-    $(div_id + " .button.hide").on('click', function() {
-      $(div_id).remove();
+     $("span.button.hide").on('click', function() {
+      $("div#chart_#{@parameters["chart_id"]}").remove();
     });
   });
