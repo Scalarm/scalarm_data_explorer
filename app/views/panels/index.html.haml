@@ -2,15 +2,15 @@
   %dl.accordion{"data-accordion" => ""}
     %dd.accordion-navigation
       - @groups.each do | group_id, group| # na razie groupid na stale i tak trzeba zmienic strukture
-        %a{href: "#"+group["name"]}
+        %a{href: "#"+group["name"], style:"padding:0px", id:group_id}
           = group["name"]
-          #content{id:group_id}
+          #content{id:group_id, style:"padding-bottom:10px;"  "display: none;"}
             %dl.row{style: "text-align: left;"}
               - group["methods"].each do |method| 
                 %li.small-9.columns.small-centered{id:method["name"], style:"padding-bottom: 0px;"}
                   - if method["em_class"]
                     - image_id = method["name"].gsub(/\s+/, "")
-                    %a.tip-right.text-left{href: "#", title: method["description"], "em-class" => method["em_class"], "data-reveal-id"=> method["id"], "data-tooltip" =>""}
+                    %a.tip-right.text-left{href: "#", "em-class" => method["em_class"], "data-reveal-id"=> method["id"], "data-tooltip" =>"", style:"padding: 0px;"}
                       %span{style: "padding: 0;"}= method["name"]
                       %center
                         %form{id:"description_#{image_id}" ,style:"display: none"}
@@ -19,7 +19,7 @@
                             %img(src= "#{method["image"]}" id="image_#{image_id}")
                   - else
                     - image_id = method["name"].gsub(/\s+/, "")
-                    %a.tip-right.text-left{href:"#method"+method["name"], "data-reveal-id"=>method["id"], "data-tooltip"=>"", title:method["description"]}
+                    %a.tip-right.text-left{href:"#method"+method["name"], "data-reveal-id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
                       %span= method["name"]
                       %center
                         %form{id:"description_#{image_id}" ,style:"display: none"}
@@ -48,11 +48,18 @@
         $(image_name).hide();
     });
 
-  $("#searchList").find("#Basic analysis").bind("click", function() {
-      alert("Klik")
+  $("#searchList").find("#basic").bind("click", function() {
+      if (!$("#content_basic").is(":visible"))
+        $("#content_basic").show();
+      else
+        $("#content_basic").hide();
+    });
 
-
-
+  $("#searchList").find("#params").bind("click", function() {
+      if (!$("#content_params").is(":visible"))
+        $("#content_params").show();
+      else
+        $("#content_params").hide();
     });
 
 
