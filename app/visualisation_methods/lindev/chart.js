@@ -1,8 +1,8 @@
-function lindev_main(i, param1, param2, data) {
+window.lindev_main = function(i, param1, param2, data) {
     var chart = new Highcharts.Chart({
         chart: {
             zoomType: 'xy',
-            renderTo: $('#lindev_chart_'+ i + " .chart")[0]
+            renderTo: $('#chart_'+ i + " .chart")[0]
         },
         credits: {
             enabled: false
@@ -38,4 +38,4 @@ function lindev_main(i, param1, param2, data) {
             }
         }]
     });
-}
+};

@@ -1,37 +1,36 @@
-%section.panel.radius.plot
-%h3.subheader
-  = "Line chart #{@parameters["param1"]} vs. #{@parameters["param2"]}"
+%section#lindev_chart_form.panel.radius.plot
+  %h3.subheader Line chart #{@parameters["param1"]} vs. #{@parameters["param2"]}
   .row
-%button= 'Hide chart'
-%br
-  .chart
+  %span.button.hide= 'Hide chart'
+  %br
+    .chart
 
-.row
-  .small-offset-1.small-3.columns
-    %label.inline{:for => "choose_axis_lindev_chart_undefined"} Select axis to add series:
-  .small-5.columns.end
-    %select#choose_axis_lindev_chart_undefined
-      %option{:value => "x"} Axis X
-      %option{:value => "y"} Axis Y
-.row
-  .small-offset-1.small-3.columns
-    %label.inline{:for => "new_series_lindev_chart_undefined"} Add new series:
-  .small-5.columns.end
-    %select#new_series_lindev_chart_undefined
-      %optgroup{:label => "Parameters"}
-        -@parameters["input_parameters"].each do |parameter|
-          %option{:value => parameter}= parameter
-      %optgroup.moes{:label => "MoEs"}
-        -@parameters["moes"].each do |output|
-          %option{:value => output }= output
-  .small-2.columns.end
-    %span.add_series.button.radius.tiny Add series
+  .row
+    .small-offset-1.small-3.columns
+      %label.inline{:for => "choose_axis_lindev_chart_undefined"} Select axis to add series:
+    .small-5.columns.end
+      %select#choose_axis_lindev_chart_undefined
+        %option{:value => "x"} Axis X
+        %option{:value => "y"} Axis Y
+  .row
+    .small-offset-1.small-3.columns
+      %label.inline{:for => "new_series_lindev_chart_undefined"} Add new series:
+    .small-5.columns.end
+      %select#new_series_lindev_chart_undefined
+        %optgroup{:label => "Parameters"}
+          -@parameters["input_parameters"].each do |parameter|
+            %option{:value => parameter}= parameter
+        %optgroup.moes{:label => "MoEs"}
+          -@parameters["moes"].each do |output|
+            %option{:value => output }= output.first
+    .small-2.columns.end
+      %span.add_series.button.radius.tiny Add series
 
 
 
 -# TODO: sessionGetJSON - move to separate partial or something
 :javascript
-  var sessionGetJSON = function(url, onSuccess, onError) {
+  var sessionGetJSON = function(url,params, onSuccess, onError) {
     return $.ajax({
       dataType: "json",
       url: url,
@@ -70,12 +69,12 @@
         sessionGetJSON(url, params, handler);
       }
       else if(setAxis=="y") {
-        var url = "#{@prefix}/chart_instances/lindev"
+        var url = "#{@prefix}/chart_instances/lindev";
         var params = {
           "type": "data",
           "param1": $(div_id + " .chart").highcharts().userOptions.xAxis.title.text,
           "param2": axis, "id": "#{@experiment_id}"
-        },
+        };
         var handler = function(data) {
           var chart = $(div_id + " .chart").highcharts();
           chart.addAxis({ id: axis, title: { text: axis_label } }, true);
@@ -85,7 +84,7 @@
         sessionGetJSON(url, params, handler);
       }
     });
-    $(div_id + " .button.hide").on('click', function() {
-      $(div_id).remove();
+     $("span.button.hide").on('click', function() {
+      $("div#chart_#{@parameters["chart_id"]}").remove();
     });
   });

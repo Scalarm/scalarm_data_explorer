@@ -19,6 +19,7 @@ class ChartInstancesController < ApplicationController
     @parameters["output"] = output
     @parameters["type"] = type
     #moes and input parameters
+
     @parameters["moes"] = @experiment.simulation_runs.where(filter, fields).first.result
     #add labels to method in scalarm_database -> experiment
     @parameters["input_parameters"]= @experiment.get_parameter_ids
@@ -30,12 +31,12 @@ class ChartInstancesController < ApplicationController
     classname = chart_id.camelize.constantize.new
     classname.experiment = @experiment
     classname.parameters = @parameters
-    object = classname.handler
+    @object = classname.handler
     chart_header =""
     #if(!@parameters["type"] || @parameters["type"]=="scalarm")
     chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, "chart.html.haml"), layout: false
     #end
-    render :text => (chart_header + object.to_s)
+    render :html => (chart_header + @object.to_s.html_safe), layout: false
 
     #else
     #  raise 'Not authorised'

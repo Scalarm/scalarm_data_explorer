@@ -2,23 +2,17 @@ class Lindev
   attr_accessor :experiment
   attr_accessor :parameters
 
-  INFO = {
-      'name' => 'Line chart',
-      'id' => 'lindevModal',
-      'group' => 'basic',
-      'image' => '/chart/images/material_design/lindev_icon.png',
-      'description' => 'Line chart with standard deviation'
-  }
 
-  def prepare_lindev_chart_content(parameters, data)
+
+  def prepare_lindev_chart_content(data)
              output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
              #output += "\nvar data = " + JSON.stringify(data) + ";"
-             output += "\nvar data = " + ActiveSupport::JSON.decode(data) + ";" if data != nil
+             output += "\nvar data = " + data.to_json + ";" if data != nil
 
-             output += "\nlindev_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", data);"
+             output += "\nwindow.lindev_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", data);"
              output += "\n})();</script>"
 
-             return output
+             output
 
 
   end
@@ -40,66 +34,97 @@ class Lindev
     # if array.length == 0
     #   error("No such experiment or no runs done")
     # end
-
+    Rails.logger.debug("################")
+    Rails.logger.debug(array)
+    Rails.logger.debug("################")
+    Rails.logger.debug(array.first)
+    Rails.logger.debug("################")
+    Rails.logger.debug(array.first.arguments)
     args = array.first.arguments.split(',')
-    values = array.values.split(',')
-
+    #values = array.values.split(',')
+    Rails.logger.debug("################")
+    Rails.logger.debug(args)
+   # Rails.logger.debug(values)
     array = array.map do |data|
+      obj ={}
+
       values = data.values.split(',')
       new_args = {}
-      args.each do |i|
-        new_args[args[i]] = values[i].to_f
+      args.each_with_index do |arg_name, index|
+        new_args[arg_name] = values[index].to_f
       end
-      data.arguments = new_args
-      remove_instance_variable(data.values)
+      Rails.logger.debug("$$$$$$$$$$$$$$$$$")
+      Rails.logger.debug(new_args)
+      #
+      obj[:arguments] = new_args
+      obj[:result] = {}
+      #remove_instance_variable(data.values)
       data.result.each do |key|
-        data.result[key] = Float(data.result[key]) unless data.result[key].is_a? Float
+        obj[:result][key] = data.result[key].to_f unless data.result[key].is_a? Float
       end
-      data
+
+      obj
     end
 
-    mins = []
-    maxes = []
-    args.each do |i|
-      mins[args[i]] = min { |array, args|}
-      maxes[args[i]] = max { |array, args|}
-    end
+    Rails.logger.debug("################")
+    Rails.logger.debug(array)
+    # mins = []
+    # maxes = []
+    # args.each do |i|
+    #   mins[args[i]] = [array, args[i]].min
+    #   maxes[args[i]] = [array, args[i]].max
+    # end
 
-    get_param1 = getter(param1, args)
-    get_param2 = getter(param2, args)
+
+
+   # get_param1 = getter(param1, args)
+    #get_param2 = getter(param2, args)
+
+
     grouped_by_param1 = {}
-      array.map do |obj|
-        if grouped_by_param1.include? get_param1(obj)
-          grouped_by_param1[get_param1(obj)].push(get_param2(obj))
-        else grouped_by_param1[get_param1(obj)] = get_param2(obj)
-        end
-        array
+
+    array=array.map do |obj|
+      param1x = args.index(param1) ? obj[:result][param1]:obj[:arguments][param1]
+      param2x = args.index(param2) ? obj[:result][param2] : obj[:arguments][param2]
+
+      if grouped_by_param1.include? param1x
+        grouped_by_param1[param1x] = [param2x]
+      else
+        grouped_by_param1[param1x] = param2x
       end
+      obj
+    end
+
+    Rails.logger.debug(grouped_by_param1)
 
 
-    # values = []
-    # grouped_by_param1.each do |index|
-    #   sum = grouped_by_param1[index].reduce(1, :+)
-    #   mean = sum/grouped_by_param1[index].length
-    #   values.push(Float(index, mean))
-    # end
-    # values = values.sort_by{|e| e}
-    # with_stddev = []
-    # grouped_by_param1.each do |index|
-    #   sum = grouped_by_param1[index].reduce(1, :+)
-    #   mean = sum/grouped_by_param1[index].length
-    #   partial_sd = 0
-    #   grouped_by_param1[index].each do |i|
-    #     partial_sd += **(grouped_by_param1[index][i]-mean)
-    #   end
-    #   sd = Math.sqrt(partial_sd/grouped_by_param1[index].length)
-    #   with_stddev.push(Float([index, mean-sd, mean+sd]))
-    # end
-    # with_stddev = with_stddev.sort_by{|e| e}
-    #
+    values = []
+    grouped_by_param1.each do |key,value|
+      sum = value.kind_of?(Array) ? value.reduce(:+) : value
+      mean = value.kind_of?(Array)? sum/value.length : sum
+      values.push([key.to_f, mean])
+     end
+    Rails.logger.debug(values)
+
+    values = values.sort_by{|e| e}
+    with_stddev = []
+    grouped_by_param1.each do |key,value|
+      sum = value.kind_of?(Array) ? value.reduce(:+) : value
+      mean = value.kind_of?(Array)? sum/value.length : sum
+      partial_sd = 0
+      if value.kind_of?(Array)
+        value.each do |i|
+          partial_sd += (value[i]-mean)**2
+        end
+      else
+        partial_sd = (value-mean)**2
+      end
+      sd = value.kind_of?(Array)? Math.sqrt(partial_sd/value.length) : Math.sqrt(partial_sd)
+      with_stddev.push([key.to_f, mean-sd, mean+sd])
+    end
+    with_stddev = with_stddev.sort_by{|e| e}
+    [values, with_stddev]
     # success([values, with_stddev])
-    rescue
-      nil
   end
 
 
@@ -118,7 +143,7 @@ class Lindev
 
         object = content[JSON.stringify(data)]
       elsif parameters["chart_id"]
-        object[:content] = prepare_lindev_chart_content(parameters, data)
+        object = prepare_lindev_chart_content(data)
         #object[:input_parameters] = retreived_parameters["parameters"]
         #object[:moes] = retreived_parameters["result"]
 
@@ -126,7 +151,8 @@ class Lindev
         error("Request parameters missing: 'chart_id'");
 
       end
-      getLineDev(experiment, parameters["id"], parameters["param1"], parameters["param2"])
+      object
+      #getLineDev(experiment, parameters["id"], parameters["param1"], parameters["param2"])
 
     end
   end
