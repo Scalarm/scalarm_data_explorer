@@ -1,5 +1,5 @@
 {
-    "methods": ["interaction", "3d", "lindev", "pareto"],
+    "methods": ["lindev"],
 
     "groups": {
 
