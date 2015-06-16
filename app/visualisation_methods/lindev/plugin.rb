@@ -25,49 +25,54 @@ class Lindev
   end
 
 
-  def getLineDev (experiment, id, param1, param2)
+  ##
+  # TODO: documentation - what this method does? change name
+  def get_line_dev (experiment, id, param1, param2)
     #dao.getData(id, function(array, args, mins, maxes){
 
     ## TODO
-    array = experiment.simulation_runs.to_a
+    simulation_runs = experiment.simulation_runs.to_a
 
     # if array.length == 0
     #   error("No such experiment or no runs done")
     # end
-    Rails.logger.debug("################")
-    Rails.logger.debug(array)
-    Rails.logger.debug("################")
-    Rails.logger.debug(array.first)
-    Rails.logger.debug("################")
-    Rails.logger.debug(array.first.arguments)
-    args = array.first.arguments.split(',')
+    # Rails.logger.debug("################")
+    # Rails.logger.debug(array)
+    # Rails.logger.debug("################")
+    # Rails.logger.debug(array.first)
+    # Rails.logger.debug("################")
+    # Rails.logger.debug(array.first.arguments)
+    argument_ids = simulation_runs.first.arguments.split(',')
     #values = array.values.split(',')
-    Rails.logger.debug("################")
-    Rails.logger.debug(args)
+    # Rails.logger.debug("################")
+    # Rails.logger.debug(args)
    # Rails.logger.debug(values)
-    array = array.map do |data|
+
+    simulation_runs = simulation_runs.map do |data|
       obj ={}
 
       values = data.values.split(',')
       new_args = {}
-      args.each_with_index do |arg_name, index|
+      argument_ids.each_with_index do |arg_name, index|
         new_args[arg_name] = values[index].to_f
       end
-      Rails.logger.debug("$$$$$$$$$$$$$$$$$")
-      Rails.logger.debug(new_args)
+      # Rails.logger.debug("$$$$$$$$$$$$$$$$$")
+      # Rails.logger.debug(new_args)
       #
       obj[:arguments] = new_args
       obj[:result] = {}
       #remove_instance_variable(data.values)
-      data.result.each do |key|
-        obj[:result][key] = data.result[key].to_f unless data.result[key].is_a? Float
+      unless data.result.nil?
+        data.result.each do |key, value|
+          obj[:result][key] = value.to_f rescue 0.0
+        end
       end
 
       obj
     end
 
-    Rails.logger.debug("################")
-    Rails.logger.debug(array)
+    # Rails.logger.debug("################")
+    # Rails.logger.debug(array)
     # mins = []
     # maxes = []
     # args.each do |i|
@@ -83,14 +88,15 @@ class Lindev
 
     grouped_by_param1 = {}
 
-    array=array.map do |obj|
-      param1x = args.index(param1) ? obj[:result][param1]:obj[:arguments][param1]
-      param2x = args.index(param2) ? obj[:result][param2] : obj[:arguments][param2]
+    simulation_runs = simulation_runs.map do |obj|
+      ## search for parameter value value in result or arguments
+      param1_val = argument_ids.index(param1) ? obj[:arguments][param1] : obj[:result][param1]
+      param2_val = argument_ids.index(param2) ? obj[:arguments][param2] : obj[:result][param2]
 
-      if grouped_by_param1.include? param1x
-        grouped_by_param1[param1x] = [param2x]
+      if grouped_by_param1.include? param1_val
+        grouped_by_param1[param1_val] = [param2_val]
       else
-        grouped_by_param1[param1x] = param2x
+        grouped_by_param1[param1_val] = param2_val
       end
       obj
     end
@@ -101,7 +107,7 @@ class Lindev
     values = []
     grouped_by_param1.each do |key,value|
       sum = value.kind_of?(Array) ? value.reduce(:+) : value
-      mean = value.kind_of?(Array)? sum/value.length : sum
+      mean = value.kind_of?(Array) ? sum/value.length : sum
       values.push([key.to_f, mean])
      end
     Rails.logger.debug(values)
@@ -114,7 +120,7 @@ class Lindev
       partial_sd = 0
       if value.kind_of?(Array)
         value.each do |i|
-          partial_sd += (value[i]-mean)**2
+          partial_sd += (i-mean)**2
         end
       else
         partial_sd = (value-mean)**2
@@ -123,6 +129,7 @@ class Lindev
       with_stddev.push([key.to_f, mean-sd, mean+sd])
     end
     with_stddev = with_stddev.sort_by{|e| e}
+
     [values, with_stddev]
     # success([values, with_stddev])
   end
@@ -138,7 +145,7 @@ class Lindev
     if parameters["id"] && parameters["param1"] && parameters["param2"]
 
       object = {}
-      data = getLineDev(experiment, parameters["id"], parameters["param1"], parameters["param2"])
+      data = get_line_dev(experiment, parameters["id"], parameters["param1"], parameters["param2"])
       if parameters["type"] == "data"
 
         object = content[JSON.stringify(data)]
