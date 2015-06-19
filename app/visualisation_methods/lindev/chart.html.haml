@@ -5,25 +5,25 @@
   %br
     .chart
 
-  .row
-    .small-offset-1.small-3.columns
-      %label.inline{:for => "choose_axis_lindev_chart_undefined"} Select axis to add series:
-    .small-5.columns.end
-      %select#choose_axis_lindev_chart_undefined
-        %option{:value => "x"} Axis X
-        %option{:value => "y"} Axis Y
-  .row
-    .small-offset-1.small-3.columns
-      %label.inline{:for => "new_series_lindev_chart_undefined"} Add new series:
-    .small-5.columns.end
-      %select#new_series_lindev_chart_undefined
-        %optgroup{:label => "Parameters"}
-          -@parameters["input_parameters"].each do |parameter|
-            %option{:value => parameter}= parameter
-        %optgroup.moes{:label => "MoEs"}
-          -@parameters["moes"].each do |output|
-            %option{:value => output }= output.first
-    .small-2.columns.end
+  -#.row
+  -#  .small-offset-1.small-3.columns
+  -#    %label.inline{:for => "choose_axis_lindev_chart_undefined"} Select axis to add series:
+  -#  .small-5.columns.end
+  -#    %select#choose_axis_lindev_chart_undefined
+  -#      %option{:value => "x"} Axis X
+  -#      %option{:value => "y"} Axis Y
+  -#.row
+  -#  .small-offset-1.small-3.columns
+  -#    %label.inline{:for => "new_series_lindev_chart_undefined"} Add new series:
+  -#  .small-5.columns.end
+  -#    %select#new_series_lindev_chart_undefined
+  -#      %optgroup{:label => "Parameters"}
+  -#        -@parameters["input_parameters"].each do |parameter|
+  -#          %option{:value => parameter}= parameter
+  -#      %optgroup.moes{:label => "MoEs"}
+  -#        -@parameters["moes"].each do |output|
+  -#          %option{:value => output }= output.first
+    -#.small-2.columns.end
       %span.add_series.button.radius.tiny Add series
 
 
@@ -48,7 +48,7 @@
     $("#choose_axis_lindev_chart_#{@chart_id}").change(function() {
       setAxis = $(this).find(":selected").val();
     });
-    var div_id = "#lindev_chart_#{@chart_id}";
+    var div_id = "#chart_#{@chart_id}";
     $(div_id+ " .add_series").bind("click", function() {
       var axis_label = $("#new_series_lindev_chart_#{@chart_id} option:selected").html();
       var axis = $("#new_series_lindev_chart_#{@chart_id} option:selected").val();

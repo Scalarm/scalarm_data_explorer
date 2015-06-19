@@ -1,0 +1,8 @@
+{
+  "name": "Dendrogram",
+  "id": "dendrogramModal",
+  "group": "params",
+  "image": "/assets/material_design/lindev_icon.png",
+  "description": "Method of cluster analysis which seeks to build a hierarchy of clusters"
+}
+

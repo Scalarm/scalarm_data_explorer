@@ -5,14 +5,12 @@ class Lindev
 
 
   def prepare_lindev_chart_content(data)
-             output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
-             #output += "\nvar data = " + JSON.stringify(data) + ";"
-             output += "\nvar data = " + data.to_json + ";" if data != nil
+    output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
+    output += "\nvar data = " + data.to_json + ";" if data != nil
+    output += "\nlindev_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", data);"
+    output += "\n})();</script>"
 
-             output += "\nwindow.lindev_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", data);"
-             output += "\n})();</script>"
-
-             output
+    output
 
 
   end
@@ -46,7 +44,7 @@ class Lindev
     #values = array.values.split(',')
     # Rails.logger.debug("################")
     # Rails.logger.debug(args)
-   # Rails.logger.debug(values)
+    # Rails.logger.debug(values)
 
     simulation_runs = simulation_runs.map do |data|
       obj ={}
@@ -82,7 +80,7 @@ class Lindev
 
 
 
-   # get_param1 = getter(param1, args)
+    # get_param1 = getter(param1, args)
     #get_param2 = getter(param2, args)
 
 
@@ -109,7 +107,7 @@ class Lindev
       sum = value.kind_of?(Array) ? value.reduce(:+) : value
       mean = value.kind_of?(Array) ? sum/value.length : sum
       values.push([key.to_f, mean])
-     end
+    end
     Rails.logger.debug(values)
 
     values = values.sort_by{|e| e}

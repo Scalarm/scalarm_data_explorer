@@ -1,12 +1,12 @@
 {
-    "methods": ["lindev"],
+    "methods": ["lindev", "pareto", "dendrogram"],
 
     "groups": {
 
         "basic": {
             "name": "Basic analysis",
             "methods": [{
-                "name": "Histograms",
+                "name": "Distribution of results",
                 "id": "experiment-analysis-modal",
                 "em_class": "histogram-analysis",
                 "image": "/assets/material_design/histogram_icon.png",
