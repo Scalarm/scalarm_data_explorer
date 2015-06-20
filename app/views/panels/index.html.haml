@@ -28,6 +28,14 @@
   $(function(){
     $(document).foundation();
 
+  $("#searchList [data-reveal-id=experiment-analysis-modal]").on("click", function(event){
+    var modalIdName = $(event.currentTarget).attr('data-reveal-id');
+    var className = $(event.currentTarget).attr('em-class');
+
+    $("#" + modalIdName + " .content").hide();
+    $("#" + modalIdName + " ." + className + "-content").show();
+    });
+
   $("#searchList").find("#basic").bind("click", function() {
       if (!$("#content_basic").is(":visible"))
         $("#content_basic").show();
