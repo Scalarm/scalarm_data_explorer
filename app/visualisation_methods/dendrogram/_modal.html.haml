@@ -8,9 +8,7 @@
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
 - result = experiment.simulation_runs.where(filter, fields).first.result
-
-- outputs = []
-- outputs.push(result.first[0])
+- outputs = result.keys
 
 
 
@@ -39,8 +37,6 @@
     .scripts
 
 :javascript
-
-
   $(function(){
     $('#dendrogramModal').foundation('reveal', 'close');
     var sessionGetJSON = function(url, params, onSuccess, onError) {
@@ -58,18 +54,14 @@
     };
     var scripts_loaded = false;
     var chart_counter = 0;
-
     var load_chart = function() {
-
-      var chart_div = $("<div id=\"chart_"+chart_counter+"\">")[0];
+      var chart_div = $("<div id=\"dendrogram_chart_"+chart_counter+"\">")[0];
       $("#dendrogramModal .charts").prepend(chart_div);
       var moes = $("#dendrogramModal .firstParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param1="+moes;
        query_params += "&chart_id="+chart_counter;
-
       var url = "#{@prefix}/chart_instances/dendrogram?"+query_params;
-
       var handler = function(data) {
         $("#busy_dendrogram").hide();
         var targetOffset = $(chart_div).offset().top;
@@ -78,9 +70,7 @@
       };
       sessionGetJSON(url, {}, handler);
       chart_counter++;
-
     };
-
     $("#dendrogramModal").find("button").bind("click", function() {
       $("#busy_dendrogram").show();
       if(!scripts_loaded) {

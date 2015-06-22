@@ -3,5 +3,5 @@
   "id": "paretoModal",
   "group": "params",
   "image": "/assets/images/material_design/pareto_icon.png",
-  "description": "Shows significance of parameters (or interaction)"
+  "description": "Chart showing significance of parameters (or interaction)"
 }

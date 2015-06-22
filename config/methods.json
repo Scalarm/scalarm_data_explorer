@@ -1,5 +1,5 @@
 {
-    "methods": ["lindev", "pareto", "dendrogram"],
+    "methods": ["lindev", "dendrogram"],
 
     "groups": {
 
@@ -10,13 +10,13 @@
                 "id": "experiment-analysis-modal",
                 "em_class": "histogram-analysis",
                 "image": "/assets/material_design/histogram_icon.png",
-                "description": "Histograms analysis"
+                "description": "A histogram analysis shows results frequency distributions"
             }, {
-                "name": "Scatter plots",
+                "name": "Bivariate analysis",
                 "id": "experiment-analysis-modal",
                 "em_class": "bivariate-analysis",
                 "image": "/assets/material_design/scatter_icon.png",
-                "description": "Bivariate analysis - scatter plot"
+                "description": "Analysis of two variables relationship creates a scatter plot"
             }]
         },
         "params": {
@@ -26,7 +26,7 @@
                 "id": "experiment-analysis-modal",
                 "em_class": "rtree-analysis",
                 "image": "/assets/material_design/regression_icon.png",
-                "description": "Regression trees analysis"
+                "description": "The classification of objects by dividing the found set of conditions"
             }]
         }
     }

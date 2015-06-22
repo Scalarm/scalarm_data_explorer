@@ -8,9 +8,7 @@
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
 - result = experiment.simulation_runs.where(filter, fields).first.result
-
-- outputs = []
-- outputs.push(result.first[0])
+- outputs = result.keys
 
 
 
@@ -110,9 +108,10 @@
       if(!scripts_loaded) {
         var url = "#{@prefix}/script_tags/lindev?base_url=" + encodeURIComponent("#{@prefix}");
         var handler = function(data) {
-          load_chart();
+
           scripts_loaded = true;
           $("#lindevModal").find(".scripts").html(data);
+          load_chart();
         };
         sessionGetJSON(url, {}, handler);
       }
