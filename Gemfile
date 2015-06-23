@@ -7,6 +7,8 @@ gem 'rails', '4.1.1'
 # use puma as the app server
 gem 'puma'
 
+# wrapper for R interpreter
+gem 'rinruby'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
