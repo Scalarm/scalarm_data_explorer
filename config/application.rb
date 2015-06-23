@@ -16,7 +16,7 @@ module ScalarmDataExplorer
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
-
+    config.r_interpreter = RinRuby.new(false)
     config.session_threshold = 30*60 # max session time in seconds - currently it is 30 minutes
     config.force_ssl = (Rails.env == 'production') #this sets Secure attribute for cookies
 
