@@ -6,7 +6,6 @@ class Dendrogram
 
   def handler
     if parameters["id"] && parameters["param1"]
-
       object = {}
       data = get_data_for_dendrogram(experiment, parameters["id"], parameters["param1"])
       if parameters["type"] == 'data'
@@ -34,6 +33,7 @@ class Dendrogram
 
   # TODO: documentation - what this method does? change name
   def get_data_for_dendrogram(experiment, id, param1)
+
    # simulation_runs = experiment.simulation_runs.to_a
     rinruby = Rails.configuration.r_interpreter
 
@@ -64,17 +64,32 @@ EOF
     for counter in 1..merge.row_size()
       hash[counter.to_s] = [merge[(counter-1),0].to_i, merge[(counter-1),1].to_i]
     end
-    hash
-    
+    creating_dendrogram_structure(hash)
   end
+
 
   def creating_dendrogram_structure(data)
 # search for - and - pairs and creating dict output value -> this pair
+    root = data.keys.last
+    create_json(data, root)
+  end
 
 
-
+  def create_json(hash, node)
+    d = hash[node.to_s]
+    if d[0] < 0 && d[1] < 0
+      "{\"id\":\"#{node}\",\"children\":[{\"id\":\"#{-d[0]}\"},{\"id\":\"#{-d[1]}\"}]}"
+    elsif d[0] < 0 && d[1] > 0
+      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[1])},{\"id\":\"#{-d[0]}\"}]}"
+    elsif d[0] > 0 && d[1] < 0
+      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[0])},{\"id\":\"#{-d[1]}\"}]}"
+    elsif d[0] > 0 && d[1] > 0
+      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[0])},#{create_json(hash, d[1])}]}"
+    end if d!=nil
 
   end
+
+
   def moe_names
     moe_name_set = []
     limit = @experiment.size > 1000 ? @experiment.size / 2 : @experiment.size

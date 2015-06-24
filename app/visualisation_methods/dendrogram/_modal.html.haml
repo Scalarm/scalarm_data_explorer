@@ -76,9 +76,9 @@
       if(!scripts_loaded) {
         var url = "#{@prefix}/script_tags/dendrogram?base_url=" + encodeURIComponent("#{@prefix}");
         var handler = function(data) {
-          load_chart();
           scripts_loaded = true;
           $("#dendrogramModal").find(".scripts").html(data);
+          load_chart();
         };
         sessionGetJSON(url, {}, handler);
       }
