@@ -54,8 +54,9 @@ class Dendrogram
 				method = hdata$method
         )
 EOF
-    #parameters
-    lst = R.pull "lst"
+
+    #parameters - lst  NOTE!!!! THIS STRUCTURE IS VERY BIG
+
     #structure of the tree (matrix)
     merge = R.pull "merge"
 
