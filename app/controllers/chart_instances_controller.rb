@@ -19,8 +19,8 @@ class ChartInstancesController < ApplicationController
     @parameters["output"] = output
     @parameters["type"] = type
     #moes and input parameters
-
-    @parameters["moes"] = @experiment.simulation_runs.where(filter, fields).first.result
+    moes = @experiment.simulation_runs.where(filter, fields).first
+    @parameters["moes"] = moes.blank? ? [] : moes.result
     #add labels to method in scalarm_database -> experiment
     @parameters["input_parameters"]= @experiment.get_parameter_ids
     #require("visualisation_methods/#{chart_id}/#{chart_id}")

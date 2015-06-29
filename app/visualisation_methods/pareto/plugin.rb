@@ -5,7 +5,7 @@ class Pareto
 
   def prepare_pareto_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
-    output += "\nvar data = " +  data.to_json + ";"
+    output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\npareto_main(i, data);"
     output += "\n})();</script>"
     output
