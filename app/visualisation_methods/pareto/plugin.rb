@@ -1,83 +1,89 @@
 class Pareto
 
-  INFO = {
-      'name' => 'Pareto',
-      'id' => 'paretoModal',
-      'group' => 'params',
-      'image' => '/chart/images/material_design/pareto_icon.png',
-      'description' => 'Shows significance of parameters (or interaction)'
-  }
+  attr_accessor :experiment
+  attr_accessor :parameters
 
-  def prepare_pareto_chart_content(parameters, data)
-    var output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";";
-    output += "\nvar data = " + JSON.stringify(data) + ";";
-    output += "\npareto_main(i, data);";
+  def prepare_pareto_chart_content(data)
+    output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
+    output += "\nvar data = " +  data.to_json + ";"
+    output += "\npareto_main(i, data);"
     output += "\n})();</script>"
     output
   end
 
-  def handler(experiment)
+  def handler()
     if parameters["id"] && parameters["chart_id"] && parameters["output"]
-      object[content] = prepare_pareto_chart_content(parameters, data)
-      getPareto(experiment, parameters["id"], parameters["output"], success(object), error)
+      data = get_pareto_data
+      object = prepare_pareto_chart_content(data)
+      object
     else
       error("Request parameters missing")
     end
+
   end
+  
+  def get_pareto_data
 
 
-
-  def getPareto(experiment, id, outputParam, success, error)
-
-    #dao.getData(id, function(array, args, mins, maxes){
-
-    experiment = Scalarm::Database::Model::Experiment.new({})
-    array = experiment.simulation_runs.to_a
-    if array.length == 0
+    simulation_runs = experiment.simulation_runs.to_a
+    if simulation_runs.length == 0
       error("No such experiment or no runs done")
     end
 
-    args = array.first.arguments.split(',')
-
-
-    array = array.map do |data|
+    argument_ids = simulation_runs.first.arguments.split(',')
+    params = {}
+    simulation_runs = simulation_runs.map do |data|
+      obj ={}
       values = data.values.split(',')
       new_args = {}
-      args.each do |i|
-        new_args[args[i]] = Float(values[i])
-      end
-      data.arguments = new_args
-      remove_instance_variable(data.values)
-      data.result.each do |key|
-        data.result[key] = Float(data.result[key]) unless data.result[key].is_a? Float
-      end
-    end
 
-    mins = []
-    maxes = []
-    args.each do |i|
-      mins[args[i]] = min { |array, args|}
-      maxes[args[i]] = max { |array, args|}
-    end
-
-
-    effects = []
-    args.each do |i|
-      sum = 0
-      array.each do |j|
-        sum += j
-        avg = sum/j
+      argument_ids.each_with_index do |arg_name, index|
+        params[arg_name] = params[arg_name].kind_of?(Array)? params[arg_name]<<values[index].to_f : [values[index].to_f]
+        new_args[arg_name] = values[index].to_f
       end
 
-      effects.push((avg + args[i] + maxes[args[i]] + outputParam)/4 - (avg + args[i] + maxes[args[i]] + outputParam)/4)
+      obj[:arguments] = new_args
+      obj[:result] = {}
+      unless data.result.nil?
+        data.result.each do |key, value|
+          obj[:result][key] = value.to_f rescue 0.0
+        end
+      end
+      obj
     end
-    data = []
-    args.each do |i|javascript calculateAverage
-      data.push({name: args[i], value: effects[i]})
-    end
-    data.sort { |a, b| b.value - a.value }
+    mins = {}
+    maxes = {}
 
-    success(data)
+    argument_ids.each do |arg_name|
+      mins[arg_name] = params[arg_name].min
+      maxes[arg_name] = params[arg_name].max
+    end
+
+
+
+    #preparing Chart content
+    data =[]
+    argument_ids.each do |arg_name|
+      local_max =  maxes[arg_name]
+      local_min = mins[arg_name]
+      count_min = params[arg_name].count(local_min)
+      count_max = params[arg_name].count(local_max)
+      sum_min =0
+      sum_max =0
+      simulation_runs.map do |datas|
+        if datas[:arguments][arg_name] ==local_max
+          sum_max+=datas[:result].values.reduce(:+)
+          end
+
+        if datas[:arguments][arg_name] ==local_min
+          sum_min+=datas[:result].values.reduce(:+)
+        end
+
+      end
+      data.push({ name: arg_name, value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
+    end
+    data
+
 
   end
 

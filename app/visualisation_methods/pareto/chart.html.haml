@@ -1,16 +1,15 @@
 %section.panel.radius.plot
 %h3.subheader
-  = "Pareto chart - " + %{output}
+  %h3.subheader Pareto chart -  #{@parameters["param1"]}
   .row
-%button= 'Hide chart'
-%br
-  .chart
+  %span.button.hide= 'Hide chart'
+  %br
+    .chart
 
-- content_for :javascript do
-  :javascript
-    $(function() {
-      var div_id = "#pareto_chart_#{chart_id}";
-      $(div_id + " .button").on('click', function() {
-        $(div_id).remove();
-      });
+:javascript
+  $(function() {
+    var div_id = "#pareto_chart_#{@parameters['chart_id']}";
+    $("span.button.hide").on('click', function() {
+      $(div_id).remove();
     });
+  });
