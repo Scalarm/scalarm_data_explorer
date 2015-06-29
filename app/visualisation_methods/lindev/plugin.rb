@@ -69,7 +69,7 @@ class Lindev
 
     #filling grouped_by_param1 with correct data
     grouping_by_parameter(argument_ids, grouped_by_param1, param1, param2, simulation_runs)
-
+    Rails.logger.debug(grouped_by_param1)
     values = []
     with_stddev = []
     grouped_by_param1.each do |key, value|
@@ -139,9 +139,9 @@ class Lindev
       param2_val = argument_ids.index(param2) ? obj[:arguments][param2] : obj[:result][param2]
 
       if grouped_by_param1.include? param1_val
-        grouped_by_param1[param1_val] = [param2_val]
+        grouped_by_param1[param1_val].push(param2_val)
       else
-        grouped_by_param1[param1_val] = param2_val
+        grouped_by_param1[param1_val] = [param2_val]
       end
       obj
     end
