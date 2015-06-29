@@ -5,10 +5,12 @@
 
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
-- result = @experiment.simulation_runs.where(filter, fields).first.result
-
-- outputs = []
-- outputs.push(result.first[0])
+- result = @experiment.simulation_runs.where(filter, fields).first
+- outputs=[]
+- if result.blank?
+  - outputs = ["No results found in completed simulation runs"]
+- else
+  - outputs = result.result.keys
 
 #paretoModal.reveal-modal(data-reveal="true")
   %section#pareto_charts_form.panel.radius.analysis-chart

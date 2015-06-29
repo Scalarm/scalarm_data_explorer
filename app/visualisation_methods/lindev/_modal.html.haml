@@ -3,13 +3,16 @@
 - parameters_labels = parameters
 
 
-- experiment_id = params[:id].to_s
-- experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
+- #experiment_id = params[:id].to_s
+- #experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
-- result = experiment.simulation_runs.where(filter, fields).first.result
-- outputs = result.keys
-
+- result = @experiment.simulation_runs.where(filter, fields).first
+- outputs=[]
+- if result.blank?
+  - outputs = ["No results found in completed simulation runs"]
+- else
+  - outputs = result.result.keys
 
 
 #lindevModal.reveal-modal(data-reveal="true")

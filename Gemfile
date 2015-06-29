@@ -38,6 +38,8 @@ gem 'foundation-rails'
 # Use Unicorn as the app server
 # gem 'unicorn'
 
+#for mathematical functions
+gem 'descriptive_statistics'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

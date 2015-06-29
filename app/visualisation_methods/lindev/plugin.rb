@@ -71,12 +71,27 @@ class Lindev
     grouping_by_parameter(argument_ids, grouped_by_param1, param1, param2, simulation_runs)
 
     values = []
-    #creating result table -> mean values
-    values = calculate_mean_values(grouped_by_param1, values)
-
     with_stddev = []
+    grouped_by_param1.each do |key, value|
+      if value.kind_of?(Array)
+        values.push([key.to_f, value.mean])
+        with_stddev.push([key.to_f, (value.mean-value.standard_deviation).to_f,(value.mean+value.standard_deviation).to_f])
+      else
+        values.push([key.to_f, value.to_f])
+        with_stddev.push([key.to_f,value.to_f, value.to_f])
+
+      end
+      Rails.logger.debug(with_stddev)
+      Rails.logger.debug(values)
+    end
+    values= values.sort_by { |e| e }
+    with_stddev= with_stddev.sort_by { |e| e }
+    #creating result table -> mean values
+  #  values = calculate_mean_values(grouped_by_param1, values)
+
+  #  with_stddev = []
     #creating result table -> standard deviation values
-    with_stddev = calculate_standard_deviation(grouped_by_param1, with_stddev)
+  #  with_stddev = calculate_standard_deviation(grouped_by_param1, with_stddev)
 
     [values, with_stddev]
 
@@ -85,8 +100,8 @@ class Lindev
 
   def calculate_standard_deviation(grouped_by_param1, with_stddev)
     grouped_by_param1.each do |key, value|
-      sum = value.kind_of?(Array) ? value.reduce(:+) : value
-      mean = value.kind_of?(Array) ? sum/value.length : sum
+      sum = value.kind_of?(Array) ? value.inject(0){ |accum, i| accum + i }: value
+      mean = value.kind_of?(Array) ? sum / value.length.to_f : sum
       partial_sd = 0
       if value.kind_of?(Array)
         value.each do |i|
@@ -95,8 +110,8 @@ class Lindev
       else
         partial_sd = (value-mean)**2
       end
-      sd = value.kind_of?(Array) ? Math.sqrt(partial_sd/value.length) : Math.sqrt(partial_sd)
-      with_stddev.push([key.to_f, mean-sd, mean+sd])
+      sd = value.kind_of?(Array) ? Math.sqrt(partial_sd/value.length-1).to_f : Math.sqrt(partial_sd).to_f
+      with_stddev.push([key.to_f, (mean-sd).to_f, (mean+sd).to_f])
     end
     with_stddev = with_stddev.sort_by { |e| e }
 

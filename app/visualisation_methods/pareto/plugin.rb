@@ -21,7 +21,7 @@ class Pareto
     end
 
   end
-  
+
   def get_pareto_data
 
 
