@@ -1,8 +1,9 @@
 class ChartInstancesController < ApplicationController
+  before_filter :load_experiment, only: :show
+
   def show
     chart_id = params[:id].to_s #nazwa metody
     experiment_id = params[:experiment_id].to_s
-    @experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
 
     output = params[:output].to_s
     chart_counter = params[:chart_id].to_s

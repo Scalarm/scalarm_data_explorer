@@ -3,7 +3,7 @@ require 'scalarm/database/core'
 
 class PanelsController < ApplicationController
 
-
+  before_filter :load_experiment, only: [:show, :index]
 
   # TODO: will be removed some day
   def index
@@ -15,16 +15,12 @@ class PanelsController < ApplicationController
   end
 
   def handle_panel_for_experiment
-
-    # TODO: security
-
     panels = Panels.new
     @methods = panels.methods
     @groups = panels.groups
 
     experiment_id = params[:id].to_s
 
-    @experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
     if @experiment.nil?
       raise 'No experiment'
     end
