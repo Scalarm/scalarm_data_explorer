@@ -1,4 +1,4 @@
-function interaction_main(i, param1, param2, data) {
+window.interaction_main = function(i, param1, param2, data) {
 	var chart = new Highcharts.Chart({
 		chart: {
 			renderTo: $('#interaction_chart_'+ i + " .chart")[0]
