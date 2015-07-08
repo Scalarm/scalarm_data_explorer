@@ -7,7 +7,7 @@ class Interaction
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";";
     output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\ninteraction_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", data);";
-    output += "\n})();</script>";
+    output += "\n})();</script>"
     output
 
   end
@@ -26,7 +26,7 @@ class Interaction
   end
 
 
-  def getInteraction( param1, param2, outputParam)
+  def getInteraction(param1, param2, outputParam)
 
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0

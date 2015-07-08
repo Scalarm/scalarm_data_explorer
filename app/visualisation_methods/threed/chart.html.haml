@@ -1,14 +1,14 @@
 %section.panel.radius.plot
-%h3.subheader
-  %h3.subheader Pareto chart -  #{@parameters["output"]}
+  %h3.subheader 3D scatter plot chart - xAxis: #{@parameters["param1"]} yAxis: #{@parameters["param2"]} zAxis:  #{@parameters["param3"]}
   .row
   %span.button.hide= 'Hide chart'
   %br
     .chart
 
+
 :javascript
   $(function() {
-    var div_id = "#pareto_chart_#{@parameters['chart_id']}";
+    var div_id = "#threed_chart_#{@parameters['chart_id']}";
     $("span.button.hide").on('click', function() {
       $(div_id).remove();
     });
