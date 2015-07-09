@@ -1,6 +1,26 @@
 %section#dendrogram_chart_form.panel.radius.plot
-  %h3.subheader Dendrogram for hierarchical clastering by #{@parameters["param1"]}
+  %h3.subheader Dendrogram for hierarchical clastering by #{@parameters["param1"]} #{@parameters["param_tab"]}
   .row
   %span.button.hide= 'Hide chart'
   %br
     .chart
+
+      :javascript
+        var sessionGetJSON = function(url,params, onSuccess, onError) {
+          return $.ajax({
+          dataType: "json",
+          url: url,
+          xhrFields: {
+            withCredentials: true
+          },
+          success: onSuccess,
+          error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
+            console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
+          }
+          });
+        };
+        $(function() {
+          $("span.button.hide").on('click', function() {
+            $("div#dendrogram_chart_#{@parameters["chart_id"]}").remove();
+          });
+        });

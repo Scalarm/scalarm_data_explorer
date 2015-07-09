@@ -89,6 +89,7 @@
       var x_axis = $("#lindevModal .firstParam option:selected").val();
       var y_axis = $("#lindevModal .secondParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&number_of_moes=2";
       query_params += "&param1="+x_axis;
       query_params += "&param2="+y_axis;
       query_params += "&chart_id="+chart_counter;
