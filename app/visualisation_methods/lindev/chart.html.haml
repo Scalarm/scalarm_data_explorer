@@ -32,14 +32,14 @@
 :javascript
   $(function() {
     var setAxis = "x";
-    $("#choose_axis_lindev_chart_#{@chart_id}").change(function() {
+    $("#choose_axis_lindev_chart_#{@parameters["chart_id"]}").change(function() {
       setAxis = $(this).find(":selected").val();
     });
-    var div_id = "#chart_#{@chart_id}";
+    var div_id = "#chart_#{@parameters["chart_id"]}";
     $(div_id+ " .add_series").bind("click", function() {
-      var axis_label = $("#new_series_lindev_chart_#{@chart_id} option:selected").html();
-      var axis = $("#new_series_lindev_chart_#{@chart_id} option:selected").val();
-      $("#choose_axis_lindev_chart_#{@chart_id}").prop("disabled", true);
+      var axis_label = $("#new_series_lindev_chart_#{@parameters["chart_id"]} option:selected").html();
+      var axis = $("#new_series_lindev_chart_#{@parameters["chart_id"]} option:selected").val();
+      $("#choose_axis_lindev_chart_#{@parameters["chart_id"]}").prop("disabled", true);
       if(setAxis=="x") {
         var url = "#{@prefix}/chart_instances/lindev";
         var params = {

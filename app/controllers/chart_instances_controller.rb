@@ -16,14 +16,23 @@ class ChartInstancesController < ApplicationController
     output = params[:output].to_s
     chart_counter = params[:chart_id].to_s
     type=  params[:type].to_s
+
     param1 = param_tab[0].to_s
     param2 = param_tab[1].to_s
+
+    #param1 = params[:param1].to_s
+    #param2 = params[:param2].to_s
+    #param3 = params[:param3].to_s
+#3dChart
 
     filter = {is_done: true, is_error: {'$exists'=> false}}
     fields = {fields: {result: 1}}
     @parameters = { "id" => chart_id }
     @parameters["param1"] = param1
     @parameters["param2"] = param2
+    #for 3dchart
+    @parameters["param3"] = param3
+
     @parameters["chart_id"] = chart_counter
     @parameters["output"] = output
     @parameters["type"] = type
@@ -33,7 +42,6 @@ class ChartInstancesController < ApplicationController
     @parameters["moes"] = moes.blank? ? [] : moes.result
     #add labels to method in scalarm_database -> experiment
     @parameters["input_parameters"]= @experiment.get_parameter_ids
-    #require("visualisation_methods/#{chart_id}/#{chart_id}")
 
     #if @experiment.visible_to(@current_user.id)
     path = Rails.root.join('app','visualisation_methods',"#{chart_id}","plugin")

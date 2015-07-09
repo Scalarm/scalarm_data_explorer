@@ -1,4 +1,4 @@
-function threeD_main(i, param1, param2, param3, data) {
+window.threed_main = function(i, param1, param2, param3, data) {
     var min_z = data.reduce(function(a, b) { return a <= b[2] ? a : b[2];}, Infinity);
     var max_z = data.reduce(function(a, b) { return a >= b[2] ? a : b[2];}, -Infinity);
 
@@ -37,7 +37,7 @@ function threeD_main(i, param1, param2, param3, data) {
     // Set up the chart
 	var chart = new Highcharts.Chart({
         chart: {
-            renderTo: $('#three_d_chart_'+ i + " .chart")[0],
+            renderTo: $('#threed_chart_'+ i + " .chart")[0],
             margin: 100,
             type: 'scatter',
             options3d: {

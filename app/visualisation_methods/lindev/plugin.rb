@@ -69,7 +69,6 @@ class Lindev
 
     #filling grouped_by_param1 with correct data
     grouping_by_parameter(argument_ids, grouped_by_param1, param1, param2, simulation_runs)
-    Rails.logger.debug(grouped_by_param1)
     values = []
     with_stddev = []
     grouped_by_param1.each do |key, value|
@@ -81,8 +80,6 @@ class Lindev
         with_stddev.push([key.to_f,value.to_f, value.to_f])
 
       end
-      Rails.logger.debug(with_stddev)
-      Rails.logger.debug(values)
     end
     values= values.sort_by { |e| e }
     with_stddev= with_stddev.sort_by { |e| e }
