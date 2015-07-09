@@ -1,0 +1,11 @@
+%section#simulation.panel.radius.plot
+  %br
+    .simulation
+  %span.button.hide= 'Hide window'
+
+  :javascript
+        $(function() {
+          $("span.button.hide").on('click', function() {
+            $("div#simulation").remove();
+          });
+        });
