@@ -19,7 +19,7 @@ class ChartInstancesController < ApplicationController
 
     param1 = param_tab[0].to_s
     param2 = param_tab[1].to_s
-
+    param3 = param_tab[2].to_s
     #param1 = params[:param1].to_s
     #param2 = params[:param2].to_s
     #param3 = params[:param3].to_s

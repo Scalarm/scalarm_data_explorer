@@ -61,7 +61,7 @@ class Threed
     end
 
     data = []
-    # TODO?
+
     #counter = Array.new(simulation_runs.size, &:next)
     #simulation_runs.size
     counter  = 0
