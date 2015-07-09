@@ -1,3 +1,5 @@
+=define_helper_functions
+
 - parameters = @experiment.get_parameter_ids
 -# parameters = %w(a b)
 - parameters_labels = parameters
@@ -66,19 +68,6 @@
   $(function(){
 
     $('#lindevModal').foundation('reveal', 'close');
-    var sessionGetJSON = function(url, params, onSuccess, onError) {
-      return $.ajax({
-       // dataType: "json",
-        url: url,
-        xhrFields: {
-          withCredentials: true
-        },
-        success: onSuccess,
-        error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
-          console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
-        }
-      });
-    };
     var scripts_loaded = false;
     var chart_counter = 0;
 
@@ -102,7 +91,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      sessionGetJSON(url, {}, handler);
+      getWithSession(url, {}, handler);
       chart_counter++;
 
     };
@@ -117,7 +106,7 @@
           $("#lindevModal").find(".scripts").html(data);
           load_chart();
         };
-        sessionGetJSON(url, {}, handler);
+        getWithSession(url, {}, handler);
       }
       else
         load_chart();
