@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
   def load_experiment
     experiment_id = (params[:experiment_id] || params[:id])
     raise 'No experiment ID specified, cannot load experiment' unless experiment_id
-    @experiment = Scalarm::Database::Model::Experiment.visible_to(current_user).where(experiment_id: experiment_id).first
+    @experiment = Scalarm::Database::Model::Experiment.visible_to(current_user).find_by_id(experiment_id)
     raise "Cannot get data for experiment with ID: #{experiment_id}" unless @experiment
   end
 
