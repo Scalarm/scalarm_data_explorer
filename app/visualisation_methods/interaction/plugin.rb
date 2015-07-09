@@ -61,12 +61,42 @@ class Interaction
       mins[arg_name] = params[arg_name].min
       maxes[arg_name] = params[arg_name].max
     end
+    Rails.logger.debug("###################")
 
+    Rails.logger.debug(simulation_runs)
+    #simulation_runs[:arguments]
+    low_low = {:result => {}}
+    low_high = {:result => {}}
+    high_low = {:result => {}}
+    high_high = {:result => {}}
+    simulation_runs.map do |data|
+      if data[:arguments][param1] == mins[param1] && data[:arguments][param2] == mins[param2]
+        low_low[:result] = data[:result]
+      end
 
+      if data[:arguments][param1] == mins[param1] && data[:arguments][param2] == maxes[param2]
+        low_high[:result] = data[:result]
+
+      end
+      if data[:arguments][param1] == maxes[param1] && data[:arguments][param2] == mins[param2]
+        high_low[:result] =  data[:result]
+
+      end
+
+      if data[:arguments][param1] == maxes[param1] && data[:arguments][param2] == maxes[param2]
+        high_high[:result] = data[:result]
+      end
+  end
+#gdy wartosc jest rowna min i max dla danych arg
    ## low_low =  simulation_runs[:arguments].select(param1 == mins[param1]).select(param2 == mins[param2])[0]
   #  low_high = array.select(param1 == mins[param1]).select(param2 == maxes[param2])[0]
    # high_low = array.select(param1 == maxes[param1]).select(param2 == mins[param2])[0]
    # high_high = array.select(param1 == maxes[param1]).select(param2 == maxes[param2])[0]
+    Rails.logger.debug("###################################")
+    Rails.logger.debug(low_low)
+    Rails.logger.debug(low_high)
+    Rails.logger.debug(high_low)
+    Rails.logger.debug(high_high)
 
     if (!low_low && low_high && high_low && high_high)
       raise ('Not enough data in database!')
@@ -74,17 +104,17 @@ class Interaction
     else
       result = []
 
-      result.push(low_low.result[outputParam],
-                  low_high.result[outputParam],
-                  high_low.result[outputParam],
-                  high_high.result[outputParam])
+      result.push(low_low.empty? ? 0 : low_low[:result][outputParam],
+                  low_high.empty? ? 0 : low_high[:result][outputParam],
+                  high_low.empty? ? 0 : high_low[:result][outputParam],
+                  high_high.empty? ? 0 : high_high[:result][outputParam])
 
       data[param1] = {domain: [mins[param1], maxes[param1]]}
-      data[param2] = {domain: [mins[param1], maxes[param1]]}
+      data[param2] = {domain: [mins[param2], maxes[param2]]}
 
     end
 
-    data.effects = result
+    data[:effects] = result
     data
   end
 

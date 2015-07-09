@@ -63,7 +63,7 @@
     var scripts_loaded = false;
 
     var load_chart = function(){
-      var interaction_chart_div = $("<div id=\"chart_"+interaction_chart_counter+"\">")[0];
+      var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
       $("#interactionModal .charts").prepend(interaction_chart_div);
         //TODO - if there's nothing to select -> do nothing
       var x_axis = $("#interactionModal .firstParam option:selected").val();
@@ -80,7 +80,7 @@
 
       var handler = function(data) {
         $("#busy_interaction").hide();
-        var targetOffset = $(this).offset().top;
+        var targetOffset = $(interaction_chart_div).offset().top;
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(interaction_chart_div).html(data);
       };
