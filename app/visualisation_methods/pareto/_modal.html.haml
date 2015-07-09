@@ -1,3 +1,5 @@
+=define_helper_functions
+
 - parameters = @experiment.get_parameter_ids
 
 -# parameters_labels = parameters
@@ -42,19 +44,6 @@
   $(function(){
 
     $('#paretoModal').foundation('reveal', 'close');
-    var sessionGetJSON = function(url, params, onSuccess, onError) {
-      return $.ajax({
-       // dataType: "json",
-        url: url,
-        xhrFields: {
-          withCredentials: true
-        },
-        success: onSuccess,
-        error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
-          console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
-        }
-      });
-    };
 
     var pareto_chart_counter = 0;
     var scripts_loaded = false;
@@ -75,7 +64,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(pareto_chart_div).html(data);
       };
-      sessionGetJSON(url, {}, handler);
+      getWithSession(url, {}, handler);
       pareto_chart_counter++;
 
     };
@@ -89,7 +78,7 @@
           scripts_loaded = true;
           $("#paretoModal").find(".scripts").html(data);
         };
-       sessionGetJSON(url, {}, handler);
+       getWithSession(url, {}, handler);
       }
       else
         load_chart();

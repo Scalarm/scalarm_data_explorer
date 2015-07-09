@@ -30,19 +30,6 @@
 
 -# TODO: sessionGetJSON - move to separate partial or something
 :javascript
-  var sessionGetJSON = function(url,params, onSuccess, onError) {
-    return $.ajax({
-      dataType: "json",
-      url: url,
-      xhrFields: {
-        withCredentials: true
-      },
-      success: onSuccess,
-      error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
-        console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
-      }
-    });
-  };
   $(function() {
     var setAxis = "x";
     $("#choose_axis_lindev_chart_#{@chart_id}").change(function() {
@@ -66,7 +53,7 @@
           chart.addSeries({name: axis_label.split(" - ").slice(-1)[0], xAxis: axis, data: data[0]});
           chart.addSeries({name: axis_label.split(" - ").slice(-1)[0], xAxis: axis, data: data[1], type: "errorbar"});
         };
-        sessionGetJSON(url, params, handler);
+        getWithSession(url, params, handler);
       }
       else if(setAxis=="y") {
         var url = "#{@prefix}/chart_instances/lindev";
@@ -81,7 +68,7 @@
           chart.addSeries({name: axis_label.split(" - ").slice(-1)[0], yAxis: axis, data: data[0]});
           chart.addSeries({name: axis_label.split(" - ").slice(-1)[0], yAxis: axis, data: data[1], type: "errorbar"});
         };
-        sessionGetJSON(url, params, handler);
+        getWithSession(url, params, handler);
       }
     });
      $("span.button.hide").on('click', function() {

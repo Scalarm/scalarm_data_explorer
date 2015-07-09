@@ -1,0 +1,5 @@
+:javascript
+  if (!window.are_helper_functions_defined) {
+    #{render partial: 'helper_functions'}
+    window.are_helper_functions_defined = true
+  }
