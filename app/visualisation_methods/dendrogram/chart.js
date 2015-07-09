@@ -1,9 +1,23 @@
-dendrogram_main = function(i, param1, data) {
+dendrogram_main = function(i, param1, data, experiment_id, prefix) {
+    var sessionGetJSON = function(url, params, onSuccess, onError) {
+        return $.ajax({
+            // dataType: "json",
+            url: url,
+            xhrFields: {
+                withCredentials: true
+            },
+            success: onSuccess,
+            error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
+                console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
+            }
+        });
+    };
+
     root = JSON.parse(data);
 
     var si = 30;
-    var radius = si*15;
-    var margin = 100;
+    var radius = 440;
+    var margin = 5;
     var cluster = d3.layout.cluster()
         .size([360, radius-margin])
         .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
@@ -20,6 +34,7 @@ dendrogram_main = function(i, param1, data) {
     var color = d3.scale.category20();
     var nodes = cluster.nodes(root);
     var links = cluster.links(nodes);
+    alert(nodes.size);
     var link = svg.selectAll(".link")
         .data(links)
         .enter().append("path")
@@ -27,8 +42,7 @@ dendrogram_main = function(i, param1, data) {
         .attr("d", diagonal)
         .on({
             "click":  function(d) {
-                var gg = "link";
-                alert(gg) }
+                alert("link") }
         })
         .style("stroke", function(d) { return color(d.source.depth); });
 
@@ -41,13 +55,11 @@ dendrogram_main = function(i, param1, data) {
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; });
 
     node.append("circle")
+        .attr("cursor", "pointer")
         .attr("r", function(d) {
-            var list2 = []; list2.size = 0
-            list_of_children(d,list2);
-            if (list2.size+4 < 12) d.coc = (list2.size+4);
-            else d.coc = 12;
-            return d.coc;})
-
+            if (d.depth > 6) return 6;
+            return (12-d.depth)
+        })
 
         .on({
             "mouseover": function() {
@@ -62,27 +74,40 @@ dendrogram_main = function(i, param1, data) {
 
             "click":  function(d) {
                 var list = [];
-                var list2 = []; list2.size = 0
+                var list2 = [];
+                list2.size = 0
                 var tmp = d;
 
                 list.push(tmp.id);
-                list_of_children(d,list2);
+                list_of_children(d, list2);
                 d.coc = list2.size;
-                if (!tmp.parent) alert("Root")
+
+                if (!d.parent) alert("Root" + d.depth)
                 else {
                     while (tmp.parent != root) {
                         tmp = tmp.parent;
                         list.push(tmp.id);
                     }
                     list.push(tmp.parent.id);
-                    if(d.children) alert(d.id + "\nDo korzenia:" + list +
+                    if (d.children) alert(d.id + ", \nGłębokość: " + d.depth + "\nDo korzenia:" + list +
                     "\nSymulacje: " + list2 +
-                    "\nLiczba symulacji:" + d.coc)}
+                    "\nLiczba symulacji:" + d.coc)
+                    else {
+                        var url = prefix + "/experiments/" + experiment_id + "/simulations/"+d.id;
+
+                        alert(url);
+                        var handler = function(data) {
+                            $("<div id=simulation>").html(data);
+                        }
+                        sessionGetJSON(url, {}, handler);
+                    }
                 }
+            }
 
 
 
         });
+
 
 
     node.append("text")
@@ -108,4 +133,6 @@ dendrogram_main = function(i, param1, data) {
     renderTo
         :
         $('#chart_' + i + " .chart")[0]
+
+
 };

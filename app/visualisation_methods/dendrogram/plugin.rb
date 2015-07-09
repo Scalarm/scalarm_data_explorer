@@ -4,10 +4,11 @@ class Dendrogram
   attr_accessor :experiment
   attr_accessor :parameters
 
+
   def handler
     if parameters["id"] && parameters["param1"]
       object = {}
-      data = get_data_for_dendrogram(experiment, parameters["id"], parameters["param1"])
+      data = get_data_for_dendrogram(experiment, parameters["id"], parameters["param_tab"])
       if parameters["type"] == 'data'
 
         object = content[JSON.stringify(data)]
@@ -24,9 +25,10 @@ class Dendrogram
   def prepare_dendrogram_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\ndendrogram_main(i, \"" + parameters["param1"] + "\", data);"
+    output += "\nvar prefix = \"" + @prefix.to_s + "\";"
+    output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
+    output += "\ndendrogram_main(i, \"" + parameters["param1"] + "\", data, experiment_id, prefix);"
     output += "\n})();</script>"
-
     output
   end
 
@@ -34,7 +36,7 @@ class Dendrogram
   # TODO: documentation - what this method does? change name
   def get_data_for_dendrogram(experiment, id, param1)
 
-   # simulation_runs = experiment.simulation_runs.to_a
+    # simulation_runs = experiment.simulation_runs.to_a
     rinruby = Rails.configuration.r_interpreter
 
     #getting data

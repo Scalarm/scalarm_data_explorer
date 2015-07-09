@@ -9,7 +9,6 @@
   - outputs = ["No results found in completed simulation runs"]
 - else
   - outputs = result.result.keys
-- outputs = ['a', 'b']
 
 
 #dendrogramModal.reveal-modal(data-reveal="true")
@@ -69,6 +68,7 @@
             if ($(this).parents('tr').eq(0).find('.name').text() != 'Check all')
               return $(this).parents('tr').eq(0).find('.name').text();
         });
+       
 
       var selected = selectedFiles.toArray();
       moes = "";
