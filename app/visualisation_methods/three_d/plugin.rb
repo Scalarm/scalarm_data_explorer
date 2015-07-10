@@ -1,4 +1,4 @@
-class Threed
+class ThreeD
 
   attr_accessor :experiment
   attr_accessor :parameters
@@ -6,7 +6,7 @@ class Threed
   def prepare_3d_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\nthreed_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", \"" + parameters["param3"] + "\", data);"
+    output += "\nthreeD_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", \"" + parameters["param3"] + "\", data);"
     output += "\n})();</script>"
     output
 

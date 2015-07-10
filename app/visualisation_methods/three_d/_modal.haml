@@ -10,8 +10,8 @@
 - else
   - outputs = result.result.keys
 
-#threedModal.reveal-modal(data-reveal="true")
-  %section#threed_charts_form.panel.radius.analysis-chart
+#threeDModal.reveal-modal(data-reveal="true")
+  %section#threeD_charts_form.panel.radius.analysis-chart
     %a.close-reveal-modal &#215
     %h3.subheader="3d scatter plot charts"
     %h3 #{}
@@ -72,7 +72,7 @@
 
   $(function(){
 
-    $("#threedModal").foundation("reveal", "close");
+    $("#threeDModal").foundation("reveal", "close");
 
     var sessionGetJSON = function(url, params, onSuccess, onError) {
       return $.ajax({
@@ -94,19 +94,19 @@
 
     var load_chart = function() {
 
-      var three_d_chart_div = $("<div id=\"threed_chart_"+three_d_chart_counter+"\">")[0];
-      $("#threedModal .charts").prepend(three_d_chart_div);
+      var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
+      $("#threeDModal .charts").prepend(three_d_chart_div);
       //TODO - if there's nothing to select -> do nothing
-      var x_axis = $("#threedModal .firstParam option:selected").val();
-      var y_axis = $("#threedModal .secondParam option:selected").val();
-      var z_axis = $("#threedModal .thirdParam option:selected").val();
+      var x_axis = $("#threeDModal .firstParam option:selected").val();
+      var y_axis = $("#threeDModal .secondParam option:selected").val();
+      var z_axis = $("#threeDModal .thirdParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param1="+x_axis;
       query_params += "&param2="+y_axis;
       query_params += "&param3="+z_axis;
       query_params += "&chart_id="+three_d_chart_counter;
 
-      var url = "#{@prefix}/chart_instances/threed?"+query_params;
+      var url = "#{@prefix}/chart_instances/three_d?"+query_params;
 
       var handler = function(data) {
         $("#busy_3d").hide();
@@ -119,13 +119,13 @@
 
     };
 
-    $("#threedModal").find("button").bind("click", function() {
+    $("#threeDModal").find("button").bind("click", function() {
       $("#busy_3d").show();
       if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/threed?base_url=" + encodeURIComponent("#{@prefix}");
+        var url = "#{@prefix}/script_tags/three_d?base_url=" + encodeURIComponent("#{@prefix}");
         var handler = function(data) {
           scripts_loaded = true;
-         $("#threedModal").find(".scripts").html(data);
+          $("#threeDModal").find(".scripts").html(data);
           load_chart();
         };
        sessionGetJSON(url, {}, handler);
