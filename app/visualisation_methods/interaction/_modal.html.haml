@@ -70,8 +70,8 @@
       var y_axis = $("#interactionModal .secondParam option:selected").val();
       var outputParam = $("#interactionModal .outputParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
-      query_params += "&param1="+x_axis;
-      query_params += "&param2="+y_axis;
+      query_params += "&param_x="+x_axis;
+      query_params += "&param_y="+y_axis;
       query_params += "&output="+outputParam;
       query_params += "&chart_id="+interaction_chart_counter;
 

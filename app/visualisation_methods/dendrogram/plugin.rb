@@ -6,7 +6,7 @@ class Dendrogram
 
 
   def handler
-    if parameters["id"] && parameters["param1"]
+    if parameters["id"] && parameters["param_x"]
       object = {}
       data = get_data_for_dendrogram(experiment, parameters["id"], parameters["param_tab"])
       if parameters["type"] == 'data'
@@ -27,14 +27,14 @@ class Dendrogram
     output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\ndendrogram_main(i, \"" + parameters["param1"] + "\", data, experiment_id, prefix);"
+    output += "\ndendrogram_main(i, \"" + parameters["param_x"] + "\", data, experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
 
 
   # TODO: documentation - what this method does? change name
-  def get_data_for_dendrogram(experiment, id, param1)
+  def get_data_for_dendrogram(experiment, id, param_x)
 
     # simulation_runs = experiment.simulation_runs.to_a
     rinruby = Rails.configuration.r_interpreter
@@ -49,12 +49,7 @@ class Dendrogram
     R.eval <<EOF
     hdata <- hclust(dist(read.csv('#{result_file.path}')), 'complete')
     merge <- hdata$merge
-    lst <- c(
-				height = hdata$height,
-				order = hdata$order,
-				labels = hdata$labels,
-				method = hdata$method
-        )
+
 EOF
 
     #parameters - lst  NOTE!!!! THIS STRUCTURE IS VERY BIG

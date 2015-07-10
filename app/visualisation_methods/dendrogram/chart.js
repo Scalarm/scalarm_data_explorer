@@ -1,4 +1,4 @@
-dendrogram_main = function(i, param1, data, experiment_id, prefix) {
+dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
     var sessionGetJSON = function(url, params, onSuccess, onError) {
         return $.ajax({
             // dataType: "json",

@@ -101,9 +101,9 @@
       var y_axis = $("#threeDModal .secondParam option:selected").val();
       var z_axis = $("#threeDModal .thirdParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
-      query_params += "&param1="+x_axis;
-      query_params += "&param2="+y_axis;
-      query_params += "&param3="+z_axis;
+      query_params += "&param_x="+x_axis;
+      query_params += "&param_y="+y_axis;
+      query_params += "&param_z="+z_axis;
       query_params += "&chart_id="+three_d_chart_counter;
 
       var url = "#{@prefix}/chart_instances/three_d?"+query_params;

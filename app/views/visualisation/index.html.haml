@@ -49,8 +49,8 @@ $(function() {
     var y_axis = $("#lindevModal .secondParam option:selected").val();
 
     var query_params = "id=#{experimentID}";
-    query_params += "&param1="+x_axis;
-    query_params += "&param2="+y_axis;
+    query_params += "&param_x="+x_axis;
+    query_params += "&param_y="+y_axis;
     query_params += "&chart_id="+chart_counter;
     //TODO? Query string with prefix?
     $(chart_div).load("#{prefix}/chart_instances/lindev?"+query_params, function(){

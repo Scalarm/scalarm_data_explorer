@@ -1,4 +1,4 @@
-window.threeD_main = function(i, param1, param2, param3, data) {
+window.threeD_main = function(i, param_x, param_y, param_z, data) {
     var min_z = data.reduce(function(a, b) { return a <= b[2] ? a : b[2];}, Infinity);
     var max_z = data.reduce(function(a, b) { return a >= b[2] ? a : b[2];}, -Infinity);
 
@@ -57,23 +57,23 @@ window.threeD_main = function(i, param1, param2, param3, data) {
             text: '3d scatter plot'
         },
         subtitle: {
-            text: param1 + " - " + param2 + " - " + param3
+            text: param_x + " - " + param_y + " - " + param_z
         },
         yAxis: {
             title: {
-                text: param2
+                text: param_y
             }
         },
         xAxis: {
             title: {
-                text: param1
+                text: param_x
             }
         },
         zAxis: {
             min: min_z,
             max: max_z,
             title: {
-                text: param3
+                text: param_z
             }
         },
         credits: {
@@ -87,7 +87,7 @@ window.threeD_main = function(i, param1, param2, param3, data) {
         }],
         tooltip: {
             formatter: function(){
-                return param1 + ": " + this.x + "<br/>" + param2 + ": " + this.y + "<br>" + param3 + ": " + this.key;
+                return param_x + ": " + this.x + "<br/>" + param_y + ": " + this.y + "<br>" + param_z + ": " + this.key;
             }
         }
     });

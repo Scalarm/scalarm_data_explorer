@@ -1,4 +1,4 @@
-window.lindev_main = function(i, param1, param2, data) {
+window.lindev_main = function(i, param_x, param_y, data) {
     var chart = new Highcharts.Chart({
         chart: {
             zoomType: 'xy',
@@ -8,23 +8,23 @@ window.lindev_main = function(i, param1, param2, data) {
             enabled: false
         },
         title: {
-            text: "Line chart - " + param1 + " vs " + param2
+            text: "Line chart - " + param_x + " vs " + param_y
         },
         xAxis: {
             title: {
-                text: param1
+                text: param_x
             }
         },
         yAxis: {
             title: {
-                text: param2
+                text: param_y
             }
         },
         tooltip: {
             shared: true
         },
         series: [{
-            name: param2 + " (mean)",
+            name: param_y + " (mean)",
             data: data[0],
             tooltip: {
                 pointFormat: '<span style="font-weight: bold; color: {series.color}">{series.name}</span>: <b>{point.y:.1f}</b> '

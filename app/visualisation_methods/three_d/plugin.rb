@@ -6,7 +6,7 @@ class ThreeD
   def prepare_3d_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\nthreeD_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", \"" + parameters["param3"] + "\", data);"
+    output += "\nthreeD_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", \"" + parameters["param_z"] + "\", data);"
     output += "\n})();</script>"
     output
 
@@ -15,8 +15,8 @@ class ThreeD
 
 
   def handler
-    if parameters["id"] && parameters["chart_id"] && parameters["param1"] && parameters["param2"] && parameters["param3"]
-      data = get3d(parameters["param1"], parameters["param2"], parameters["param3"])
+    if parameters["id"] && parameters["chart_id"] && parameters["param_x"] && parameters["param_y"] && parameters["param_z"]
+      data = get3d(parameters["param_x"], parameters["param_y"], parameters["param_z"])
       object = prepare_3d_chart_content(data)
       object
     else
@@ -26,7 +26,7 @@ class ThreeD
 
 
 
-  def get3d(param1, param2, param3)
+  def get3d(param_x, param_y, param_z)
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
       error("No such experiment or no runs done")
@@ -65,16 +65,16 @@ class ThreeD
     #counter = Array.new(simulation_runs.size, &:next)
     #simulation_runs.size
     counter  = 0
-    if argument_ids.index(param1)
+    if argument_ids.index(param_x)
       simulation_runs.map do |data_sim|
 
-        data[counter] = [data_sim[:arguments][param1]]
+        data[counter] = [data_sim[:arguments][param_x]]
         counter+=1
       end
     else
       simulation_runs.map do |data_sim|
 
-        data[counter] = [data_sim[:result][param1]]
+        data[counter] = [data_sim[:result][param_x]]
         counter+=1
 
       end
@@ -82,31 +82,31 @@ class ThreeD
 
 
     counter  = 0
-    if argument_ids.index(param2)
+    if argument_ids.index(param_y)
       simulation_runs.map do |data_sim|
 
-        data[counter].push(data_sim[:arguments][param2])
+        data[counter].push(data_sim[:arguments][param_y])
         counter+=1
       end
     else
       simulation_runs.map do |data_sim|
 
-        data[counter].push(data_sim[:result][param2])
+        data[counter].push(data_sim[:result][param_y])
         counter+=1
 
       end
     end
     counter  = 0
-    if argument_ids.index(param3)
+    if argument_ids.index(param_z)
       simulation_runs.map do |data_sim|
 
-        data[counter].push(data_sim[:arguments][param3])
+        data[counter].push(data_sim[:arguments][param_z])
         counter+=1
       end
     else
       simulation_runs.map do |data_sim|
 
-        data[counter].push(data_sim[:result][param3])
+        data[counter].push(data_sim[:result][param_z])
         counter+=1
 
       end

@@ -4,57 +4,28 @@ class ChartInstancesController < ApplicationController
   def show
 
 
-        chart_id = params[:id].to_s #nazwa metody
-    experiment_id = params[:experiment_id].to_s
-
-    number_of_moes = params[:number_of_moes].to_i
-    param_tab = []
-    (0..number_of_moes-1).each do |i|
-       param_tab[i] = params[:"param#{i+1}"].to_s
-    end
-
-    output = params[:output].to_s
-    chart_counter = params[:chart_id].to_s
-    type=  params[:type].to_s
-
-    param1 = param_tab[0].to_s
-    param2 = param_tab[1].to_s
-    param3 = param_tab[2].to_s
-    #param1 = params[:param1].to_s
-    #param2 = params[:param2].to_s
-    #param3 = params[:param3].to_s
-#3dChart
+    chart_id = params[:id].to_s #nazwa metody
 
     filter = {is_done: true, is_error: {'$exists'=> false}}
     fields = {fields: {result: 1}}
-    @parameters = { "id" => chart_id }
-    @parameters["param1"] = param1
-    @parameters["param2"] = param2
-    #for 3dchart
-    @parameters["param3"] = param3
-
-    @parameters["chart_id"] = chart_counter
-    @parameters["output"] = output
-    @parameters["type"] = type
-    @parameters["param_tab"] = param_tab
-    #moes and input parameters
     moes = @experiment.simulation_runs.where(filter, fields).first
-    @parameters["moes"] = moes.blank? ? [] : moes.result
-    #add labels to method in scalarm_database -> experiment
-    @parameters["input_parameters"]= @experiment.get_parameter_ids
 
-    #if @experiment.visible_to(@current_user.id)
+    params[:input_parameters] = @experiment.get_parameter_ids
+    params[:moes] = moes.blank? ? [] : moes.result
+
     path = Rails.root.join('app','visualisation_methods',"#{chart_id}","plugin")
     require(path)
-    classname = chart_id.camelize.constantize.new
-    classname.experiment = @experiment
-    classname.parameters = @parameters
-    @object = classname.handler
+
+    handler = chart_id.camelize.constantize.new
+    handler.experiment = @experiment
+    handler.parameters = params#@parameters
+
+    @content = handler.handler
     chart_header =""
     #if(!@parameters["type"] || @parameters["type"]=="scalarm")
     chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, "chart.html.haml"), layout: false
     #end
-    render :html => (chart_header + @object.to_s.html_safe), layout: false
+    render :html => (chart_header + @content.to_s.html_safe), layout: false
 
     #else
     #  raise 'Not authorised'

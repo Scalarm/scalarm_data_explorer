@@ -6,7 +6,7 @@ class Interaction
   def prepare_interaction_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";";
     output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\ninteraction_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", data);";
+    output += "\ninteraction_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", data);";
     output += "\n})();</script>"
     output
 
@@ -15,9 +15,9 @@ class Interaction
 
   def handler
     # dane parameters success error
-    if parameters["id"] && parameters["chart_id"] && parameters["param1"] && parameters["param2"] && parameters["output"]
+    if parameters["id"] && parameters["chart_id"] && parameters["param_x"] && parameters["param_y"] && parameters["output"]
 
-      data = getInteraction(parameters["param1"], parameters["param2"], parameters["output"])
+      data = getInteraction(parameters["param_x"], parameters["param_y"], parameters["output"])
       object = prepare_interaction_chart_content(data)
       object
     else
@@ -26,7 +26,7 @@ class Interaction
   end
 
 
-  def getInteraction(param1, param2, outputParam)
+  def getInteraction(param_x, param_y, outputParam)
 
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
@@ -70,28 +70,28 @@ class Interaction
     high_low = {:result => {}}
     high_high = {:result => {}}
     simulation_runs.map do |data|
-      if data[:arguments][param1] == mins[param1] && data[:arguments][param2] == mins[param2]
+      if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == mins[param_y]
         low_low[:result] = data[:result]
       end
 
-      if data[:arguments][param1] == mins[param1] && data[:arguments][param2] == maxes[param2]
+      if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == maxes[param_y]
         low_high[:result] = data[:result]
 
       end
-      if data[:arguments][param1] == maxes[param1] && data[:arguments][param2] == mins[param2]
+      if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == mins[param_y]
         high_low[:result] =  data[:result]
 
       end
 
-      if data[:arguments][param1] == maxes[param1] && data[:arguments][param2] == maxes[param2]
+      if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == maxes[param_y]
         high_high[:result] = data[:result]
       end
   end
 #gdy wartosc jest rowna min i max dla danych arg
-   ## low_low =  simulation_runs[:arguments].select(param1 == mins[param1]).select(param2 == mins[param2])[0]
-  #  low_high = array.select(param1 == mins[param1]).select(param2 == maxes[param2])[0]
-   # high_low = array.select(param1 == maxes[param1]).select(param2 == mins[param2])[0]
-   # high_high = array.select(param1 == maxes[param1]).select(param2 == maxes[param2])[0]
+   ## low_low =  simulation_runs[:arguments].select(param_x == mins[param_x]).select(param_y == mins[param_y])[0]
+  #  low_high = array.select(param_x == mins[param_x]).select(param_y == maxes[param_y])[0]
+   # high_low = array.select(param_x == maxes[param_x]).select(param_y == mins[param_y])[0]
+   # high_high = array.select(param_x == maxes[param_x]).select(param_y == maxes[param_y])[0]
     Rails.logger.debug("###################################")
     Rails.logger.debug(low_low)
     Rails.logger.debug(low_high)
@@ -109,8 +109,8 @@ class Interaction
                   high_low.empty? ? 0 : high_low[:result][outputParam],
                   high_high.empty? ? 0 : high_high[:result][outputParam])
 
-      data[param1] = {domain: [mins[param1], maxes[param1]]}
-      data[param2] = {domain: [mins[param2], maxes[param2]]}
+      data[param_x] = {domain: [mins[param_x], maxes[param_x]]}
+      data[param_y] = {domain: [mins[param_y], maxes[param_y]]}
 
     end
 

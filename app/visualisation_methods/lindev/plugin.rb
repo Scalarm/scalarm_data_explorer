@@ -4,10 +4,10 @@ class Lindev
 
 
   def handler
-    if parameters["id"] && parameters["param1"] && parameters["param2"]
+    if parameters["id"] && parameters["param_x"] && parameters["param_y"]
 
       object = {}
-      data = get_line_dev_data(experiment, parameters["id"], parameters["param1"], parameters["param2"])
+      data = get_line_dev_data(experiment, parameters["id"], parameters["param_x"], parameters["param_y"])
       if parameters["type"] == "data"
         object = content[JSON.stringify(data)]
       elsif parameters["chart_id"]
@@ -24,7 +24,7 @@ class Lindev
   def prepare_lindev_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\nlindev_main(i, \"" + parameters["param1"] + "\", \"" + parameters["param2"] + "\", data);"
+    output += "\nlindev_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", data);"
     output += "\n})();</script>"
 
     output
@@ -34,7 +34,7 @@ class Lindev
 
 
   # TODO: documentation - what this method does? change name
-  def get_line_dev_data (experiment, id, param1, param2)
+  def get_line_dev_data (experiment, id, param_x, param_y)
 
     simulation_runs = experiment.simulation_runs.to_a
 
@@ -65,13 +65,13 @@ class Lindev
       obj
     end
 
-    grouped_by_param1 = {}
+    grouped_by_param_x = {}
 
-    #filling grouped_by_param1 with correct data
-    grouping_by_parameter(argument_ids, grouped_by_param1, param1, param2, simulation_runs)
+    #filling grouped_by_param_x with correct data
+    grouping_by_parameter(argument_ids, grouped_by_param_x, param_x, param_y, simulation_runs)
     values = []
     with_stddev = []
-    grouped_by_param1.each do |key, value|
+    grouped_by_param_x.each do |key, value|
       if value.kind_of?(Array)
         values.push([key.to_f, value.mean])
         with_stddev.push([key.to_f, (value.mean-value.standard_deviation).to_f,(value.mean+value.standard_deviation).to_f])
@@ -84,19 +84,19 @@ class Lindev
     values= values.sort_by { |e| e }
     with_stddev= with_stddev.sort_by { |e| e }
     #creating result table -> mean values
-  #  values = calculate_mean_values(grouped_by_param1, values)
+  #  values = calculate_mean_values(grouped_by_param_x, values)
 
   #  with_stddev = []
     #creating result table -> standard deviation values
-  #  with_stddev = calculate_standard_deviation(grouped_by_param1, with_stddev)
+  #  with_stddev = calculate_standard_deviation(grouped_by_param_x, with_stddev)
 
     [values, with_stddev]
 
   end
 
 
-  def calculate_standard_deviation(grouped_by_param1, with_stddev)
-    grouped_by_param1.each do |key, value|
+  def calculate_standard_deviation(grouped_by_param_x, with_stddev)
+    grouped_by_param_x.each do |key, value|
       sum = value.kind_of?(Array) ? value.inject(0){ |accum, i| accum + i }: value
       mean = value.kind_of?(Array) ? sum / value.length.to_f : sum
       partial_sd = 0
@@ -116,8 +116,8 @@ class Lindev
   end
 
 
-  def calculate_mean_values(grouped_by_param1, values)
-    grouped_by_param1.each do |key, value|
+  def calculate_mean_values(grouped_by_param_x, values)
+    grouped_by_param_x.each do |key, value|
       sum = value.kind_of?(Array) ? value.reduce(:+) : value
       mean = value.kind_of?(Array) ? sum/value.length : sum
       values.push([key.to_f, mean])
@@ -129,16 +129,16 @@ class Lindev
   end
 
 
-  def grouping_by_parameter(argument_ids, grouped_by_param1, param1, param2, simulation_runs)
+  def grouping_by_parameter(argument_ids, grouped_by_param_x, param_x, param_y, simulation_runs)
     simulation_runs = simulation_runs.map do |obj|
       ## search for parameter value value in result or arguments
-      param1_val = argument_ids.index(param1) ? obj[:arguments][param1] : obj[:result][param1]
-      param2_val = argument_ids.index(param2) ? obj[:arguments][param2] : obj[:result][param2]
+      param_x_val = argument_ids.index(param_x) ? obj[:arguments][param_x] : obj[:result][param_x]
+      param_y_val = argument_ids.index(param_y) ? obj[:arguments][param_y] : obj[:result][param_y]
 
-      if grouped_by_param1.include? param1_val
-        grouped_by_param1[param1_val].push(param2_val)
+      if grouped_by_param_x.include? param_x_val
+        grouped_by_param_x[param_x_val].push(param_y_val)
       else
-        grouped_by_param1[param1_val] = [param2_val]
+        grouped_by_param_x[param_x_val] = [param_y_val]
       end
       obj
     end
