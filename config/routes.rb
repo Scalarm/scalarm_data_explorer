@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :moes, only: [:show]
   resources :chart_instances, only: [:show]
 
+  resources :cluster_infos, only: [:show]
   match '*path' => 'application#cors_preflight_check', via: :options
 
   # default readme in this file has been deleted
