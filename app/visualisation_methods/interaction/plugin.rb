@@ -84,18 +84,7 @@ class Interaction
         high_high[:result] = data[:result]
       end
   end
-#gdy wartosc jest rowna min i max dla danych arg
-   ## low_low =  simulation_runs[:arguments].select(param_x == mins[param_x]).select(param_y == mins[param_y])[0]
-  #  low_high = array.select(param_x == mins[param_x]).select(param_y == maxes[param_y])[0]
-   # high_low = array.select(param_x == maxes[param_x]).select(param_y == mins[param_y])[0]
-   # high_high = array.select(param_x == maxes[param_x]).select(param_y == maxes[param_y])[0]
-=begin
-    Rails.logger.debug("###################################")
-    Rails.logger.debug(low_low)
-    Rails.logger.debug(low_high)
-    Rails.logger.debug(high_low)
-    Rails.logger.debug(high_high)
-=end
+
 
     if (!low_low && low_high && high_low && high_high)
       raise ('Not enough data in database!')
