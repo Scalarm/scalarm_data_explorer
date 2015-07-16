@@ -73,7 +73,7 @@ namespace :service do
   desc 'Downloading and installing dependencies'
   task :setup, [:debug] => [:environment] do
     puts 'Setup started'
-    # install_r_libraries
+    install_r_libraries
 
     _validate_service
     puts 'Setup finished'
@@ -166,8 +166,8 @@ def install_r_libraries
   puts 'Checking R libraries...'
   Rails.configuration.r_interpreter.eval(
       ".libPaths(c(\"#{Dir.pwd}/r_libs\", .libPaths()))
-    if(!require(AlgDesign, quietly=TRUE)){
-      install.packages(\"AlgDesign\", repos=\"http://cran.rstudio.com/\")
+    if(!require(e1071, quietly=TRUE)){
+      install.packages(\"e1071\", repos=\"http://cran.rstudio.com/\")
     }")
 end
 
