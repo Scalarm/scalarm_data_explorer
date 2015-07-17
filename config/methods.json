@@ -9,13 +9,13 @@
                 "name": "Distribution of results",
                 "id": "experiment-analysis-modal",
                 "em_class": "histogram-analysis",
-                "image": "/assets/images/material_design/histogram_icon.png",
+                "image": "histogram_icon.png",
                 "description": "A histogram analysis shows results frequency distributions"
             }, {
                 "name": "Bivariate analysis",
                 "id": "experiment-analysis-modal",
                 "em_class": "bivariate-analysis",
-                "image": "/assets/images/material_design/scatter_icon.png",
+                "image": "scatter_icon.png",
                 "description": "Analysis of two variables relationship creates a scatter plot"
             }]
         },
@@ -25,7 +25,7 @@
                 "name": "Regression trees",
                 "id": "experiment-analysis-modal",
                 "em_class": "rtree-analysis",
-                "image": "/assets/images/material_design/regression_icon.png",
+                "image": "regression_icon.png",
                 "description": "The classification of objects by dividing the found set of conditions"
             }]
         }

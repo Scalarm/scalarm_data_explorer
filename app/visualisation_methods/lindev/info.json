@@ -2,7 +2,7 @@
   "name": "Linear relationship",
   "id": "lindevModal",
   "group": "basic",
-  "image": "/assets/images/material_design/lindev_icon.png",
+  "image": "lindev_icon.png",
   "description": "<br/>Line chart with standard deviation"
 }
 
