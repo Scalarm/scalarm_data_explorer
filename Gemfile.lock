@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/Scalarm/scalarm-database.git
-  revision: d9caf167f1171224e2a0aa5dbd3f782fbdce4dd2
+  revision: 8f1d229ca7f4a53e6fe8adde6272ca6365360962
   specs:
-    scalarm-database (0.3.1)
+    scalarm-database (0.3.2)
       activesupport
       bson
       bson_ext
@@ -11,9 +11,9 @@ GIT
 
 GIT
   remote: git://github.com/Scalarm/scalarm-service_core.git
-  revision: 3638b0940f9211e40b45f6769726d277099aa389
+  revision: bec82b6d04b8cd5c6c4d40ba1b1188491629f75a
   specs:
-    scalarm-service_core (0.4.1)
+    scalarm-service_core (0.4.2)
       actionpack (~> 4.1)
       activesupport (~> 4.1)
       rest-client (~> 1.8)
@@ -192,8 +192,8 @@ DEPENDENCIES
   rails (= 4.1.1)
   rinruby
   sass-rails (~> 5.0)
-  scalarm-database (>= 0.3.1)!
-  scalarm-service_core (~> 0.4.1)!
+  scalarm-database (>= 0.3.2)!
+  scalarm-service_core (~> 0.4.2)!
   sdoc (~> 0.4.0)
   spring
   therubyracer
