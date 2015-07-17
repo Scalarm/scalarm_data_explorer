@@ -48,10 +48,10 @@ class ClusterInfos
     #differences with variance and standard_deviation results between R and Ruby method for now stay Ruby function
     hash[:variances] = calculate_function(header, datas,"variance") #evaluate_r_function(header, "var")
     hash[:standard_deviation] = calculate_function(header, datas,"standard_deviation")  #evaluate_r_function(header, "sd")
+
     hash[:lower_quartiles] = evaluate_r_quantile(header,2)
-
-
     hash[:upper_quartiles] = evaluate_r_quantile(header,4)
+
     hash[:arguments_ranges] = arguments_ranges(header, datas)
 
     hash
@@ -200,20 +200,6 @@ class ClusterInfos
     end
 
     return header, data_array
-  end
-
-  ##
-  #   creating array of all input and output parameters names
-  def create_header(moes, with_index, with_moes, with_params)
-
-    if with_params
-      all_parameters = parameters_names.uniq.flatten
-    end
-    header = []
-   # header += ['simulation_index'] if with_index
-    header += all_parameters if with_params
-    header += moes if with_moes
-    header
   end
 
 end
