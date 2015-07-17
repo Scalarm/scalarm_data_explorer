@@ -2,7 +2,7 @@
   "name": "Hierarchical clustering",
   "id": "dendrogramModal",
   "group": "params",
-  "image": "/assets/images/material_design/dendrogram_icon.png",
+  "image": "dendrogram_icon.png",
   "description": "Method of cluster analysis which builds a hierarchy of clusters and shows it on dendrogram"
 }
 
