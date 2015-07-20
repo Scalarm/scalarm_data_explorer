@@ -1,8 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-# TODO: user rails ~> 4.1.x
-gem 'rails', '4.1.1'
+gem 'rails', '~> 4.1.12'
 
 # use puma as the app server
 gem 'puma'
