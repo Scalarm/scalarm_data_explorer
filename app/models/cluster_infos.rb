@@ -39,7 +39,7 @@ class ClusterInfos
 
     hash[:skewness] = evaluate_r_function(header, "skewness")
     hash[:kurtosis] = evaluate_r_function(header, "kurtosis")
-    hash[:inter_quartile_ranges] = evaluate_r_function(header, "IQR")
+
 
     #in Ruby gem these methods are faster
     hash[:means] = calculate_function(header, datas,"mean")#evaluate_r_function(header, "mean")
@@ -49,9 +49,14 @@ class ClusterInfos
     hash[:variances] = calculate_function(header, datas,"variance") #evaluate_r_function(header, "var")
     hash[:standard_deviation] = calculate_function(header, datas,"standard_deviation")  #evaluate_r_function(header, "sd")
 
-    hash[:lower_quartiles] = evaluate_r_quantile(header,2)
-    hash[:upper_quartiles] = evaluate_r_quantile(header,4)
+    hash[:lower_quartiles] = calculate_function(header, datas,"q1")#evaluate_r_quantile(header,2)
+    hash[:upper_quartiles] = calculate_function(header, datas,"q3")#evaluate_r_quantile(header,4)
+    iqr = {}
+    header.each do |name|
+      iqr[name]= hash[:upper_quartiles][name].to_f- hash[:lower_quartiles][name].to_f
 
+    end
+    hash[:inter_quartile_ranges] = iqr#evaluate_r_function(header, "IQR")
     hash[:arguments_ranges] = arguments_ranges(header, datas)
 
     hash
@@ -85,6 +90,10 @@ class ClusterInfos
           hash[arg] = param_data.median
         when "standard_deviation"
           hash[arg] = param_data.standard_deviation
+        when "q1"
+          hash[arg] = param_data.percentile(25)
+        when "q3"
+          hash[arg] = param_data.percentile(75)
       end
 
     end
