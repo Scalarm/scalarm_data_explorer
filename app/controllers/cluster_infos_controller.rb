@@ -13,7 +13,7 @@ class ClusterInfosController < ApplicationController
     respond_to do |format|
       #change it for display
       format.html {render :html => content}
-      format.json { render json: {status: 'ok', data: content.to_json } }
+      format.json { render json: {status: 'ok', data: content } }
 
     end
 
