@@ -10,6 +10,8 @@
 - else
   - outputs = result.result.keys
 
+  -#outputs = ["param1", "temperature", "number of pairs", "violent", "IoT"]
+
 =define_helper_functions
 
 #dendrogramModal.reveal-modal(data-reveal="true")
@@ -22,14 +24,17 @@
       %table( width="100%")
         -outputs.each do |output|
           %tr
-            %td.name
-              %input{:type => "checkbox"}#{output}
-
-        %tr
-          %td.name
-            %input#checkAll{:type => "checkbox"}Check all
-
-
+            %td.name.small-12.medium-3.columns
+              %input{:type => "checkbox", :style => "margin-right:5px;"}
+              %label #{output}
+    %span.button.radius.tiny.check_all#check Check all
+    -#.row
+    -#  %label.inline="Select parameters of clustering:"
+    -#  %table( width="100%")
+    -#    -outputs.each do |output|
+    -#      %span.small-12.medium-3.columns
+    -#        %input{:type => "checkbox", :style => "margin-right:5px;"}
+    -#        %label #{output}
 
     .row
       %ul.inline-list
@@ -42,6 +47,8 @@
   .charts
     .scripts
 
+#clusterInfo.reveal-modal(data-reveal="")
+
 :javascript
   $(function(){
     $('#dendrogramModal').foundation('reveal', 'close');
@@ -53,20 +60,13 @@
       var selectedFiles =
         $('input:checked').
         map(function () {
-            if ($(this).parents('tr').eq(0).find('.name').text() != 'Check all')
-              return $(this).parents('tr').eq(0).find('.name').text();
+            return $(this).parents('tr').eq(0).find('.name').text().trim();
         });
        
 
-      var selected = selectedFiles.toArray();
-      moes = "";
-      moes += "&number_of_moes="+selected.length;
-      for (i = 1; i <= selected.length; i++) {
-        moes+="&param"+ i + "=" + selected[i-1];
-      }
-
+      var array = selectedFiles.toArray();
+      if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
       var query_params = "experiment_id=#{@experiment.id}";
-      query_params += moes;
       query_params += "&chart_id="+chart_counter;
 
       var url = "#{@prefix}/chart_instances/dendrogram?"+query_params;
@@ -76,7 +76,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {}, handler);
+      getWithSession(url, {array}, handler);
       chart_counter++;
     };
 
@@ -95,9 +95,14 @@
         load_chart();
     });
 
-    $("#checkAll").change(function () {
-      $("input:checkbox").prop('checked', $(this).prop("checked"));
+    $("span.button.radius.tiny.check_all").on('click', function () {
+      if ($("input:checkbox").length ==  $("input:checked").length) {
+        $("input:checkbox").prop('checked', false);
+      }
+      else $("input:checkbox").prop('checked', true);
     });
+
+
 
 
   });

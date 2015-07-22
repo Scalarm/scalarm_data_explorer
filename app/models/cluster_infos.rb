@@ -1,12 +1,14 @@
 require 'rinruby'
-require 'benchmark'
+#require 'benchmark' only for time test
 class ClusterInfos
 
   attr_accessor :simulations_index
   attr_accessor :experiment
 
-
+  ##
+  # init class and R package
   def initialize(experiment, simulations_index)
+    R.eval ("require ('e1071', quietly=TRUE)")
 
     #getting data
     @experiment = experiment
@@ -14,11 +16,16 @@ class ClusterInfos
 
   end
 
+  ##
+  # function to get all data about simulations
   def evaluate
-    header, result_data = create_result_csv
+    header, result_data = create_data_result
     datas =  statistics(header,result_data)
     datas
   end
+
+  ##
+  # main function which collect all data and return it as hash
   def statistics(header,result_data)
     datas = {}
 
@@ -28,23 +35,75 @@ class ClusterInfos
       datas[header[counter]] = result_data.map{|row| row[counter]}
 
     end
-    R.eval ("require ('e1071', quietly=TRUE)")
     hash = {}
 
     hash[:skewness] = evaluate_r_function(header, "skewness")
     hash[:kurtosis] = evaluate_r_function(header, "kurtosis")
-    hash[:inter_quartile_ranges] = evaluate_r_function(header, "IQR")
-    hash[:means] = evaluate_r_function(header, "mean")
-    hash[:variances] = evaluate_r_function(header, "var")
-    hash[:standard_deviation] = evaluate_r_function(header, "sd")
-    hash[:lower_quartiles] = evaluate_r_quantile(header,2)
-    hash[:medians] = evaluate_r_quantile(header,3)
-    hash[:upper_quartiles] = evaluate_r_quantile(header,4)
+
+
+    #in Ruby gem these methods are faster
+    hash[:means] = calculate_function(header, datas,"mean")#evaluate_r_function(header, "mean")
+    hash[:medians] = calculate_function(header, datas,"median") #evaluate_r_quantile(header,3)
+
+    #differences with variance and standard_deviation results between R and Ruby method for now stay Ruby function
+    hash[:variances] = calculate_function(header, datas,"variance") #evaluate_r_function(header, "var")
+    hash[:standard_deviation] = calculate_function(header, datas,"standard_deviation")  #evaluate_r_function(header, "sd")
+
+    hash[:lower_quartiles] = calculate_function(header, datas,"q1")#evaluate_r_quantile(header,2)
+    hash[:upper_quartiles] = calculate_function(header, datas,"q3")#evaluate_r_quantile(header,4)
+    iqr = {}
+    header.each do |name|
+      iqr[name]= hash[:upper_quartiles][name].to_f- hash[:lower_quartiles][name].to_f
+
+    end
+    hash[:inter_quartile_ranges] = iqr#evaluate_r_function(header, "IQR")
     hash[:arguments_ranges] = arguments_ranges(header, datas)
 
     hash
   end
 
+
+  ##
+  # calculate by ruby descriptive statistics gem
+  # available functions:
+  # 1. Number
+  # 2 .Sum
+  # 3. Mean
+  # 4. Median
+  # 5. Mode
+  # 6. Variance
+  # 7. Standard Deviation
+  # 8. Percentile
+  # 9. Percentile Rank
+  # 10. Descriptive Statistics
+  # 11. Quartiles
+  def calculate_function(header, datas, function)
+    hash = {}
+    header.each do |arg|
+      param_data = datas[arg]
+      case function
+        when "mean"
+          hash[arg] = param_data.mean
+        when "variance"
+          hash[arg] = param_data.variance
+        when "median"
+          hash[arg] = param_data.median
+        when "standard_deviation"
+          hash[arg] = param_data.standard_deviation
+        when "q1"
+          hash[arg] = param_data.percentile(25)
+        when "q3"
+          hash[arg] = param_data.percentile(75)
+      end
+
+    end
+    hash
+
+  end
+
+  ##
+  # executing function in R by RinRuby gem
+  #passing array of arguments (in,out) and name of function
   def evaluate_r_function(header, function)
     hash = {}
     header.each do |arg|
@@ -56,6 +115,8 @@ class ClusterInfos
     hash
   end
 
+  ##
+  # calculating in R quantile
   def evaluate_r_quantile(header, number)
     hash = {}
     header.each do |arg|
@@ -67,6 +128,8 @@ class ClusterInfos
     hash
   end
 
+  ##
+  # creating table of result data ranges
   def arguments_ranges(header, result_data)
     hash = {}
     header.each do |arg|
@@ -76,6 +139,8 @@ class ClusterInfos
     hash
   end
 
+  ##
+  # get moes (results) names as an array
   def moe_names
     moe_name_set = []
     limit = @experiment.size > 1000 ? @experiment.size / 2 : @experiment.size
@@ -86,6 +151,8 @@ class ClusterInfos
     moe_name_set.uniq
   end
 
+  ##
+  # get input paramaters names as an array
   def parameters_names
     parameters_names = []
 
@@ -100,7 +167,10 @@ class ClusterInfos
     parameters_names
   end
 
-  def create_result_csv(with_index=false, with_params=true, with_moes=true)
+
+  ##
+  # no simulation index in header and with input and output paramameters
+  def create_data_result(with_index=false, with_params=true, with_moes=true)
     moes = moe_names
     if with_params
       all_parameters = parameters_names.uniq.flatten
@@ -139,19 +209,6 @@ class ClusterInfos
     end
 
     return header, data_array
-  end
-
-
-  def create_header(moes, with_index, with_moes, with_params)
-
-    if with_params
-      all_parameters = parameters_names.uniq.flatten
-    end
-    header = []
-   # header += ['simulation_index'] if with_index
-    header += all_parameters if with_params
-    header += moes if with_moes
-    header
   end
 
 end

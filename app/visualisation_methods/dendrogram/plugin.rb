@@ -6,9 +6,9 @@ class Dendrogram
 
 
   def handler
-    if parameters["id"] && parameters["param_x"]
+    if parameters["id"] && parameters["array"]
       object = {}
-      data = get_data_for_dendrogram(experiment, parameters["id"], parameters["param_tab"])
+      data = get_data_for_dendrogram(experiment, parameters["id"], parameters["array"].first)
       if parameters["type"] == 'data'
 
         object = content[JSON.stringify(data)]
@@ -20,6 +20,7 @@ class Dendrogram
       end
       object
     end
+
   end
 
   def prepare_dendrogram_chart_content(data)
@@ -27,7 +28,7 @@ class Dendrogram
     output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\ndendrogram_main(i, \"" + parameters["param_x"] + "\", data, experiment_id, prefix);"
+    output += "\ndendrogram_main(i, \"" + parameters["array"].first + "\", data, experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
@@ -94,8 +95,10 @@ EOF
     @experiment.simulation_runs.where({ is_done: true }, { fields: %w(result), limit: limit }).each do |simulation_run|
       moe_name_set += simulation_run.result.keys.to_a
     end
-
+    Rails.logger.debug(moe_name_set.uniq)
+    Rails.logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     moe_name_set.uniq
+
   end
 
   def parameters_names
@@ -113,7 +116,7 @@ EOF
   end
 
   def create_result_csv(with_index=true, with_params=true, with_moes=true)
-    moes = moe_names
+    moes = parameters["array"]
     if with_params
       all_parameters = parameters_names.uniq.flatten
     end

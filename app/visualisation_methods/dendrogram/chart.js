@@ -1,4 +1,5 @@
 dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
+
     var sessionGetJSON = function(url, params, onSuccess, onError) {
         return $.ajax({
             // dataType: "json",
@@ -16,8 +17,8 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
     root = JSON.parse(data);
 
     var si = 30;
-    var radius = 440;
-    var margin = 5;
+    var radius = ($("#dendrogramModal").width()/2)-40;
+    var margin = 25;
     var cluster = d3.layout.cluster()
         .size([360, radius-margin])
         .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
@@ -34,7 +35,6 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
     var color = d3.scale.category20();
     var nodes = cluster.nodes(root);
     var links = cluster.links(nodes);
-    alert(nodes.size);
     var link = svg.selectAll(".link")
         .data(links)
         .enter().append("path")
@@ -44,7 +44,14 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
             "click":  function(d) {
                 alert("link") }
         })
+        .style("stroke-width", function(d) {
+            if (d.source.depth > 9) return 2;
+            else
+                return (10-d.source.depth); })
         .style("stroke", function(d) { return color(d.source.depth); });
+
+
+
 
 
 
@@ -56,20 +63,24 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
     node.append("circle")
         .attr("cursor", "pointer")
+        .style("fill", function(d){ if (!d.parent)return "#1F77B4"})
+        .style("stroke", function(d){ if (!d.parent)return "#222"})
         .attr("r", function(d) {
             if (d.depth > 6) return 6;
             return (12-d.depth)
         })
 
         .on({
-            "mouseover": function() {
-                var c = d3.select(this).classed("selected");
-                d3.select(this).classed("selected", !c);
+            "mouseover": function(d) {
+                //highlight([d.id]);
+                //d3.select(d).classed("highlighted", true);
+                (d).classed("highlighted", true);
             },
 
-            "mouseout": function() {
-                var c = d3.select(this).classed("normal");
-                d3.select(this).classed("normal", !c);
+            "mouseout": function(d,i) {
+                if (d3.selectAll("svg path").empty()) {
+                    unhighlight();
+                }
             },
 
             "click":  function(d) {
@@ -82,25 +93,34 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
                 list_of_children(d, list2);
                 d.coc = list2.size;
 
-                if (!d.parent) alert("Root" + d.depth)
-                else {
-                    while (tmp.parent != root) {
-                        tmp = tmp.parent;
-                        list.push(tmp.id);
+                if (d.children) {
+                    // TODO: trzeba zmienić prefix - przekazać baseurl
+                    var url = "https://localhost:25000/cluster_infos/"+ experiment_id + "?simulations=" + list2.toString();
+                    var handler = function(data) {
+                        $('#clusterInfo').html(data);
+                        $('#clusterInfo').foundation('reveal', 'open');
+                        $('#clusterInfo').on("closed", function() {
+                            $('#dendrogramModal').foundation('reveal', 'open');
+                        })
                     }
-                    list.push(tmp.parent.id);
-                    if (d.children) alert(d.id + ", \nGłębokość: " + d.depth + "\nDo korzenia:" + list +
-                    "\nSymulacje: " + list2 +
-                    "\nLiczba symulacji:" + d.coc)
-                    else {
-                        var url = prefix + "/experiments/" + experiment_id + "/simulations/"+d.id;
+                    $('#clusterInfo').html(window.loaderHTML);
+                    getWithSession(url, {}, handler);
 
-                        alert(url);
-                        var handler = function(data) {
-                            $("<div id=simulation>").html(data);
-                        }
-                        sessionGetJSON(url, {}, handler);
+
+                }
+                else {
+                    var url = prefix + "/experiments/" + experiment_id + "/simulations/"+d.id;
+
+                    var handler = function(data) {
+                        $('#extension-dialog').html(data);
+                        $('#extension-dialog').foundation('reveal', 'open');
+                        $('#extension-dialog').on("closed", function() {
+                            $('#dendrogramModal').foundation('reveal', 'open');
+                        })
                     }
+
+                    $('#extension-dialog').html(window.loaderHTML);
+                    getWithSession(url, {}, handler);
                 }
             }
 
@@ -109,12 +129,34 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
         });
 
 
-
     node.append("text")
+        .attr("cursor", "pointer")
         .attr("dy", ".31em")
         .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
         .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
-        .text(function(d) { if(!d.children) return d.id; }); // wyświ
+        .text(function(d) { if(!d.children) return d.id; }) // wyĹwi
+        .on({
+            "mouseover": function() {
+            },
+
+            "mouseout": function() {
+            },
+
+            "click":  function(d) {
+                var url = prefix + "/experiments/" + experiment_id + "/simulations/"+d.id;
+
+                var handler = function(data) {
+                    $('#extension-dialog').html(data);
+                    $('#extension-dialog').foundation('reveal', 'open');
+                    $('#extension-dialog').on("closed", function() {
+                        $('#dendrogramModal').foundation('reveal', 'open');
+                    })
+                }
+
+                $('#extension-dialog').html(window.loaderHTML);
+                getWithSession(url, {}, handler);
+            }
+        });
 
     function list_of_children(d, list2) {
         var c = 0;
@@ -128,6 +170,23 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
                 list_of_children(d.children[ch], list2);
             }
         }
+    }
+
+    function unhighlight() {
+        d3.selectAll("circle").classed("highlighted", false);
+    }
+
+    function highlight(ids) {
+        // First unhighlight all the circles.
+        unhighlight();
+
+        // Find the circles that have an id
+        // in the array of ids given, and
+        // highlight those.
+        d3.selectAll("circle").filter(function(d, i) {
+            return ids.indexOf(d.id) > -1;
+        })
+            .classed("highlighted", true);
     }
 
     renderTo
