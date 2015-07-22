@@ -40,43 +40,80 @@
 -#        %span.columns{:style => "margin-top: 8px"}
 -#          #{parameter}: #{value[parameter.to_s]}
 
-
 %h2
-  Cluster details
+  Details of cluster #{params[:cluster_id]}
 %table{:width => "100%", :style => "border: 0px"}
   %tr
     %td{:valign => "top"}
       %a
-        %h3.details_label{:style => "margin-top: 15px", :id => "simulations", :href => "#"}
-          Simulations
+        %h3{:style => "margin-top: 15px"}
+          Parent cluster: #{params[:parent]}
+        -#%span.columns{:style => "margin-top: 8px"}
+          #{params[:parent]}
       %a
-        %h3.details_label{:style => "margin-top: 15px", :id => "number_of_simulations", :href => "#"}
-          Number of simulations
-
-      -@content.each do |key, value|
-        %a
-          %h3.details_label{:style => "margin-top: 15px", :id => key.to_s, :href => "#"}
-            #{key.to_s.gsub(/_/, ' ').capitalize}
-    %td{:width => "50%", :valign => "top"}
-      .row{:id => "simulations_content", :style => 'display: none'}
-        %h3.details_content{:style => "margin-top: 15px"}
+        %h3{:style => "margin-top: 15px"}
+          Children clusters: #{params[:children]}
+        -#%span.columns{:style => "margin-top: 8px"}
+          #{params[:children]}
+      %h3{:style => "margin-top: 15px"}
+        Number of simulations: #{simulation_array.length}
+      %a
+        %h3.details_label{:style => "margin-top: 15px", :id => "", :href => "#"}
           Simulations:
-        .row
-          -simulation_array.each do |simulation|
-            %a.simulation_number{:id => "#{simulation}", :href => "#"}
-              #{simulation}
-      .row{:id => "number_of_simulations_content", :style => 'display: none'}
-        %h3.details_content{:style => "margin-top: 15px"}
-          Number of simulations:
-        %span.columns{:style => "margin-top: 8px"}
-          #{simulation_array.length}
-      -@content.each do |key, value|
-        .row{:id => "#{key.to_s}_content", :style => 'display: none'}
-          %h3.details_content{:style => "margin-top: 15px"}
-            #{key.to_s.gsub(/_/, ' ').capitalize}:
-          -@content[:"#{key.to_s}"].each do |key, index|
-            %span.columns{:style => "margin-top: 8px"}
-              #{key}: #{index}
+        -simulation_array.each do |simulation|
+          %a.simulation_number{:id => "#{simulation}", :href => "#"}
+            #{simulation},
+
+    %td{:width => "50%", :valign => "top"}
+      %ul{id: "detailsList"}
+        %dl.accordion{"data-accordion" => "myAccordion",:id => "Accordion", :style=> "text-align: left;"}
+          - @content.each do |key, value|
+            %dd.accordion-navigation{:style => "background: transparent;"}
+              %a{:href => "##{key.to_s}", style: "text-align: left;"}
+                %i.fa.fa-plus-circle{style: "color: 333"}
+                #{key.to_s.gsub(/_/, ' ').capitalize}:
+              %ul.content{:id => "#{key.to_s}", :style => "background: none; text-align: left;"}
+                - @content[:"#{key.to_s}"].each do |key, index|
+                  %li
+                    %span{:style => "margin-top: 8px"}
+                      #{key}: #{index}
+
+-#%h2
+-#  Cluster details
+-#%table{:width => "100%", :style => "border: 0px"}
+-#  %tr
+-#    %td{:valign => "top"}
+-#      %a
+-#        %h3.details_label{:style => "margin-top: 15px", :id => "simulations", :href => "#"}
+-#          Simulations
+-#      %a
+-#        %h3.details_label{:style => "margin-top: 15px", :id => "number_of_simulations", :href => "#"}
+-#          Number of simulations
+-#
+-#      -@content.each do |key, value|
+-#        %a
+-#          %h3.details_label{:style => "margin-top: 15px", :id => key.to_s, :href => "#"}
+-#            #{key.to_s.gsub(/_/, ' ').capitalize}
+-#    %td{:width => "50%", :valign => "top"}
+-#      .row{:id => "simulations_content", :style => 'display: none'}
+-#        %h3.details_content{:style => "margin-top: 15px"}
+-#          Simulations:
+-#        .row
+-#          -simulation_array.each do |simulation|
+-#            %a.simulation_number{:id => "#{simulation}", :href => "#"}
+-#              #{simulation}
+-#      .row{:id => "number_of_simulations_content", :style => 'display: none'}
+-#        %h3.details_content{:style => "margin-top: 15px"}
+-#          Number of simulations:
+-#        %span.columns{:style => "margin-top: 8px"}
+-#          #{simulation_array.length}
+-#      -@content.each do |key, value|
+-#        .row{:id => "#{key.to_s}_content", :style => 'display: none'}
+-#          %h3.details_content{:style => "margin-top: 15px"}
+-#            #{key.to_s.gsub(/_/, ' ').capitalize}:
+-#          -@content[:"#{key.to_s}"].each do |key, index|
+-#            %span.columns{:style => "margin-top: 8px"}
+-#              #{key}: #{index}
 
 #extension-dialog.reveal-modal(data-reveal="")
 :javascript
@@ -97,8 +134,6 @@
 
     $(document).ready(function() {
     $("a.simulation_number").click(function(event) {
-
-
       var url = "#{@prefix}/experiments/#{@experiment.id}/simulations/"+event.target.id;
       var handler = function(data) {
         $('#extension-dialog').html(data);
@@ -110,6 +145,26 @@
       $('#extension-dialog').html(window.loaderHTML);
       getWithSession(url, {}, handler);
     });
+  });
+
+  $(".accordion").on("click", "dd", function (){
+    $("dd.active").find(".content").slideUp("slow");
+    if(!$(this).hasClass("active")) {
+      $(this).find(".content").slideToggle("slow");
+      $("dd").find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
+      $(this).find('i').addClass('fa fa-minus-circle');
+      $("dd").removeClass("active");
+      $(this).addClass("active");
+    }
+    else {
+      $(this).find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
+      $(this).removeClass("active");
+    }
+  });
+
+  $( "#Accordion" ).accordion({
+    collapsible: true,
+    active: false
   });
 
 
