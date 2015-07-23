@@ -1,0 +1,15 @@
+=define_helper_functions
+
+%section#kmeans_chart_form.panel.radius.plot
+  %h3.subheader K-means clustering by #{params[:array]}
+  .row
+  %span.button.hide= 'Hide chart'
+  %br
+    .chart
+
+      :javascript
+        $(function() {
+          $("span.button.hide").on('click', function() {
+            $("div#kmeans_chart_#{params["chart_id"]}").remove();
+          });
+        });
