@@ -2,7 +2,7 @@ require 'erb'
 class ChartInstancesController < ApplicationController
   before_filter :load_experiment, only: :show
   include ERB::Util
-
+  rescue_from Exception, with: :handle_exception
   def show
 
 
@@ -39,18 +39,23 @@ class ChartInstancesController < ApplicationController
        params.update(params){ |k, v| ERB::Util.h(v)}
     end
     handler.parameters = params
-
-    @content = handler.handler
-    #waiting for better time ...
     chart_header =""
-    #if(!@parameters["type"] || @parameters["type"]=="scalarm")
+    @content = handler.handler
+    # waiting for better time ...
+    # if(!@parameters["type"] || @parameters["type"]=="scalarm")
     chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, "chart.html.haml"), layout: false
     #end
-    render :html => (chart_header + @content.to_s.html_safe), layout: false
-
     #else
     #  raise 'Not authorised'
     #end
 
+    render :html => (chart_header + @content.to_s.html_safe), layout: false
+  end
+
+  def handle_exception(exception)
+    render json: {
+               status: 'error',
+               msg: "#{exception.class.to_s}: #{exception.to_s} in line #{exception.backtrace[0].split(':')[-2]}"
+           }, status: 500
   end
 end

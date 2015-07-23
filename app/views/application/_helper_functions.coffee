@@ -4,6 +4,9 @@ window.getWithSession = (url, params, onSuccess, onError) =>
     xhrFields:
       withCredentials: true
     success: onSuccess,
-    error: (typeof(onError) == "function" && onError) || (jqXHR, textStatus, errorThrown) =>
-      console.log("Error on request to #{url}: #{textStatus} #{errorThrown}")
+    error: onError
   )
+
+window.onErrorHandler = (jqXHR, textStatus, errorThrown) =>
+  $(".loading_chart_gif").hide()
+  toastr.error =("An error has occured: #{errorThrown}, #{textStatus}")

@@ -47,7 +47,7 @@
         %li
           %button.radius Load chart
         %li
-          %img(src="#{image_url("loading.gif")}" id='busy_interaction' size='16x16' style='display: none' )
+          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_interaction' size='16x16' style='display: none' )
 
 
 
@@ -84,7 +84,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(interaction_chart_div).html(data);
       };
-      getWithSession(url, {}, handler);
+      getWithSession(url, {}, handler,onErrorHandler);
       interaction_chart_counter++;
 
     };
