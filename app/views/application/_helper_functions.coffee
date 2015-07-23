@@ -1,6 +1,8 @@
+
 window.getWithSession = (url, params, onSuccess, onError) =>
   $.ajax(
     url: url,
+    data: params,
     xhrFields:
       withCredentials: true
     success: onSuccess,
