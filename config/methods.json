@@ -4,15 +4,15 @@
     "groups": {
 
         "basic": {
-            "name": "Basic analysis",
+            "name": "Variate analysis",
             "methods": [{
-                "name": "Distribution of results",
+                "name": "Histogram",
                 "id": "experiment-analysis-modal",
                 "em_class": "histogram-analysis",
                 "image": "/assets/images/material_design/histogram_icon.png",
                 "description": "A histogram analysis shows results frequency distributions"
             }, {
-                "name": "Bivariate analysis",
+                "name": "Scatter plot",
                 "id": "experiment-analysis-modal",
                 "em_class": "bivariate-analysis",
                 "image": "/assets/images/material_design/scatter_icon.png",

@@ -42,27 +42,38 @@
 
 %h2
   Details of cluster #{params[:cluster_id]}
-%table{:width => "100%", :style => "border: 0px"}
+%table{:width => '100%', :style => 'border: 0px'}
   %tr
     %td{:valign => "top"}
-      %a
-        %h3{:style => "margin-top: 15px"}
-          Parent cluster: #{params[:parent]}
-        -#%span.columns{:style => "margin-top: 8px"}
-          #{params[:parent]}
-      %a
-        %h3{:style => "margin-top: 15px"}
-          Children clusters: #{params[:children]}
-        -#%span.columns{:style => "margin-top: 8px"}
-          #{params[:children]}
-      %h3{:style => "margin-top: 15px"}
-        Number of simulations: #{simulation_array.length}
-      %a
-        %h3.details_label{:style => "margin-top: 15px", :id => "", :href => "#"}
-          Simulations:
-        -simulation_array.each do |simulation|
+      %h3.details_label{:style => 'margin-top: 15px', :id => "", :href => "#"}
+        Simulations (#{simulation_array.length}):
+      -if simulation_array.length >= 100
+        .row{:id => 'less_simulations'}
+          %p.less_simulations
+            -simulation_array.sort[0..98].each do |simulation|
+              %a.simulation_number{:id => "#{simulation}", :href => "#"}
+                #{simulation}
+              ,
+            %a.simulation_number{:id => "#{simulation_array[99].to_s}", :href => "#"}
+              #{simulation_array[99]}...
+          %button.radius.tiny.show_all Show all
+        .row{:id => 'more_simulations', :style => 'display: none'}
+          %p.more_simulations
+            -simulation_array.sort[0..-1].each do |simulation|
+              %a.simulation_number{:id => "#{simulation}", :href => "#"}
+                #{simulation}
+              ,
+            %a.simulation_number{:id => "#{simulation_array[99].to_s}", :href => "#"}
+              #{simulation_array.last}
+          %button.radius.tiny.hide_sim Hide
+      -else
+        -simulation_array.sort[0..-1].each do |simulation|
           %a.simulation_number{:id => "#{simulation}", :href => "#"}
-            #{simulation},
+            #{simulation}
+          ,
+        %a.simulation_number{:id => "#{simulation_array[99].to_s}", :href => "#"}
+          #{simulation_array.last}
+
 
     %td{:width => "50%", :valign => "top"}
       %ul{id: "detailsList"}
@@ -132,7 +143,7 @@
     });
   });
 
-    $(document).ready(function() {
+
     $("a.simulation_number").click(function(event) {
       var url = "#{@prefix}/experiments/#{@experiment.id}/simulations/"+event.target.id;
       var handler = function(data) {
@@ -144,8 +155,11 @@
       }
       $('#extension-dialog').html(window.loaderHTML);
       getWithSession(url, {}, handler);
+
     });
-  });
+
+
+
 
   $(".accordion").on("click", "dd", function (){
     $("dd.active").find(".content").slideUp("slow");
@@ -162,12 +176,18 @@
     }
   });
 
-  $( "#Accordion" ).accordion({
-    collapsible: true,
-    active: false
+  $("#show_all_simulations").on("click", function (){
+    $("#more_simulations").show();
   });
 
+  $("button.radius.tiny.show_all").on('click', function () {
+    $("#more_simulations").show();
+    $("#less_simulations").hide();
+  });
 
-
+  $("button.radius.tiny.hide_sim").on('click', function () {
+    $("#more_simulations").hide();
+    $("#less_simulations").show();
+  });
 
   });

@@ -1,8 +1,7 @@
 %ul{id: "searchList", style:"list-style-type: circle;"}
-  %dl.accordion{"data-accordion" => "myAccordionGroup", style: "text-align: left;"}
-    - @groups.each do |group_id, group|
+  - @groups.each do |group_id, group|
+    %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
       %dd.accordion-navigation
-
         %a{:href => "#"+group_id, style: "text-align: left;"}
           %i.fa.fa-plus-circle{style: "color: 333"}
           = group["name"]
@@ -10,7 +9,7 @@
           - group["methods"].each do |method|
             - if method["em_class"]
               %li
-                %a.tip-right.text-left{href: "#", "em-class" => method["em_class"], "line-height"=> "1.3", "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{@prefix}#{method["image"]} /></div> ", "data-reveal-id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;" "text-align: left;"}
+                %a.tip-right.text-left{href: "#", "em-class" => method["em_class"], "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{@prefix}#{method["image"]} /></div> ", "data-reveal-id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;" "text-align: left;"}
                   %span= method["name"]
             - else
               %li
@@ -50,17 +49,13 @@
     });
 
   $(".accordion").on("click", "dd", function (){
-    $("dd.active").find(".content").slideUp("slow");
-    if(!$(this).hasClass("active")) {
-      $(this).find(".content").slideToggle("slow");
-      $("dd").find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
-      $(this).find('i').addClass('fa fa-minus-circle');
-      $("dd").removeClass("active");
-      $(this).addClass("active");
-    }
-    else {
-      $(this).find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
-      $(this).removeClass("active");
-    }
+      if(!$(this).hasClass("active")) {
+        $(this).find('i').addClass('fa fa-minus-circle');
+      }
+      else {
+        $(this).find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
+      }
   });
+
+
   });

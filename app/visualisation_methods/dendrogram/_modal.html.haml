@@ -27,7 +27,7 @@
             %td.name.small-12.medium-3.columns
               %input{:type => "checkbox", :style => "margin-right:5px;"}
               %label #{output}
-    %span.button.radius.tiny.check_all#check Check all
+
     -#.row
     -#  %label.inline="Select parameters of clustering:"
     -#  %table( width="100%")
@@ -39,7 +39,10 @@
     .row
       %ul.inline-list
         %li
-          %button.radius Load chart
+          %button.radius.check_all#check Check / Uncheck all
+      %ul.inline-list
+        %li
+          %button.radius.load Load chart
         %li
           %a
             %img(src="#{@prefix}/assets/images/material_design/loading.gif" id='busy_dendrogram' size='16x16' style='display: none' )
@@ -65,7 +68,7 @@
        
 
       var array = selectedFiles.toArray();
-      if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
+
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&chart_id="+chart_counter;
 
@@ -80,27 +83,31 @@
       chart_counter++;
     };
 
-    $("#dendrogramModal").find("button").bind("click", function() {
-      $("#busy_dendrogram").show();
-      if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/dendrogram?base_url=" + encodeURIComponent("#{@prefix}");
-        var handler = function(data) {
-          scripts_loaded = true;
-          $("#dendrogramModal").find(".scripts").html(data);
+    $("#dendrogramModal").find("button.radius.load").bind("click", function() {
+      if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
+      else {
+        $("#busy_dendrogram").show();
+        if(!scripts_loaded) {
+          var url = "#{@prefix}/script_tags/dendrogram?base_url=" + encodeURIComponent("#{@prefix}");
+          var handler = function(data) {
+            scripts_loaded = true;
+            $("#dendrogramModal").find(".scripts").html(data);
+            load_chart();
+          };
+          getWithSession(url, {}, handler);
+        }
+        else
           load_chart();
-        };
-        getWithSession(url, {}, handler);
       }
-      else
-        load_chart();
     });
 
-    $("span.button.radius.tiny.check_all").on('click', function () {
+    $("button.radius.check_all#check").on('click', function () {
       if ($("input:checkbox").length ==  $("input:checked").length) {
         $("input:checkbox").prop('checked', false);
       }
       else $("input:checkbox").prop('checked', true);
     });
+
 
 
 

@@ -1,20 +1,7 @@
 dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
-    var sessionGetJSON = function(url, params, onSuccess, onError) {
-        return $.ajax({
-            // dataType: "json",
-            url: url,
-            xhrFields: {
-                withCredentials: true
-            },
-            success: onSuccess,
-            error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
-                console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
-            }
-        });
-    };
 
-    root = JSON.parse(data);
+    var root = JSON.parse(data);
 
     var si = 30;
     var radius = ($("#dendrogramModal").width()/2)-40;
@@ -95,7 +82,7 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
                 if (d.children) {
                     // TODO: trzeba zmienić prefix - przekazać baseurl
-                    var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + d.id + "&parent=" + d.parent.id + "&children=" + d.children[0].id + "," + d.children[1].id + "&simulations=" + list2.toString();
+                    var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + d.id + "&simulations=" + list2.toString();
 
                     var handler = function(data) {
                         $('#clusterInfo').html(data);
@@ -190,6 +177,16 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
         })
             .classed("highlighted", true);
     }
+
+
+
+    window.onresize = function() {
+
+    };
+
+
+
+
 
     renderTo
         :
