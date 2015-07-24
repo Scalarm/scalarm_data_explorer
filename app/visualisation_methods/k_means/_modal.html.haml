@@ -4,7 +4,7 @@
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
 - result = @experiment.simulation_runs.where(filter, fields).first
-- count_of_cluster = [1,2,3,4,5,6,7,8,9,10]
+- count_of_cluster = [2,3,4,5,6,7,8,9,10,11,12]
 - outputs=[]
 - if result.blank?
   - outputs = ["No results found in completed simulation runs"]
