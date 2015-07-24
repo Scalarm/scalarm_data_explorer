@@ -28,7 +28,7 @@ class KMeans
     output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\nkmeans_main(i, \"" + parameters["param_x"] + "\", data, experiment_id, prefix);"
+    output += "\nkmeans_main(i, \"" + parameters["array"] + "\", data,8, 8, experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
@@ -41,23 +41,36 @@ class KMeans
     rinruby = Rails.configuration.r_interpreter
 
     #getting data
-    result_file = Tempfile.new('kmeans')
-    simulation_ind, result_csv = create_result_csv
-    Rails.logger.debug(result_csv)
-    IO.write(result_file.path, result_csv)
+
+    simulation_ind, result_data = create_data_result
+    #Rails.logger.debug(result_data)
+    result_data = result_data.sort_by{|x,y|x}
     Rails.logger.debug("########################################")
-    Rails.logger.debug(simulation_ind)
+   # Rails.logger.debug(result_data)
+    #Rails.logger.debug(simulation_ind)
     moes = moe_names
-    simulation_ind = simulation_ind.sort
+    #simulation_ind = simulation_ind.sort
     #evaluate R commands
+    R.assign("data" , result_data.map{|row| row[1]})
     R.eval <<EOF
-    hdata <- kmeans(dist(read.csv('#{result_file.path}')),8)
+    hdata <- kmeans(data,#{parameters[:clusters]})
     cluster <- hdata$cluster
 
 
 EOF
     merge = R.pull "cluster"
     Rails.logger.debug(merge)
+    hash = {}
+    for counter in 1..(merge.count()-1)
+      hash[simulation_ind[counter]] = merge[counter]
+    end
+    hash
+
+    Rails.logger.debug(hash)
+    clusters = grouping_hash(hash)
+    Rails.logger.debug(clusters)
+    clusters
+    #Rails.logger.debug(hash.invert[8])
     #merge2 = R.pull "centers"
   #  Rails.logger.debug(merge2)
     #centers <- hdata$centers
@@ -72,8 +85,15 @@ EOF
     end
     creating_kmeans_structure(hash)
 =end
-  end
 
+  end
+  def grouping_hash(data)
+    data_hash= {}
+    for counter in 1..8
+      data_hash[counter] = data.select{ |k, v| v== counter }.keys
+    end
+    data_hash
+  end
 
   def creating_kmeans_structure(data)
 # search for - and - pairs and creating dict output value -> this pair
@@ -121,6 +141,37 @@ EOF
     parameters_names
   end
 
+
+  def create_data_result(with_index=true, with_params=false, with_moes=true)
+    moes = moe_names
+    if with_params
+      all_parameters = parameters_names.uniq.flatten
+    end
+    data_array=[]
+    simulation_ind = []
+
+
+    query_fields = {_id: 0}
+    query_fields[:index] = 1 if with_index
+    query_fields[:values] = 1 if with_params
+    query_fields[:result] = 1 if with_moes
+
+    @experiment.simulation_runs.where(
+        {is_done: true, is_error: {'$exists' => false}},
+        {fields: query_fields}
+    ).each do |simulation_run|
+      line = []
+      line.push(simulation_run.index) if with_index
+      simulation_ind << simulation_run.index
+      moes.map { |moe_name|
+        line.push(simulation_run.result[moe_name] || '') } if with_moes
+      data_array.push(line)
+
+    end
+
+    return simulation_ind, data_array
+  end
+=begin
   def create_result_csv(with_index=true, with_params=false, with_moes=true)
     Rails.logger.debug("#############MOEES#############")
     simulation_ind = []
@@ -156,4 +207,5 @@ EOF
     end
     return simulation_ind, csv
   end
+=end
 end

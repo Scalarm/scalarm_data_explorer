@@ -1,4 +1,4 @@
-window.kmeans_main  = function(i, data, viewer, moes, firstLevel, secondLevel, experimentID) {
+window.kmeans_main  = function(i,moes, data, firstLevel, secondLevel, experimentID, prefix) {
     /*$('body').append(viewer);
     var dialog = $('#clusters_details');
     dialog.on("closed", function() {
@@ -33,7 +33,7 @@ window.kmeans_main  = function(i, data, viewer, moes, firstLevel, secondLevel, e
     var subclusters = [];
     var subcluster_size;
     var brightness;
-    var colors = Highcharts.getOptions().colors;
+
     for(var j in data) {
         var color = colors[ j%colors.length ];
         clusters.push({
@@ -61,9 +61,23 @@ window.kmeans_main  = function(i, data, viewer, moes, firstLevel, secondLevel, e
         }
 
     }*/
+    var colors = Highcharts.getOptions().colors;
+    var clusters = [];
+       for(var j in data) {
+           var color = colors[j % colors.length];
+           clusters.push({
+               y: data[j].length,
+               id: 'cluster_' + j,
+               visible: true,
+               indexes: data[j],
+               /*  means: data[j]["means"],
+                ranges: data[j]["ranges"],*/
+               color: color
+           });
+       }
     var chart = new Highcharts.Chart({
         chart: {
-            renderTo: $('#clustering_chart_'+ i + " .chart")[0],
+            renderTo: $('#kmeans_chart_'+ i + " .chart")[0],
             type: 'pie'
         },
         title: {
@@ -85,13 +99,13 @@ window.kmeans_main  = function(i, data, viewer, moes, firstLevel, secondLevel, e
                 }//,
                 //color: 'white',
                 //distance: -30
-            },
-            point: {
+            }
+            /*point: {
                 events: {
                     click: openViewer(this)
                 }
-            }
-        }, {
+            }*/
+        }/*, {
             data: subclusters,
             size: '100%',
             innerSize: '70%',
@@ -101,13 +115,13 @@ window.kmeans_main  = function(i, data, viewer, moes, firstLevel, secondLevel, e
                 }//,
                 //color: 'white',
                 //distance: -30
-            },
-            point: {
+            }
+           /!* point: {
                 events: {
                     click: openViewer(this)
                 }
-            }
-        }],
+            }*!/
+        }*/],
         tooltip: {
             formatter: function() {
                 // console.log(this);
