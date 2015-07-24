@@ -1,5 +1,4 @@
 require 'rinruby'
-require 'csv'
 class KMeans
   attr_accessor :experiment
   attr_accessor :parameters
@@ -9,33 +8,34 @@ class KMeans
 
     if parameters["id"] && parameters["array"]
       object = {}
-      data = get_data_for_kmeans(experiment, parameters["id"], parameters["param_tab"])
+      data, subclusters = get_data_for_kmeans
       if parameters["type"] == 'data'
 
         object = content[JSON.stringify(data)]
       elsif parameters["chart_id"]
-        object = prepare_kmeans_chart_content(data)
+        object = prepare_kmeans_chart_content(data, subclusters)
       else
-        error("Request parameters missing: 'chart_id'");
+        raise("Request parameters missing: 'chart_id'");
 
       end
       object
     end
   end
 
-  def prepare_kmeans_chart_content(data)
+  def prepare_kmeans_chart_content(data, subclusters)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
+    output += "\nvar subclusters = " + subclusters.to_json + ";" if subclusters != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\nkmeans_main(i, \"" + parameters["array"] + "\", data,8, 8, experiment_id, prefix);"
+    output += "\nkmeans_main(i, \"" + moe_names.to_sentence + "\", data, subclusters, "+ parameters[:clusters].to_s + ", " + parameters[:subclusters].to_s + ", experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
 
 
-  # TODO: documentation - what this method does? change name
-  def get_data_for_kmeans(experiment, id, param_x)
+  # TODO: documentation
+  def get_data_for_kmeans
 
     # simulation_runs = experiment.simulation_runs.to_a
     rinruby = Rails.configuration.r_interpreter
@@ -43,80 +43,96 @@ class KMeans
     #getting data
 
     simulation_ind, result_data = create_data_result
-    #Rails.logger.debug(result_data)
+
     result_data = result_data.sort_by{|x,y|x}
-    Rails.logger.debug("########################################")
-   # Rails.logger.debug(result_data)
-    #Rails.logger.debug(simulation_ind)
-    moes = moe_names
-    #simulation_ind = simulation_ind.sort
-    #evaluate R commands
+
+    result_hash = {}
+    result_data.map{|row| result_hash[row[0]]=row[1]}
+    # for 2 and more moes join arrays of result into one and pass as data
     R.assign("data" , result_data.map{|row| row[1]})
     R.eval <<EOF
     hdata <- kmeans(data,#{parameters[:clusters]})
-    cluster <- hdata$cluster
-
+    clusters <- hdata$cluster
 
 EOF
-    merge = R.pull "cluster"
-    Rails.logger.debug(merge)
+    merge = R.pull "clusters"
     hash = {}
-    for counter in 1..(merge.count()-1)
+    for counter in 0..(merge.count()-1)
       hash[simulation_ind[counter]] = merge[counter]
     end
-    hash
+  #  hash
 
-    Rails.logger.debug(hash)
-    clusters = grouping_hash(hash)
-    Rails.logger.debug(clusters)
-    clusters
-    #Rails.logger.debug(hash.invert[8])
-    #merge2 = R.pull "centers"
-  #  Rails.logger.debug(merge2)
-    #centers <- hdata$centers
-    #structure of the tree (matrix)
-   # merge = R.pull "merge"
 
-    #parsing matrix into hash: value -> left child, right child
-=begin
-    hash = {}
-    for counter in 1..merge.row_size()
-      hash[counter.to_s] = [merge[(counter-1),0].to_i, merge[(counter-1),1].to_i]
+    clusters = grouping_hash(hash, parameters[:clusters])
+
+    subclusters={}
+    for counter in 1..(parameters[:clusters].to_i)
+      #subcluster_moes=[]
+      subcluster_moes = result_hash.select{|k,v| clusters[counter].include?(k)}.values
+      subclusters[counter] = subcluster_moes
     end
-    creating_kmeans_structure(hash)
-=end
+
+    result_subcluster =create_subclusters(simulation_ind, subclusters,clusters)
+
+    finite_data = {}
+    result_subcluster.each do |k,v|
+      finite_data[k] = grouping_hash(v, parameters[:subclusters])
+    end
+    return clusters, finite_data
 
   end
-  def grouping_hash(data)
+
+  def create_header
+    header=[]
+    moes= moe_names#[parameters["array"]]
+
+  #  header+=['simulation_index']
+    header+=moes
+    header
+
+  end
+
+  ##
+  # input hash: simulation_indx => cluster_id
+  # creating hash: key -> cluster_id, value -> array of simulation_ids
+  def grouping_hash(data, number_of_subclusters)
     data_hash= {}
-    for counter in 1..8
+    for counter in 1..(number_of_subclusters.to_i)
       data_hash[counter] = data.select{ |k, v| v== counter }.keys
     end
     data_hash
   end
 
-  def creating_kmeans_structure(data)
-# search for - and - pairs and creating dict output value -> this pair
-    root = data.keys.last
-    create_json(data, root)
+
+  ##
+  # create second level chart data (sublcasters)
+  # from 1 level gather sim_id and then create hash: level1 => {level2=>sim_ids}
+
+  def create_subclusters(simulation_ind, subcluster,cluster)
+    hash ={}
+    cluster.keys.each  do |subclust_indx|
+
+      R.assign("data" , subcluster[subclust_indx])
+      R.eval <<EOF
+        hdata <- kmeans(data,#{parameters[:subclusters]})
+        subclusters <- hdata$cluster
+EOF
+      to_merge = R.pull "subclusters"
+
+      hash_sub ={}
+      #hash[subclust_indx] = to_merge
+      for counter in 0..(to_merge.count()-1)
+        hash_sub[simulation_ind[counter]] = to_merge[counter]
+      end
+      hash[subclust_indx] = hash_sub
+    end
+  hash
+
   end
 
-
-  def create_json(hash, node)
-    d = hash[node.to_s]
-    if d[0] < 0 && d[1] < 0
-      "{\"id\":\"#{node}\",\"children\":[{\"id\":\"#{-d[0]}\"},{\"id\":\"#{-d[1]}\"}]}"
-    elsif d[0] < 0 && d[1] > 0
-      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[1])},{\"id\":\"#{-d[0]}\"}]}"
-    elsif d[0] > 0 && d[1] < 0
-      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[0])},{\"id\":\"#{-d[1]}\"}]}"
-    elsif d[0] > 0 && d[1] > 0
-      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[0])},#{create_json(hash, d[1])}]}"
-    end if d!=nil
-
-  end
-
-
+  ##
+  # for testing
+  # moe_names in future from modal
   def moe_names
     moe_name_set = []
     limit = @experiment.size > 1000 ? @experiment.size / 2 : @experiment.size
@@ -127,33 +143,15 @@ EOF
     moe_name_set.uniq
   end
 
-  def parameters_names
-    parameters_names = []
-
-    @experiment.experiment_input.each do |entity_group|
-      entity_group['entities'].each do |entity|
-        entity['parameters'].each do |parameter|
-          parameters_names << @experiment.get_parameter_ids unless parameter.include?('in_doe') and parameter['in_doe'] == true
-        end
-      end
-    end
-
-    parameters_names
-  end
-
 
   def create_data_result(with_index=true, with_params=false, with_moes=true)
     moes = moe_names
-    if with_params
-      all_parameters = parameters_names.uniq.flatten
-    end
     data_array=[]
     simulation_ind = []
 
 
     query_fields = {_id: 0}
     query_fields[:index] = 1 if with_index
-    query_fields[:values] = 1 if with_params
     query_fields[:result] = 1 if with_moes
 
     @experiment.simulation_runs.where(
@@ -165,47 +163,11 @@ EOF
       simulation_ind << simulation_run.index
       moes.map { |moe_name|
         line.push(simulation_run.result[moe_name] || '') } if with_moes
-      data_array.push(line)
+      data_array<<line
 
     end
 
     return simulation_ind, data_array
   end
-=begin
-  def create_result_csv(with_index=true, with_params=false, with_moes=true)
-    Rails.logger.debug("#############MOEES#############")
-    simulation_ind = []
-    moes = moe_names
-    if with_params
-      all_parameters = parameters_names.uniq.flatten
-    end
-    csv = CSV.generate do |csv|
-      header = []
-      header += ['simulation_index'] if with_index
-      header += all_parameters if with_params
-      header += moes if with_moes
-      csv << header
 
-      query_fields = {_id: 0}
-      query_fields[:index] = 1 if with_index
-      query_fields[:values] = 1 if with_params
-      query_fields[:result] = 1 if with_moes
-
-      @experiment.simulation_runs.where(
-          {is_done: true, is_error: {'$exists' => false}},
-          {fields: query_fields}
-      ).each do |simulation_run|
-        line = []
-        simulation_ind << simulation_run.index
-        line += [simulation_run.index] if with_index
-        line += simulation_run.values.split(',') if with_params
-        # getting values of results in a specific order
-        line += moes.map { |moe_name| simulation_run.result[moe_name] || '' } if with_moes
-
-        csv << line
-      end
-    end
-    return simulation_ind, csv
-  end
-=end
 end

@@ -1,4 +1,4 @@
-window.kmeans_main  = function(i,moes, data, firstLevel, secondLevel, experimentID, prefix) {
+window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLevel, experimentID, prefix) {
     /*$('body').append(viewer);
     var dialog = $('#clusters_details');
     dialog.on("closed", function() {
@@ -63,6 +63,7 @@ window.kmeans_main  = function(i,moes, data, firstLevel, secondLevel, experiment
     }*/
     var colors = Highcharts.getOptions().colors;
     var clusters = [];
+    var subclust = [];
        for(var j in data) {
            var color = colors[j % colors.length];
            clusters.push({
@@ -74,7 +75,23 @@ window.kmeans_main  = function(i,moes, data, firstLevel, secondLevel, experiment
                 ranges: data[j]["ranges"],*/
                color: color
            });
+           var cluster_size = data[j].length;
+           for(var k in subclusters[j]){
+               subcluster_size = subclusters[j][k].length;
+               brightness = 0.2 - (1.0*k / cluster_size) / 5;
+               subclust.push({
+                   y: subcluster_size,
+                   id: 'cluster_' + subclusters[j].key+'s1',
+                   visible: true,
+                   indexes: subclusters[j][k],
+               /*    means: data[j]["subclusters"][k]["means"],
+                   ranges: data[j]["subclusters"][k]["ranges"],*/
+                   color: Highcharts.Color(color).brighten(brightness).get()
+               });
+           }
        }
+
+
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: $('#kmeans_chart_'+ i + " .chart")[0],
@@ -105,8 +122,8 @@ window.kmeans_main  = function(i,moes, data, firstLevel, secondLevel, experiment
                     click: openViewer(this)
                 }
             }*/
-        }/*, {
-            data: subclusters,
+        }, {
+            data: subclust,
             size: '100%',
             innerSize: '70%',
             dataLabels: {
@@ -116,12 +133,12 @@ window.kmeans_main  = function(i,moes, data, firstLevel, secondLevel, experiment
                 //color: 'white',
                 //distance: -30
             }
-           /!* point: {
+           /* point: {
                 events: {
                     click: openViewer(this)
                 }
-            }*!/
-        }*/],
+            }*/
+        }],
         tooltip: {
             formatter: function() {
                 // console.log(this);
@@ -129,4 +146,4 @@ window.kmeans_main  = function(i,moes, data, firstLevel, secondLevel, experiment
             }
         }
     });
-}
+};
