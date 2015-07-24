@@ -4,6 +4,7 @@
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
 - result = @experiment.simulation_runs.where(filter, fields).first
+- count_of_cluster = [1,2,3,4,5,6,7,8,9,10]
 - outputs=[]
 - if result.blank?
   - outputs = ["No results found in completed simulation runs"]
@@ -18,15 +19,29 @@
     %h3.subheader="K-means clustering"
     %h3 #{}
     .row
-      %label.inline="Select parameters of clustering:"
+      .small-5.columns
+        %label.inline="Select number of clusters"
+      .small-7.columns
+        %select.numbClust
+          -count_of_cluster.each do |output|
+            %option{:value => output}=output
+    .row
+      .small-5.columns
+        %label.inline="Select number of subclusters"
+      .small-7.columns
+        %select.numbSubclust
+          -count_of_cluster.each do |output|
+            %option{:value => output}=output
+    .row
+      .small-5.columns
+        %label.inline="Select parameters of clustering:"
       %table( width="100%")
-        -outputs.each do |output|
-          %tr
-            %td.name.small-12.medium-3.columns
-              %input{:type => "checkbox", :style => "margin-right:5px;"}
-              %label #{output}
-
-
+        .small-7.columns
+          -outputs.each do |output|
+            %tr
+              %td.name.small-12.medium-3.columns
+                %input{:type => "checkbox", :style => "margin-right:5px;"}
+                %label #{output}
 
     .row
       %ul.inline-list
@@ -60,9 +75,13 @@
         });
 
       var array = selectedFiles.toArray();
-
+      var numb_cluster = $("#kmeansModal .numbClust option:selected").val();
+      var numb_subcluster = $("#kmeansModal .numbSubclust option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&chart_id="+chart_counter;
+      query_params += "&clusters="+numb_cluster;
+      query_params += "&subclusters="+numb_subcluster;
+
       var url = "#{@prefix}/chart_instances/k_means?"+query_params;
       var handler = function(data) {
         $("#busy_kmeans").hide();

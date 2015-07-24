@@ -2,7 +2,7 @@ require 'erb'
 class ChartInstancesController < ApplicationController
   before_filter :load_experiment, only: :show
   include ERB::Util
-  rescue_from Exception, with: :handle_exception
+#  rescue_from Exception, with: :handle_exception
   def show
 
 
@@ -52,10 +52,12 @@ class ChartInstancesController < ApplicationController
     render :html => (chart_header + @content.to_s.html_safe), layout: false
   end
 
+=begin
   def handle_exception(exception)
     render json: {
                status: 'error',
                msg: "#{exception.class.to_s}: #{exception.to_s} in line #{exception.backtrace[0].split(':')[-2]}"
            }, status: 500
   end
+=end
 end
