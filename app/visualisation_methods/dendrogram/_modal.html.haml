@@ -10,42 +10,32 @@
 - else
   - outputs = result.result.keys
 
-  -#outputs = ["param1", "temperature", "number of pairs", "violent", "IoT"]
-
 =define_helper_functions
 
 #dendrogramModal.reveal-modal(data-reveal="true")
   %section#dendrogram_charts_form.panel.radius.analysis-chart
     %a.close-reveal-modal &#215
     %h3.subheader="Dendrogram for hierarchical clustering"
-    %h3 #{}
     .row
-      %label.inline="Select parameters of clustering:"
-      %table( width="100%")
+      -if result.blank?
+        %label.inline #{outputs.to_sentence}
+      -else
+        %label.inline="Select parameters of clustering:"
         -outputs.each do |output|
-          %tr
-            %td.name.small-12.medium-3.columns
-              %input{:type => "checkbox", :style => "margin-right:5px;"}
-              %label #{output}
+          %span.small-12.medium-3.columns
+            %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
+            %label #{output}
 
-    -#.row
-    -#  %label.inline="Select parameters of clustering:"
-    -#  %table( width="100%")
-    -#    -outputs.each do |output|
-    -#      %span.small-12.medium-3.columns
-    -#        %input{:type => "checkbox", :style => "margin-right:5px;"}
-    -#        %label #{output}
-
-    .row
-      %ul.inline-list
-        %li
-          %button.radius.check_all#check Check / Uncheck all
-      %ul.inline-list
-        %li
-          %button.radius.load Load chart
-        %li
-          %a
-            %img(src="#{@prefix}/assets/images/material_design/loading.gif" id='busy_dendrogram' size='16x16' style='display: none' )
+        .row
+          %ul.inline-list
+            %li
+              %button.radius.check_all#check Check / Uncheck all
+          %ul.inline-list
+            %li
+              %button.radius.load Load chart
+            %li
+              %a
+                %img(src="#{@prefix}/assets/images/material_design/loading.gif" id='busy_dendrogram' size='16x16' style='display: none' )
 
   .charts
     .scripts
@@ -61,14 +51,10 @@
       var chart_div = $("<div id=\"dendrogram_chart_"+chart_counter+"\">")[0];
       $("#dendrogramModal .charts").prepend(chart_div);
       var selectedFiles =
-        $('input:checked').
-        map(function () {
-            return $(this).parents('tr').eq(0).find('.name').text().trim();
+        $('input:checked').map(function () {
+            return $(this).attr('id')
         });
-       
-
       var array = selectedFiles.toArray();
-
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&chart_id="+chart_counter;
 

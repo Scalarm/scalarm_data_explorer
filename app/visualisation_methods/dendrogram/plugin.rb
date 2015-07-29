@@ -5,6 +5,10 @@ class Dendrogram
   attr_accessor :parameters
 
 
+
+
+
+
   def handler
     if parameters["id"] && parameters["array"]
       object = {}
@@ -70,7 +74,11 @@ EOF
   def creating_dendrogram_structure(data)
 # search for - and - pairs and creating dict output value -> this pair
     root = data.keys.last
-    create_json(data, root)
+
+    Rails.logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!json max depth")
+    Rails.logger.debug(create_json_max_depth(data, root, 0, 5))
+    create_json_max_depth(data, root, 0, 5)
+    #create_json(data, root)
   end
 
 
@@ -85,9 +93,59 @@ EOF
     elsif d[0] > 0 && d[1] > 0
       "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[0])},#{create_json(hash, d[1])}]}"
     end if d!=nil
-
   end
 
+  def create_json_max_depth(hash, node, depth, max_depth)
+    str = "hahahah"
+    d = hash[node.to_s]
+    if d[0] < 0 && d[1] < 0
+      "{\"id\":\"#{node}\",\"children\":[{\"id\":\"#{-d[0]}\"},{\"id\":\"#{-d[1]}\"}]}"
+    elsif d[0] < 0 && d[1] > 0
+      if depth <= max_depth
+        "{\"id\":\"#{node}\",\"children\":[#{create_json_max_depth(hash, d[1], depth+1, max_depth)},{\"id\":\"#{-d[0]}\"}]}"
+      else
+        "{\"id\":\"#{node}\",\"children\":[{\"id\":\"cl #{d[1]}\",\"simulations\":\"#{get_simulations_by_cluster(hash, d[1])}\"},{\"id\":\"#{-d[0]}\"}]}"
+      end
+    elsif d[0] > 0 && d[1] < 0
+      if depth <= max_depth
+        "{\"id\":\"#{node}\",\"children\":[#{create_json_max_depth(hash, d[0], depth+1, max_depth)},{\"id\":\"#{-d[1]}\"}]}"
+      else
+        "{\"id\":\"#{node}\",\"children\":[{\"id\":\"cl #{d[0]}\",\"simulations\":\"#{get_simulations_by_cluster(hash, d[0])}\"},{\"id\":\"#{-d[1]}\"}]}"
+      end
+    elsif d[0] > 0 && d[1] > 0
+      if depth <= max_depth
+        "{\"id\":\"#{node}\",\"children\":[#{create_json_max_depth(hash, d[0], depth+1, max_depth)},#{create_json_max_depth(hash, d[1], depth+1, max_depth)}]}"
+      else
+        "{\"id\":\"#{node}\",\"children\":[{\"id\":\"cl #{d[0]}\",\"simulations\":\"#{get_simulations_by_cluster(hash, d[0])}\"},{\"id\":\"cl #{d[1]}\",\"simulations\":\"#{get_simulations_by_cluster(hash, d[1])}\"}]}"
+      end
+    end if d!=nil
+  end
+
+  def get_simulations_by_cluster(hash, node)
+    d = hash[node.to_s]
+    if d[0] < 0 && d[1] < 0
+      [-d[0], -d[1]].join(", ")
+    elsif d[0] < 0 && d[1] > 0
+      [-d[0], get_simulations_by_cluster(hash, d[1])].join(", ")
+    elsif d[0] > 0 && d[1] < 0
+      [get_simulations_by_cluster(hash, d[0]), -d[1]].join(", ")
+    elsif d[0] > 0 && d[1] > 0
+      [get_simulations_by_cluster(hash, d[0]), get_simulations_by_cluster(hash,d[1])].join(", ")
+    end if d!=nil
+  end
+
+  def get_max_depth(hash, node, depth)
+    d = hash[node.to_s]
+    if d[0] < 0 && d[1] < 0
+      depth
+    elsif d[0] < 0 && d[1] > 0
+      get_max_depth(hash, d[1], depth+1)
+    elsif d[0] > 0 && d[1] < 0
+      get_max_depth(hash, d[0], depth+1)
+    elsif d[0] > 0 && d[1] > 0
+      [get_max_depth(hash, d[0], depth+1), get_max_depth(hash, d[0], depth+1)].max
+    end if d!=nil
+  end
 
   def moe_names
     moe_name_set = []

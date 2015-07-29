@@ -71,18 +71,11 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
             },
 
             "click":  function(d) {
-                var list = [];
-                var list2 = [];
-                list2.size = 0
-                var tmp = d;
-
-                list.push(tmp.id);
-                list_of_children(d, list2);
-                d.coc = list2.size;
+                d.coc = list_of_children.size;
 
                 if (d.children) {
                     // TODO: trzeba zmienić prefix - przekazać baseurl
-                    var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + d.id + "&simulations=" + list2.toString();
+                    var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + d.id + "&simulations=" + list_of_children(d).toString();
 
                     var handler = function(data) {
                         $('#clusterInfo').html(data);
@@ -97,18 +90,34 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
                 }
                 else {
-                    var url = prefix + "/experiments/" + experiment_id + "/simulations/"+d.id;
+                    if (/^cl \d+$/.test(d.id)) {
+                        var cluster_id = d.id.replace( /\D+/g, '');
+                        var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + d.simulations;
 
-                    var handler = function(data) {
-                        $('#extension-dialog').html(data);
-                        $('#extension-dialog').foundation('reveal', 'open');
-                        $('#extension-dialog').on("closed", function() {
-                            $('#dendrogramModal').foundation('reveal', 'open');
-                        })
+                        var handler = function(data) {
+                            $('#clusterInfo').html(data);
+                            $('#clusterInfo').foundation('reveal', 'open');
+                            $('#clusterInfo').on("closed", function() {
+                                $('#dendrogramModal').foundation('reveal', 'open');
+                            })
+                        }
+                        $('#clusterInfo').html(window.loaderHTML);
+                        getWithSession(url, {}, handler);
+
+                    }else {
+                        var url = prefix + "/experiments/" + experiment_id + "/simulations/"+d.id;
+
+                        var handler = function(data) {
+                            $('#extension-dialog').html(data);
+                            $('#extension-dialog').foundation('reveal', 'open');
+                            $('#extension-dialog').on("closed", function() {
+                                $('#dendrogramModal').foundation('reveal', 'open');
+                            })
+                        }
+                        $('#extension-dialog').html(window.loaderHTML);
+                        getWithSession(url, {}, handler);
                     }
 
-                    $('#extension-dialog').html(window.loaderHTML);
-                    getWithSession(url, {}, handler);
                 }
             }
 
@@ -147,18 +156,31 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
             }
         });
 
-    function list_of_children(d, list2) {
+    function list_of_children_requrency(d, list2) {
         var c = 0;
+        if (/^cl \d+$/.test(d.id)) {
+            list2.push(d.simulations);
+        }
         for (ch in d.children)  {
-            if(!d.children[ch].children) {
-                list2.push(d.children[ch].id);
-                list2.size++;
+            if (/^cl \d+$/.test(d.children[ch].id)) {
+                list2.push(d.children[ch].simulations);
             }
             else {
-//         list2.push(d.children[ch].id);
-                list_of_children(d.children[ch], list2);
+                if (!d.children[ch].children) {
+                    list2.push(d.children[ch].id);
+                    list2.size++;
+                }
+                else {
+                    list_of_children_requrency(d.children[ch], list2);
+                }
             }
         }
+    }
+
+    function list_of_children(d) {
+        var list = [];
+        list_of_children_requrency(d, list);
+        return list;
     }
 
     function unhighlight() {

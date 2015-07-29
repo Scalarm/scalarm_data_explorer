@@ -2,7 +2,7 @@
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
       %dd.accordion-navigation
-        %a{:href => "#"+group_id, style: "text-align: left;"}
+        %a.group_title{:href => "#"+group_id, style: "text-align: left;"}
           %i.fa.fa-plus-circle{style: "color: 333"}
           = group["name"]
         %ul.content{"id" => group_id, "style" => "background: none;"  "text-align: left;  list-style-type: circle;"}
