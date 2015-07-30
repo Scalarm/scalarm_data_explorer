@@ -20,6 +20,13 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
         .attr("transform","translate("+radius + "," + radius + ")");
 
     var color = d3.scale.category20();
+    var scale_for_circle_size = d3.scale.linear()
+        .range([5, 12])
+        .domain([0, list_of_children(root).length]);
+    var scale_for_link_size = d3.scale.linear()
+        .range([2, 9])
+        .domain([12, 0]);
+
     var nodes = cluster.nodes(root);
     var links = cluster.links(nodes);
     var link = svg.selectAll(".link")
@@ -32,15 +39,12 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
                 alert("link") }
         })
         .style("stroke-width", function(d) {
-            if (d.source.depth > 9) return 2;
-            else
-                return (10-d.source.depth); })
+            //if (d.source.depth > 9) return 2;
+            //else
+            //    return (10-d.source.depth); })
+            return scale_for_link_size(d.source.depth);
+        })
         .style("stroke", function(d) { return color(d.source.depth); });
-
-
-
-
-
 
     var node = svg.selectAll(".node")
         .data(nodes)
@@ -50,11 +54,15 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
     node.append("circle")
         .attr("cursor", "pointer")
-        .style("fill", function(d){ if (!d.parent)return "#1F77B4"})
+        .style("fill", function(d){
+            if (!d.parent)return "#1F77B4";
+            else if (!d.children && !(/^cl \d+$/.test(d.id))) return "#a8d3f0"
+        })
         .style("stroke", function(d){ if (!d.parent)return "#222"})
         .attr("r", function(d) {
-            if (d.depth > 6) return 6;
-            return (12-d.depth)
+            return scale_for_circle_size(list_of_children(d).length)
+            //if (d.depth > 6) return 6;
+            //return (12-d.depth)
         })
 
         .on({
@@ -71,51 +79,16 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
             },
 
             "click":  function(d) {
-                d.coc = list_of_children.size;
-
                 if (d.children) {
-                    // TODO: trzeba zmienić prefix - przekazać baseurl
-                    var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + d.id + "&simulations=" + list_of_children(d).toString();
-
-                    var handler = function(data) {
-                        $('#clusterInfo').html(data);
-                        $('#clusterInfo').foundation('reveal', 'open');
-                        $('#clusterInfo').on("closed", function() {
-                            $('#dendrogramModal').foundation('reveal', 'open');
-                        })
-                    }
-                    $('#clusterInfo').html(window.loaderHTML);
-                    getWithSession(url, {}, handler);
-
-
+                    show_cluster_info_modal(d.id, list_of_children(d).toString());
                 }
                 else {
                     if (/^cl \d+$/.test(d.id)) {
                         var cluster_id = d.id.replace( /\D+/g, '');
-                        var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + d.simulations;
-
-                        var handler = function(data) {
-                            $('#clusterInfo').html(data);
-                            $('#clusterInfo').foundation('reveal', 'open');
-                            $('#clusterInfo').on("closed", function() {
-                                $('#dendrogramModal').foundation('reveal', 'open');
-                            })
-                        }
-                        $('#clusterInfo').html(window.loaderHTML);
-                        getWithSession(url, {}, handler);
+                        show_cluster_info_modal(cluster_id, d.simulations);
 
                     }else {
-                        var url = prefix + "/experiments/" + experiment_id + "/simulations/"+d.id;
-
-                        var handler = function(data) {
-                            $('#extension-dialog').html(data);
-                            $('#extension-dialog').foundation('reveal', 'open');
-                            $('#extension-dialog').on("closed", function() {
-                                $('#dendrogramModal').foundation('reveal', 'open');
-                            })
-                        }
-                        $('#extension-dialog').html(window.loaderHTML);
-                        getWithSession(url, {}, handler);
+                        show_simulation_details_modal(d.id);
                     }
 
                 }
@@ -124,7 +97,6 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
 
         });
-
 
     node.append("text")
         .style("font-size", "15px")
@@ -141,29 +113,33 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
             },
 
             "click":  function(d) {
-                var url = prefix + "/experiments/" + experiment_id + "/simulations/"+d.id;
+                if (/^cl \d+$/.test(d.id)) {
+                    var cluster_id = d.id.replace( /\D+/g, '');
+                    show_cluster_info_modal(cluster_id, d.simulations);
 
-                var handler = function(data) {
-                    $('#extension-dialog').html(data);
-                    $('#extension-dialog').foundation('reveal', 'open');
-                    $('#extension-dialog').on("closed", function() {
-                        $('#dendrogramModal').foundation('reveal', 'open');
-                    })
+                }else {
+                    show_simulation_details_modal(d.id);
                 }
-
-                $('#extension-dialog').html(window.loaderHTML);
-                getWithSession(url, {}, handler);
             }
         });
 
     function list_of_children_requrency(d, list2) {
         var c = 0;
         if (/^cl \d+$/.test(d.id)) {
-            list2.push(d.simulations);
+            var array = d.simulations.split(",");
+            list2 = array.reduce( function(coll,item){
+                coll.push( item );
+                return coll;
+            }, list2 );
         }
+        else
         for (ch in d.children)  {
             if (/^cl \d+$/.test(d.children[ch].id)) {
-                list2.push(d.children[ch].simulations);
+                var array = d.children[ch].simulations.split(",");
+                list2 = array.reduce( function(coll,item){
+                    coll.push( item );
+                    return coll;
+                }, list2 );
             }
             else {
                 if (!d.children[ch].children) {
@@ -198,6 +174,35 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
             return ids.indexOf(d.id) > -1;
         })
             .classed("highlighted", true);
+    }
+
+    function show_simulation_details_modal(simulation_id) {
+        var url = prefix + "/experiments/" + experiment_id + "/simulations/" + simulation_id;
+
+        var handler = function(data) {
+            $('#extension-dialog').html(data);
+            $('#extension-dialog').foundation('reveal', 'open');
+            $('#extension-dialog').on("closed", function() {
+                $('#dendrogramModal').foundation('reveal', 'open');
+            })
+        }
+        $('#extension-dialog').html(window.loaderHTML);
+        getWithSession(url, {}, handler);
+    }
+
+    function show_cluster_info_modal(cluster_id, simulations) {
+        //TO DO: baseurl jest na sztywno, trzeba to przekazać
+        var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations;
+
+        var handler = function(data) {
+            $('#clusterInfo').html(data);
+            $('#clusterInfo').foundation('reveal', 'open');
+            $('#clusterInfo').on("closed", function() {
+                $('#dendrogramModal').foundation('reveal', 'open');
+            })
+        }
+        $('#clusterInfo').html(window.loaderHTML);
+        getWithSession(url, {}, handler);
     }
 
 

@@ -7,7 +7,7 @@
 - else
   - output_parameters = result.result.keys
 - input_parameters = @experiment.get_parameter_ids
-- simulation_array = params[:simulations].split(',').map{|s| s.to_i}
+- simulation_array = params[:simulations].split(',').map{|s| s.to_i}.sort
 
 #clusterInfo.reveal-modal(data-reveal="")
 %a.close-reveal-modal &#215
@@ -50,7 +50,7 @@
       -if simulation_array.length >= 100
         .row{:id => 'less_simulations'}
           %p.less_simulations
-            -simulation_array.sort[0..98].each do |simulation|
+            -simulation_array[0..98].each do |simulation|
               %a.simulation_number{:id => "#{simulation}", :href => "#"}
                 #{simulation}
               ,
@@ -59,7 +59,7 @@
           %button.radius.tiny.show_all Show all
         .row{:id => 'more_simulations', :style => 'display: none'}
           %p.more_simulations
-            -simulation_array.sort[0..-1].each do |simulation|
+            -simulation_array[0..-1].each do |simulation|
               %a.simulation_number{:id => "#{simulation}", :href => "#"}
                 #{simulation}
               ,
@@ -67,11 +67,11 @@
               #{simulation_array.last}
           %button.radius.tiny.hide_sim Hide
       -else
-        -simulation_array.sort[0..-1].each do |simulation|
+        -simulation_array[0..-2].each do |simulation|
           %a.simulation_number{:id => "#{simulation}", :href => "#"}
             #{simulation}
           ,
-        %a.simulation_number{:id => "#{simulation_array[99].to_s}", :href => "#"}
+        %a.simulation_number{:id => "#{simulation_array.last.to_s}", :href => "#"}
           #{simulation_array.last}
 
 

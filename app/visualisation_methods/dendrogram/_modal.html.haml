@@ -20,11 +20,12 @@
       -if result.blank?
         %label.inline #{outputs.to_sentence}
       -else
-        %label.inline="Select parameters of clustering:"
-        -outputs.each do |output|
-          %span.small-12.medium-3.columns
-            %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
-            %label #{output}
+        .row
+          %label.inline="Select parameters of clustering:"
+          -outputs.each do |output|
+            %span.small-12.medium-3.columns
+              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
+              %label #{output}
 
         .row
           %ul.inline-list
