@@ -12,7 +12,7 @@
 
 =define_helper_functions
 
-#dendrogramModal.reveal-modal(data-reveal="true")
+#dendrogramModal.reveal-modal(data-reveal="true" style="max-width: 90rem;")
   %section#dendrogram_charts_form.panel.radius.analysis-chart
     %a.close-reveal-modal &#215
     %h3.subheader="Dendrogram for hierarchical clustering"
@@ -94,9 +94,5 @@
       }
       else $("input:checkbox").prop('checked', true);
     });
-
-
-
-
 
   });
