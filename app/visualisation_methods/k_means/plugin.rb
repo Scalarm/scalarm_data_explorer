@@ -48,8 +48,12 @@ class KMeans
 
     result_hash = {}
     result_data.map{|row| result_hash[row[0]]=row[1]}
+    result_array = []
+
+    result_data.map{|row| result_array.concat(row[1])}
+
     # for 2 and more moes join arrays of result into one and pass as data
-    R.assign("data" , result_data.map{|row| row[1]})
+    R.assign("data" , result_array)
     R.eval <<EOF
     hdata <- kmeans(data,#{parameters[:clusters]})
     clusters <- hdata$cluster
@@ -57,6 +61,7 @@ class KMeans
 EOF
     merge = R.pull "clusters"
     hash = {}
+
     for counter in 0..(merge.count()-1)
       hash[simulation_ind[counter]] = merge[counter]
     end
@@ -110,9 +115,13 @@ EOF
 
   def create_subclusters(simulation_ind, subcluster,cluster)
     hash ={}
-    cluster.keys.each  do |subclust_indx|
 
-      R.assign("data" , subcluster[subclust_indx])
+    cluster.keys.each  do |subclust_indx|
+      result_array = []
+      subcluster[subclust_indx].map{|row| result_array.concat(row)}
+
+      R.assign("data" ,result_array)
+      #R.assign("data" , subcluster[subclust_indx])
       R.eval <<EOF
         hdata <- kmeans(data,#{parameters[:subclusters]})
         subclusters <- hdata$cluster
@@ -161,8 +170,10 @@ EOF
       line = []
       line.push(simulation_run.index) if with_index
       simulation_ind << simulation_run.index
+      moes_list =[]
       moes.map { |moe_name|
-        line.push(simulation_run.result[moe_name] || '') } if with_moes
+        moes_list.push(simulation_run.result[moe_name] || '') } if with_moes
+      line << moes_list
       data_array<<line
 
     end
