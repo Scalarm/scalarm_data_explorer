@@ -4,31 +4,34 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
     dialog.on("closed", function() {
         $('#clusteringModal').foundation('reveal', 'open');
     })
-
+*/
     function openViewer() {
         return function(){
-            var clusterID = this.id;
-            var viewer = $("#viewer_"+clusterID);
-            var spec = $("#spec_"+clusterID);
+            var clucter_id = this.id;
+            var simulations = this.indexes.join();
+            console.log(simulations);
+            show_cluster_info_modal(clucter_id, simulations);
 
-            $("a.sim_link").on('click', function() {
-                spec.hide();
-                viewer.html(window.loaderHTML);
-                viewer.show();
-                viewer.load('/experiments/' + experimentID + '/simulations/' + $(this).data("sim-id"));
-            });
-            $("a.spec_link").on('click', function() {
-                viewer.hide();
-                spec.show();
-            });
 
-            dialog.show();
-            $('#clusters_details row.cluster_row').hide();
-            $('#' + clusterID).show();
-            dialog.foundation('reveal', 'open');
+
         }
     }
 
+    function show_cluster_info_modal(cluster_id, simulations) {
+        //TO DO: baseurl jest na sztywno, trzeba to przekazać
+        var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations;
+
+        var handler = function(data) {
+            $('#clusterInfo').html(data);
+            $('#clusterInfo').foundation('reveal', 'open');
+            $('#clusterInfo').on("closed", function() {
+                $('#dendrogramModal').foundation('reveal', 'open');
+            })
+        }
+        $('#clusterInfo').html(window.loaderHTML);
+        getWithSession(url, {}, handler);
+    }
+/*
     var clusters = [];
     var subclusters = [];
     var subcluster_size;
@@ -81,7 +84,7 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
                brightness = 0.2 - (1.0*k / cluster_size) / 5;
                subclust.push({
                    y: subcluster_size,
-                   id: 'cluster_' + subclusters[j].key+'s1',
+                   id: 'cluster_' + j+'s'+k,
                    visible: true,
                    indexes: subclusters[j][k],
                /*    means: data[j]["subclusters"][k]["means"],
@@ -116,12 +119,12 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
                 }//,
                 //color: 'white',
                 //distance: -30
-            }
-            /*point: {
+            },
+            point: {
                 events: {
                     click: openViewer(this)
                 }
-            }*/
+            }
         }, {
             data: subclust,
             size: '100%',
@@ -132,12 +135,12 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
                 }//,
                 //color: 'white',
                 //distance: -30
-            }
-           /* point: {
+            },
+            point: {
                 events: {
                     click: openViewer(this)
                 }
-            }*/
+            }
         }],
         tooltip: {
             formatter: function() {
