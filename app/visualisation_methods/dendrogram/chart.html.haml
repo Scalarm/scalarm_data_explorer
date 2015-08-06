@@ -1,7 +1,7 @@
 =define_helper_functions
 
 %section#dendrogram_chart_form.panel.radius.plot
-  %h3.subheader Dendrogram for hierarchical clautering by #{params[:array].to_sentence}
+  %h3.subheader Dendrogram for hierarchical clautering by #{Array(params[:array]).to_sentence}
   .row
   %span.button.hide= 'Hide chart'
 

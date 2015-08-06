@@ -69,7 +69,7 @@
       var chart_div = $("<div id=\"kmeans_chart_"+chart_counter+"\">")[0];
       $("#kmeansModal .charts").prepend(chart_div);
       var selectedFiles =
-        $('input:checked').
+        $('#dendrogramModal').find('input:checked')
         map(function () {
             return $(this).parents('tr').eq(0).find('.name').text().trim();
         });

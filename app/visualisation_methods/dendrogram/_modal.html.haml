@@ -12,35 +12,36 @@
 
 =define_helper_functions
 
-#dendrogramModal.reveal-modal(data-reveal="true")
+#dendrogramModal.reveal-modal(data-reveal="true" style="max-width: 90rem;")
   %section#dendrogram_charts_form.panel.radius.analysis-chart
     %a.close-reveal-modal &#215
     %h3.subheader="Dendrogram for hierarchical clustering"
-    %h3 #{}
     .row
-      %label.inline="Select parameters of clustering:"
-      %table( width="100%")
-        -outputs.each do |output|
-          %tr
-            %td.name
-              %input{:type => "checkbox"}#{output}
+      -if result.blank?
+        %label.inline #{outputs}
+      -else
+        .row
+          %label.inline="Select parameters of clustering:"
+          -outputs.each do |output|
+            %span.small-12.medium-3.columns
+              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
+              %label #{output}
 
-        %tr
-          %td.name
-            %input#checkAll{:type => "checkbox"}Check all
-
-
-
-    .row
-      %ul.inline-list
-        %li
-          %button.radius Load chart
-        %li
-          %a
-            %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_dendrogram' size='16x16' style='display: none' )
+        .row
+          %ul.inline-list
+            %li
+              %button.radius.check_all#check Check / Uncheck all
+          %ul.inline-list
+            %li
+              %button.radius.load Load chart
+            %li
+              %a
+                %img(src="#{@prefix}/assets/images/material_design/loading.gif" id='busy_dendrogram' size='16x16' style='display: none' )
 
   .charts
     .scripts
+
+#clusterInfo.reveal-modal(data-reveal="")
 
 :javascript
   $(function(){
@@ -51,24 +52,12 @@
       var chart_div = $("<div id=\"dendrogram_chart_"+chart_counter+"\">")[0];
       $("#dendrogramModal .charts").prepend(chart_div);
       var selectedFiles =
-        $('input:checked').
-        map(function () {
-            if ($(this).parents('tr').eq(0).find('.name').text() != 'Check all')
-              return $(this).parents('tr').eq(0).find('.name').text();
+        $('#dendrogramModal').find('input:checked').map(function () {
+            return $(this).attr('id')
         });
-       
-
-      var selected = selectedFiles.toArray();
-      moes = "";
-      moes += "&number_of_moes="+selected.length;
-      for (i = 1; i <= selected.length; i++) {
-        moes+="&param"+ i + "=" + selected[i-1];
-      }
-
+      var array = selectedFiles.toArray();
       var query_params = "experiment_id=#{@experiment.id}";
-      query_params += moes;
       query_params += "&chart_id="+chart_counter;
-
       var url = "#{@prefix}/chart_instances/dendrogram?"+query_params;
       var handler = function(data) {
         $("#busy_dendrogram").hide();
@@ -76,28 +65,30 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {}, handler,onErrorHandler);
+      getWithSession(url, {array}, handler, onErrorHandler);
       chart_counter++;
     };
-
-    $("#dendrogramModal").find("button").bind("click", function() {
-      $("#busy_dendrogram").show();
-      if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/dendrogram?base_url=" + encodeURIComponent("#{@prefix}");
-        var handler = function(data) {
-          scripts_loaded = true;
-          $("#dendrogramModal").find(".scripts").html(data);
+    $("#dendrogramModal").find("button.radius.load").bind("click", function() {
+      if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
+      else {
+        $("#busy_dendrogram").show();
+        if(!scripts_loaded) {
+          var url = "#{@prefix}/script_tags/dendrogram?base_url=" + encodeURIComponent("#{@prefix}");
+          var handler = function(data) {
+            scripts_loaded = true;
+            $("#dendrogramModal").find(".scripts").html(data);
+            load_chart();
+          };
+          getWithSession(url, {}, handler);
+        }
+        else
           load_chart();
-        };
-        getWithSession(url, {}, handler);
       }
-      else
-        load_chart();
     });
-
-    $("#checkAll").change(function () {
-      $("input:checkbox").prop('checked', $(this).prop("checked"));
+    $("button.radius.check_all#check").on('click', function () {
+      if ($("input:checkbox").length ==  $("input:checked").length) {
+        $("input:checkbox").prop('checked', false);
+      }
+      else $("input:checkbox").prop('checked', true);
     });
-
-
   });

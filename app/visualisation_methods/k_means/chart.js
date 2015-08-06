@@ -1,4 +1,4 @@
-window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLevel, experimentID, prefix) {
+window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLevel, experiment_id, prefix) {
     /*$('body').append(viewer);
     var dialog = $('#clusters_details');
     dialog.on("closed", function() {
@@ -7,9 +7,9 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
 */
     function openViewer() {
         return function(){
-            var clucter_id = this.id;
+            var clucter_id = this.id.split("s")[0];
             var simulations = this.indexes.join();
-            console.log(simulations);
+
             show_cluster_info_modal(clucter_id, simulations);
 
 
@@ -20,7 +20,7 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
     function show_cluster_info_modal(cluster_id, simulations) {
         //TO DO: baseurl jest na sztywno, trzeba to przekazać
         var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations;
-
+        console.log(url);
         var handler = function(data) {
             $('#clusterInfo').html(data);
             $('#clusterInfo').foundation('reveal', 'open');

@@ -9,14 +9,15 @@ class ClusterInfosController < ApplicationController
     end
     clusterInfos = ClusterInfos.new(@experiment,simulations)
     #Rails.logger.debug(Benchmark.measure{content = clusterInfos.evaluate})
-    content = clusterInfos.evaluate
+    @content = clusterInfos.evaluate
+    #render :index => @content, layout: false
+
     respond_to do |format|
       #change it for display
-      format.html {render :html => content}
-      format.json { render json: {status: 'ok', data: content } }
+      format.html {render :index => @content, layout: false}
+      format.json { render json: {status: 'ok', data: @content } }
 
     end
 
   end
-
 end
