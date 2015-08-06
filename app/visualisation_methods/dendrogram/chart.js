@@ -1,6 +1,4 @@
 dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
-
-
     var root = JSON.parse(data);
 
     var si = 30;
@@ -29,22 +27,13 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
     var nodes = cluster.nodes(root);
     var links = cluster.links(nodes);
-    var path_to_root = [ 924, 961];
     var link = svg.selectAll(".link")
         .data(links)
         .enter().append("path")
         .attr("class","link")
         .attr("d", diagonal)
         .style("stroke", function(d) { return color(d.source.depth); })
-        .style("stroke-width", function(d) { return scale_for_link_size(d.source.depth); })
-        .on({
-            "click":  function(d) {
-                alert("link: " + d.source.id + ", " + d.target.id);
-
-            }
-
-
-        });
+        .style("stroke-width", function(d) { return scale_for_link_size(d.source.depth); });
 
     var node = svg.selectAll(".node")
         .data(nodes)
@@ -68,11 +57,11 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
                 //d3.select( this ).attr("class", "highlighted");
                 $(this).next().attr("class", "highlighted");
                 highlight_path_to_root(d);
-
+                hightlight_leafs(d)
             },
 
             "mouseout": function(d) {
-                unhighlight_path_to_root(d);
+                unhighlight(d);
                 $(this).next().attr("class", "text");
             },
 
@@ -98,19 +87,14 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
         .text(function(d) { if(!d.children) return d.id; }) // wyĹwi
         .on({
             "mouseover": function(d) {
-                //var n = svg.selectAll("circle").filter(function (a) { return a.id === d.id; })
-                  //  .style("fill", "red");
-                //var m = svg.selectAll(".node").filter(function (a) { return a.id === d.id; });
                 $(this).prev().attr("class", "highlighted");
                 d3.select( this ).attr("class", "highlighted");
-                highlight_path_to_root($(this).prev());
-
             },
 
-            "mouseout": function() {
+            "mouseout": function(d) {
                 d3.select( this ).attr("class", "text");
-                set_node_color($(this).prev());
-
+                svg.selectAll("circle").filter(function (a) { return a.id === d.id; })
+                  .attr("class", function(b) { return set_node_default_color(b); });
             },
 
             "click":  function(d) {
@@ -126,32 +110,51 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
     function highlight_path_to_root(checked_node) {
         var tmp = checked_node;
+        svg.selectAll("circle").attr("class", "unlight");
+        link.style("stroke", "grey");
+
+        svg.selectAll("circle").filter(function (d) { return d === tmp && !d.children; })
+            .attr("class", "highlighted");
+
         while (tmp.parent) {
             link.filter(function (d) { return d.target === tmp; })
-                .style("stroke", "orange");
+                .style("stroke", "orange")
+                .style("stroke-width", function(d) { return 1.5*scale_for_link_size(d.source.depth); });
 
-            svg.selectAll("circle").filter(function (d) { return d.id === tmp.id; })
+            svg.selectAll("circle").filter(function (d) { return d.id === tmp.id && d.children && d.id !== checked_node.id; })
                 .attr("class", "highlighted");
             tmp = tmp.parent;
         }
-
-
+        svg.selectAll("circle").filter(function (d) { return d === tmp; })
+            .attr("class", "highlighted");
 
 
     };
 
-    function unhighlight_path_to_root(checked_node) {
-        var tmp = checked_node;
-        while (tmp.parent) {
-            link.filter(function (d) { return d.target === tmp; })
-                .style("stroke", function(d) { return color(d.source.depth); });
-            svg.selectAll("circle").filter(function (d) { return d.id === tmp.id; })
-                .attr("class", function(d){
-                    return set_node_default_color(d);
-                });
-            tmp = tmp.parent;
+    function unhighlight() {
+        link.style("stroke", function(d) { return color(d.source.depth); });
+        link.style("stroke-width", function(d) { return scale_for_link_size(d.source.depth); });
+        svg.selectAll("circle")
+            .attr("class", function(d) { return set_node_default_color(d); })
+            .attr("r", function(d) { return scale_for_circle_size(list_of_children(d).length); });
+        svg.selectAll("text")
+            .attr("class", "text");
+    };
+
+    function hightlight_leafs(checked_node) {
+        for (ch in checked_node.children) {
+            if (!checked_node.children[ch].children) {
+                svg.selectAll("circle").filter(function (a) { return a.id === checked_node.children[ch].id && !a.children; })
+                    .attr("class", "highlighted")
+                    .attr("r", function(d) { return 1 + scale_for_circle_size(list_of_children(d).length); })
+
+                svg.selectAll("text").filter(function (a) {return a.id === checked_node.children[ch].id; })
+                    .attr("class", "highlighted");
+            }
+            else
+              hightlight_leafs(checked_node.children[ch]);
         }
-    };
+    }
 
     function list_of_children_requrency(d, list2) {
         var c = 0;
@@ -218,19 +221,6 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
         getWithSession(url, {}, handler);
     }
 
-    function set_node_color(d) {
-        if (!d.parent) {
-            d.attr("class", "root");
-        }
-        else if (!d.children && !(/^cl \d+$/.test(d.id))) {
-            d.attr("class", "cluster");
-        }
-        else if (!d.children) {
-            d.attr("class", "simulation");
-        }
-        else d.attr("class", "cluster");
-    }
-
     function set_node_default_color(d) {
         if (!d.parent) {
            return "root";
@@ -244,10 +234,6 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
         else return "cluster";
     }
 
-
-
-
-
     //window.onresize = function() {
 
     //};
@@ -259,9 +245,6 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
     //function resize() {
     //    alert("RS");
     //}
-
-
-
 
     renderTo
         :
