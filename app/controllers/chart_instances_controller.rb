@@ -2,7 +2,7 @@ require 'erb'
 class ChartInstancesController < ApplicationController
   before_filter :load_experiment, only: :show
   include ERB::Util
-#  rescue_from Exception, with: :handle_exception
+
   def show
 
 
@@ -36,7 +36,7 @@ class ChartInstancesController < ApplicationController
 
     #params html safety (< 4.2 version)
     params.each do |parameter|
-       params.update(params){ |k, v| ERB::Util.h(v)}
+       params.update(params){ |k, v| v.kind_of?(Array)?v.map!{|array_value| ERB::Util.h(array_value)} :ERB::Util.h(v)}
     end
     handler.parameters = params
     chart_header =""
@@ -52,12 +52,4 @@ class ChartInstancesController < ApplicationController
     render :html => (chart_header + @content.to_s.html_safe), layout: false
   end
 
-=begin
-  def handle_exception(exception)
-    render json: {
-               status: 'error',
-               msg: "#{exception.class.to_s}: #{exception.to_s} in line #{exception.backtrace[0].split(':')[-2]}"
-           }, status: 500
-  end
-=end
 end

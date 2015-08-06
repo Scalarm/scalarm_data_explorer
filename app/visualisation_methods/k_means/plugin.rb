@@ -51,7 +51,7 @@ class KMeans
     result_array = []
 
     result_data.map{|row| result_array.concat(row[1])}
-
+    Rails.logger.debug(result_data)
     # for 2 and more moes join arrays of result into one and pass as data
     R.assign("data" , result_array)
     R.eval <<EOF
@@ -61,15 +61,17 @@ class KMeans
 EOF
     merge = R.pull "clusters"
     hash = {}
-
+    Rails.logger.debug(merge)
     for counter in 0..(merge.count()-1)
       hash[simulation_ind[counter]] = merge[counter]
     end
   #  hash
-
+    Rails.logger.debug(hash)
 
     clusters = grouping_hash(hash, parameters[:clusters])
+    Rails.logger.debug(clusters)
 
+    # sublcusters
     subclusters={}
     for counter in 1..(parameters[:clusters].to_i)
       #subcluster_moes=[]
@@ -83,14 +85,15 @@ EOF
     result_subcluster.each do |k,v|
       finite_data[k] = grouping_hash(v, parameters[:subclusters])
     end
+    Rails.logger.debug(finite_data)
     return clusters, finite_data
 
   end
 
   def create_header
     header=[]
-    moes= moe_names#[parameters["array"]]
-
+   # moes= moe_names#[parameters["array"]]
+    moes = Array(parameters["array"])
   #  header+=['simulation_index']
     header+=moes
     header
@@ -135,7 +138,8 @@ EOF
       end
       hash[subclust_indx] = hash_sub
     end
-  hash
+    Rails.logger.debug(hash)
+    hash
 
   end
 
@@ -154,10 +158,10 @@ EOF
 
 
   def create_data_result(with_index=true, with_params=false, with_moes=true)
-    moes = moe_names
+    moes = Array(parameters["array"])
     data_array=[]
     simulation_ind = []
-
+    Rails.logger.debug(moes)
 
     query_fields = {_id: 0}
     query_fields[:index] = 1 if with_index

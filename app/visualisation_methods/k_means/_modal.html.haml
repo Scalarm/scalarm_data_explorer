@@ -40,7 +40,7 @@
           -outputs.each do |output|
             %tr
               %td.name.small-12.medium-3.columns
-                %input{:type => "checkbox", :style => "margin-right:5px;"}
+                %input{:type => "checkbox", :style => "margin-right:5px;", :id => output }
                 %label #{output}
 
     .row
@@ -69,9 +69,8 @@
       var chart_div = $("<div id=\"kmeans_chart_"+chart_counter+"\">")[0];
       $("#kmeansModal .charts").prepend(chart_div);
       var selectedFiles =
-        $('#dendrogramModal').find('input:checked')
-        map(function () {
-            return $(this).parents('tr').eq(0).find('.name').text().trim();
+        $('#kmeansModal input:checked').  map(function () {
+            return $(this).attr('id')
         });
 
       var array = selectedFiles.toArray();
@@ -89,6 +88,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
+      console.debug(array);
       getWithSession(url, {array}, handler, onErrorHandler);
       chart_counter++;
     };
@@ -112,10 +112,10 @@
       }
     });
     $("button.radius.check_all#check").on('click', function () {
-      if ($("input:checkbox").length ==  $("input:checked").length) {
-        $("input:checkbox").prop('checked', false);
+      if ($("#kmeansModal input:checkbox").length ==  $("#kmeansModal input:checked").length) {
+        $("#kmeansModal input:checkbox").prop('checked', false);
       }
-      else $("input:checkbox").prop('checked', true);
+      else $("#kmeansModal input:checkbox").prop('checked', true);
     });
 
 
