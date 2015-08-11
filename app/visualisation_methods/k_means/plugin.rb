@@ -51,8 +51,7 @@ class KMeans
     result_array = []
 
     result_data.map{|row| result_array.concat(row[1])}
-    Rails.logger.debug(result_data)
-    Rails.logger.debug(result_array)
+
     # for 2 and more moes join arrays of result into one and pass as data
     R.assign("data" , result_array)
     R.eval <<EOF
@@ -62,15 +61,15 @@ class KMeans
 EOF
     merge = R.pull "clusters"
     hash = {}
-    Rails.logger.debug(merge)
+
+    # adding simulation index to result_data
+    # hash structure: simulation_id => cluster_id
     for counter in 0..(merge.count()-1)
       hash[simulation_ind[counter]] = merge[counter]
     end
   #  hash
-    Rails.logger.debug(hash)
-
     clusters = grouping_hash(hash, parameters[:clusters])
-    Rails.logger.debug(clusters)
+
 
     # sublcusters
     subclusters={}
@@ -79,7 +78,7 @@ EOF
       subcluster_moes = result_hash.select{|k,v| clusters[counter].include?(k)}.values
       subclusters[counter] = subcluster_moes
     end
-    Rails.logger.debug(subclusters)
+
     result_subcluster =create_subclusters(simulation_ind, subclusters,clusters)
 
     finite_data = {}
@@ -91,6 +90,7 @@ EOF
 
   end
 
+  # for now is only table with moes names
   def create_header
     header=[]
    # moes= moe_names#[parameters["array"]]
@@ -119,13 +119,12 @@ EOF
 
   def create_subclusters(simulation_ind, subcluster,cluster)
     hash ={}
-
+    subcluster_size = 0
     cluster.keys.each  do |subclust_indx|
       result_array = []
       subcluster[subclust_indx].map{|row| result_array.concat(row)}
 
       R.assign("data" ,result_array)
-      #R.assign("data" , subcluster[subclust_indx])
       R.eval <<EOF
         hdata <- kmeans(data,#{parameters[:subclusters]})
         subclusters <- hdata$cluster
@@ -133,13 +132,18 @@ EOF
       to_merge = R.pull "subclusters"
 
       hash_sub ={}
-      #hash[subclust_indx] = to_merge
-      for counter in 0..(to_merge.count()-1)
-        hash_sub[simulation_ind[counter]] = to_merge[counter]
+
+      # iterating from last number node in previus subclaster
+      # to_merge is from zero but simulation_ind continues from the last
+      for counter in subcluster_size..(subcluster_size+to_merge.count()-1)
+
+        hash_sub[simulation_ind[counter]] = to_merge[counter-subcluster_size]
       end
+      # adding how many simulations pass already
+      subcluster_size+=to_merge.count()
       hash[subclust_indx] = hash_sub
     end
-    Rails.logger.debug(hash)
+
     hash
 
   end
@@ -162,7 +166,6 @@ EOF
     moes = Array(parameters["array"])
     data_array=[]
     simulation_ind = []
-    Rails.logger.debug(moes)
 
     query_fields = {_id: 0}
     query_fields[:index] = 1 if with_index
