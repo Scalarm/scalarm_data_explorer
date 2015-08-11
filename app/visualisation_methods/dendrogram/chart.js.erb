@@ -84,7 +84,7 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
     node.append("text")
         .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
         .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
-        .text(function(d) { if(!d.children) return d.id; }) // wyĹwi
+        .text(function(d) { if(!d.children && !/^cl \d+$/.test(d.id)) return d.id; }) // wyĹwi
         .on({
             "mouseover": function(d) {
                 $(this).prev().attr("class", "highlighted");
