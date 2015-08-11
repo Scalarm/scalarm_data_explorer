@@ -57,7 +57,7 @@
           %button.radius Load chart
         %li
           %a
-            %img(src="#{image_url("loading.gif")}" id='busy_lindev' size='16x16' style='display: none' )
+            %img(src="#{image_url("loading.gif")}" id='busy_lindev' class='loading_chart_gif' size='16x16' style='display: none' )
 
   .charts
     .scripts
@@ -78,7 +78,7 @@
       var x_axis = $("#lindevModal .firstParam option:selected").val();
       var y_axis = $("#lindevModal .secondParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
-      query_params += "&number_of_moes=2";
+
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
       query_params += "&chart_id="+chart_counter;
@@ -91,7 +91,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {}, handler);
+      getWithSession(url, {}, handler, onErrorHandler);
       chart_counter++;
 
     };
