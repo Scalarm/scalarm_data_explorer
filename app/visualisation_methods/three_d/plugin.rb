@@ -6,7 +6,7 @@ class ThreeD
   def prepare_3d_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\nthreeD_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", \"" + parameters["param_z"] + "\", data);"
+    output += "\nthreeD_main(i, \"" + parameters["notation"] +"\",\"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", \"" + parameters["param_z"] + "\", data);"
     output += "\n})();</script>"
     output
 
@@ -110,7 +110,6 @@ class ThreeD
 
       end
     end
-
     data
   end
 

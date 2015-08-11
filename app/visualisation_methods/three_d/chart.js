@@ -1,11 +1,11 @@
-window.threeD_main = function(i, param_x, param_y, param_z, data) {
+window.threeD_main = function(i, notation,  param_x, param_y, param_z, data) {
     var min_z = data.reduce(function(a, b) { return a <= b[2] ? a : b[2];}, Infinity);
     var max_z = data.reduce(function(a, b) { return a >= b[2] ? a : b[2];}, -Infinity);
-
     function scale(z, min, max){
         return max-Math.round((z-min_z)/(max_z-min_z)*(max-min));
     }
 
+    notation = notation.split(",");
     var tab = data.map(function(obj){
         var color = 'rgb(' + scale(obj[2], 0, 20) + ', ' + scale(obj[2], 0, 130) + ', ' + scale(obj[2], 0, 255) + ')';
         return {x: obj[0], y: obj[1], z: obj[2],
@@ -60,16 +60,33 @@ window.threeD_main = function(i, param_x, param_y, param_z, data) {
             text: param_x + " - " + param_y + " - " + param_z
         },
         yAxis: {
+            labels:{
+                formatter: function(){
+                    if (notation[1] == "scientific")
+                        return this.value.toExponential(2);
+                    else
+                        return this.value;
+                }
+             },
             title: {
                 text: param_y
             }
         },
         xAxis: {
+            labels:{
+                formatter: function(){
+                    if (notation[0] == "scientific")
+                        return this.value.toExponential(2);
+                    else
+                        return this.value;
+                }
+            },
             title: {
                 text: param_x
             }
         },
         zAxis: {
+            // TODO notation to Zaxis when it is fixed
             min: min_z,
             max: max_z,
             title: {
