@@ -54,7 +54,6 @@ class ThreeD
     end
     mins = {}
     maxes = {}
-    Rails.logger.debug(simulation_runs)
     argument_ids.each do |arg_name|
       mins[arg_name] = params[arg_name].min
       maxes[arg_name] = params[arg_name].max

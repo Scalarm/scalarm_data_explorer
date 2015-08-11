@@ -13,8 +13,8 @@ class Interaction
   end
 
 
+  # create dataset for chart
   def handler
-    # dane parameters success error
     if parameters["id"] && parameters["chart_id"] && parameters["param_x"] && parameters["param_y"] && parameters["output"]
 
       data = getInteraction(parameters["param_x"], parameters["param_y"], parameters["output"])
@@ -61,53 +61,42 @@ class Interaction
       mins[arg_name] = params[arg_name].min
       maxes[arg_name] = params[arg_name].max
     end
-    Rails.logger.debug("###################")
-
-    Rails.logger.debug(simulation_runs)
-    #simulation_runs[:arguments]
+    # simulation_runs[:arguments]
     low_low = {:result => {}}
     low_high = {:result => {}}
     high_low = {:result => {}}
     high_high = {:result => {}}
     simulation_runs.map do |data|
       if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == mins[param_y]
-        low_low[:result] = data[:result]
+        # low_low[:result] = data[:result]
+        low_low[:result].empty? ? low_low[:result] = [data[:result]] : low_low[:result].push(data[:result])
       end
 
       if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == maxes[param_y]
-        low_high[:result] = data[:result]
+        low_high[:result].empty? ? low_high[:result] = [data[:result]] : low_high[:result].push(data[:result])
 
       end
       if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == mins[param_y]
-        high_low[:result] =  data[:result]
+        high_low[:result].empty? ? high_low[:result] = [data[:result]] : high_low[:result].push(data[:result])
+        # high_low[:result] =  data[:result]
 
       end
-
       if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == maxes[param_y]
-        high_high[:result] = data[:result]
+        high_high[:result].empty? ? high_high[:result] = [data[:result]] : high_high[:result].push(data[:result])
+        # high_high[:result] = data[:result]
       end
-  end
-#gdy wartosc jest rowna min i max dla danych arg
-   ## low_low =  simulation_runs[:arguments].select(param_x == mins[param_x]).select(param_y == mins[param_y])[0]
-  #  low_high = array.select(param_x == mins[param_x]).select(param_y == maxes[param_y])[0]
-   # high_low = array.select(param_x == maxes[param_x]).select(param_y == mins[param_y])[0]
-   # high_high = array.select(param_x == maxes[param_x]).select(param_y == maxes[param_y])[0]
-    #Rails.logger.debug("###################################")
-    #Rails.logger.debug(low_low)
-    #Rails.logger.debug(low_high)
-    #Rails.logger.debug(high_low)
-   # Rails.logger.debug(high_high)
+    end
 
-    if (!low_low && low_high && high_low && high_high)
-      raise ('Not enough data in database!')
+    if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
+      error ('Not enough data in database!')
 
     else
       result = []
-
-      result.push(low_low.empty? ? 0 : low_low[:result][outputParam],
-                  low_high.empty? ? 0 : low_high[:result][outputParam],
-                  high_low.empty? ? 0 : high_low[:result][outputParam],
-                  high_high.empty? ? 0 : high_high[:result][outputParam])
+      # first result from resultset as in prototype version
+      result.push(low_low[:result].blank? ? 0 : low_low[:result][0][outputParam],
+                  low_high[:result].blank? ? 0 : low_high[:result][0][outputParam],
+                  high_low[:result].blank? ? 0 : high_low[:result][0][outputParam],
+                  high_high[:result].blank? ? 0 : high_high[:result][0][outputParam])
 
       data[param_x] = {domain: [mins[param_x], maxes[param_x]]}
       data[param_y] = {domain: [mins[param_y], maxes[param_y]]}

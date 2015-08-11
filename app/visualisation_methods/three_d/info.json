@@ -1,7 +1,7 @@
 {
-  "name": "3D plot",
+  "name": "3D chart",
   "id": "threeDModal",
   "group": "basic",
-  "image": "/assets/images/material_design/3dchart_icon.png",
+  "image": "3dchart_icon.png",
   "description": "<br/>3D charts - scatter plot"
 }

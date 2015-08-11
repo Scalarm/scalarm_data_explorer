@@ -1,5 +1,5 @@
 require 'rinruby'
-#require 'benchmark' only for time test
+require 'benchmark'
 class ClusterInfos
 
   attr_accessor :simulations_index
@@ -8,18 +8,17 @@ class ClusterInfos
   ##
   # init class and R package
   def initialize(experiment, simulations_index)
-    R.eval ("require ('e1071', quietly=TRUE)")
 
     #getting data
     @experiment = experiment
-    @simulations_index = simulations_index #[214,51,219,123,98]
+    @simulations_index = simulations_index
 
   end
 
   ##
   # function to get all data about simulations
   def evaluate
-    header, result_data = create_data_result
+    header, result_data = create_result_csv
     datas =  statistics(header,result_data)
     datas
   end
