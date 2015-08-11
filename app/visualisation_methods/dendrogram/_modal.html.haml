@@ -56,17 +56,15 @@
             return $(this).attr('id')
         });
       var array = selectedFiles.toArray();
-      var query_params = "experiment_id=#{@experiment.id}";
-      query_params += "&chart_id="+chart_counter;
 
-      var url = "#{@prefix}/chart_instances/dendrogram?"+query_params;
+      var url = "#{@prefix}/chart_instances/dendrogram";
       var handler = function(data) {
         $("#busy_dendrogram").hide();
         var targetOffset = $(chart_div).offset().top;
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {array}, handler);
+      getWithSession(url, {array: array, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler);
       chart_counter++;
     };
 
