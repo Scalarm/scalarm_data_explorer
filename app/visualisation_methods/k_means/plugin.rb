@@ -28,7 +28,7 @@ class KMeans
     output += "\nvar subclusters = " + subclusters.to_json + ";" if subclusters != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\nkmeans_main(i, \"" + moe_names.to_sentence + "\", data, subclusters, "+ parameters[:clusters].to_s + ", " + parameters[:subclusters].to_s + ", experiment_id, prefix);"
+    output += "\nkmeans_main(i, \"" + Array(parameters[:array]).to_sentence + "\", data, subclusters, "+ parameters[:clusters].to_s + ", " + parameters[:subclusters].to_s + ", experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
@@ -52,6 +52,7 @@ class KMeans
 
     result_data.map{|row| result_array.concat(row[1])}
     Rails.logger.debug(result_data)
+    Rails.logger.debug(result_array)
     # for 2 and more moes join arrays of result into one and pass as data
     R.assign("data" , result_array)
     R.eval <<EOF
@@ -78,7 +79,7 @@ EOF
       subcluster_moes = result_hash.select{|k,v| clusters[counter].include?(k)}.values
       subclusters[counter] = subcluster_moes
     end
-
+    Rails.logger.debug(subclusters)
     result_subcluster =create_subclusters(simulation_ind, subclusters,clusters)
 
     finite_data = {}

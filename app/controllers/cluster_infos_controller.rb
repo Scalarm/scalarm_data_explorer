@@ -7,9 +7,9 @@ class ClusterInfosController < ApplicationController
     if simulations.include? 0
       raise "Error: simulation not exists"
     end
-    clusterInfos = ClusterInfos.new(@experiment,simulations)
+    cluster_infos = ClusterInfos.new(@experiment,simulations)
     #Rails.logger.debug(Benchmark.measure{content = clusterInfos.evaluate})
-    @content = clusterInfos.evaluate
+    @content = cluster_infos.evaluate
     #render :index => @content, layout: false
 
     respond_to do |format|

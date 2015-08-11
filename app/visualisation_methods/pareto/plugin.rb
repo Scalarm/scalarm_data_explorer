@@ -27,7 +27,7 @@ class Pareto
 
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
-      raise("No such experiment or no runs done")
+      raise("No such experiment or no simulation runs done")
     else
 
 

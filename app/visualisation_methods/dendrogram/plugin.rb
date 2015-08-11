@@ -32,7 +32,7 @@ class Dendrogram
     output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\ndendrogram_main(i, \"" + parameters["array"] + "\", data, experiment_id, prefix);"
+    output += "\ndendrogram_main(i, \"" + Array(parameters["array"]).to_sentence + "\", data, experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
