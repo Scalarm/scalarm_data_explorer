@@ -48,7 +48,6 @@
     $('#paretoModal').foundation('reveal', 'close');
 
     var pareto_chart_counter = 0;
-    var scripts_loaded = false;
     var load_chart = function() {
       var pareto_chart_div = $("<div id=\"pareto_chart_"+pareto_chart_counter+"\">")[0];
       $("#paretoModal .charts").prepend(pareto_chart_div);
@@ -96,19 +95,7 @@
 
     $("#paretoModal").find("button.radius").bind("click", function() {
       $('#busy_pareto').show();
-      if(!scripts_loaded){
-        var url = "#{@prefix}/script_tags/pareto?base_url=" + encodeURIComponent("#{@prefix}");
-        var handler = function(data) {
-
-          scripts_loaded = true;
-          $("#paretoModal").find(".scripts").html(data);
-          load_chart();
-        };
-       getWithSession(url, {}, handler);
-
-      }
-      else
-        load_chart();
+      load_chart();
       });
   });
 

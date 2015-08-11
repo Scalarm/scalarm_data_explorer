@@ -70,7 +70,6 @@
   $(function(){
 
     $('#lindevModal').foundation('reveal', 'close');
-    var scripts_loaded = false;
     var chart_counter = 0;
 
     var load_chart = function() {
@@ -125,17 +124,6 @@
 
     $("#lindevModal").find("button.radius").bind("click", function() {
       $("#busy_lindev").show();
-      if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/lindev?base_url=" + encodeURIComponent("#{@prefix}");
-        var handler = function(data) {
-
-          scripts_loaded = true;
-          $("#lindevModal").find(".scripts").html(data);
-          load_chart();
-        };
-        getWithSession(url, {}, handler);
-      }
-      else
-        load_chart();
+      load_chart();
     });
   });

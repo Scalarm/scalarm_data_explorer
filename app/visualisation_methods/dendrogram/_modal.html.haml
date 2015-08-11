@@ -12,7 +12,7 @@
 
 =define_helper_functions
 
-#dendrogramModal.reveal-modal(data-reveal="true" style="max-width: 90rem;")
+#dendrogramModal.reveal-modal(data-reveal="true")
   %section#dendrogram_charts_form.panel.radius.analysis-chart
     %a.close-reveal-modal &#215
     %h3.subheader="Dendrogram for hierarchical clustering"
@@ -51,7 +51,6 @@
 :javascript
   $(function(){
     $('#dendrogramModal').foundation('reveal', 'close');
-    var scripts_loaded = false;
     var chart_counter = 0;
     var load_chart = function() {
       var chart_div = $("<div id=\"dendrogram_chart_"+chart_counter+"\">")[0];
@@ -90,16 +89,6 @@
       if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
       else {
         $("#busy_dendrogram").show();
-        if(!scripts_loaded) {
-          var url = "#{@prefix}/script_tags/dendrogram?base_url=" + encodeURIComponent("#{@prefix}");
-          var handler = function(data) {
-            scripts_loaded = true;
-            $("#dendrogramModal").find(".scripts").html(data);
-            load_chart();
-          };
-          getWithSession(url, {}, handler);
-        }
-        else
           load_chart();
       }
     });
