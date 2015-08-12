@@ -122,6 +122,7 @@ test:
   <<: *DEFAULT
 ```
 The example file is placed in config/secrets.yml.example and will be copied to config/secrets.yml if there is no configuration.
+
 In the "config/puma.rb" configuration of the PUMA web server is stored:
 
 ```
@@ -138,20 +139,22 @@ threads 1,4     # 1-4 threads
 ```
 The example file is placed in config/puma.rb.example and will be copied to config/puma.rb if there is no configuration.
 
-To start/stop the service you can use the provided Rakefile:
+
+Please remember to set RAILS_ENV=production when running in the production mode.
 
 ```
 export RAILS_ENV=production
 ```
 
+To start/stop the service you can use the provided Rakefile:
 
 ```
 rake service:start
 rake service:stop
 ```
-Please remember to set RAILS_ENV=production when running in the production mode.
 
 Before the first start (in the production mode) of the service you need to compile assets:
+
 ```
 rake service:non_digested
 ```
