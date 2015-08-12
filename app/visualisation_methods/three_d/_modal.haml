@@ -19,7 +19,7 @@
       .small-5.columns
         %label.inline="Select first parameter for X axis"
       .small-7.columns
-        %select.firstParam
+        %select.firstParam.moes_and_params_list
           %optgroup{:label => "Parameters"}
             -parameters_labels.each do |parameter|
               %option{value:parameter} #{parameter}
@@ -32,7 +32,7 @@
       .small-5.columns
         %label.inline="Select second parameter for Y axis"
       .small-7.columns
-        %select.secondParam
+        %select.secondParam.moes_and_params_list
           %optgroup{:label => "Parameters"}
             -parameters_labels.each do |parameter|
               %option{value:parameter} #{parameter}
@@ -45,7 +45,7 @@
       .small-5.columns
         %label.inline="Select third parameter for Z axis"
       .small-7.columns
-        %select.thirdParam
+        %select.thirdParam.moes_and_params_list
           %optgroup{:label => "Parameters"}
             -parameters_labels.each do |parameter|
               %option{value:parameter} #{parameter}
@@ -93,7 +93,6 @@
 
 
     var load_chart = function() {
-      //alert(window.moes_info.moes_names)
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
       $("#threeDModal .charts").prepend(three_d_chart_div);
       //TODO - if there's nothing to select -> do nothing

@@ -121,7 +121,7 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, typ
         chart.yAxis[0].setCategories(categories_for_y);
     }
 
-    //chart.zAxis[0] is not supported, need to this global for xAxis ... (#1)
+    //chart.zAxis[0] is not supported, need to this global for zAxis ... (#1)
     if ( type_of_z == 'string') {
         Highcharts.setOptions({
             zAxis: {
