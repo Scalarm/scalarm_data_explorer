@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
   ##
   # Base url adding escaping html
   def get_prefix
-    text =(params[:base_url].to_s) || PREFIXc
+    text =(params[:base_url].to_s) || PREFIX
     @prefix = ERB::Util.h(text)
   end
 

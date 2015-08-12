@@ -15,39 +15,65 @@
                       %span{style: "padding: 0;"}= method["name"]
                   - else
                     - image_id = method["name"].gsub(/\s+/, "")
-                    %a.tip-right.text-left{href:"#method"+method["name"], "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{image_url(method["image"])}/></div>", "data-reveal-id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
+                    %a.tip-right.text-left{href:"#method"+method["name"], "class" => 'Modal', "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{image_url(method["image"])}/></div>", "id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
                       %span= method["name"]
 
 
-- @methods.each do |method|
-  = render "/../visualisation_methods/#{method}/modal"
+
 
 :javascript
   $(function(){
     $(document).foundation();
 
-  $("#searchList [data-reveal-id=experiment-analysis-modal]").on("click", function(event){
-    var modalIdName = $(event.currentTarget).attr('data-reveal-id');
-    var className = $(event.currentTarget).attr('em-class');
+    var sessionGetJSON = function(url, params, onSuccess, onError) {
+      return $.ajax({
+        data: params,
+        url: url,
+        xhrFields: {
+          withCredentials: true
+        },
+        success: onSuccess,
+        error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
+          console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
+        }
+      });
+    };
+    $("#searchList [data-reveal-id=experiment-analysis-modal]").on("click", function(event){
+      var modalIdName = $(event.currentTarget).attr('data-reveal-id');
+      var className = $(event.currentTarget).attr('em-class');
 
-    $("#" + modalIdName + " .content").hide();
-    $("#" + modalIdName + " ." + className + "-content").show();
+      $("#" + modalIdName + " .content").hide();
+      $("#" + modalIdName + " ." + className + "-content").show();
+     });
+
+    $("#searchList .Modal").on("click", function(event){
+      var modalIdName = $(event.currentTarget).attr('id');
+      if($("#"+ modalIdName + "Modal").length==0){
+        var url = "#{@prefix}/modals/" + modalIdName + "?experiment_id=#{@experiment.id}&base_url=" + encodeURIComponent("#{@prefix}");
+        var handler = function(data) {
+          $('body').append(data);
+          $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
+        };
+        sessionGetJSON(url, {}, handler);
+      }
+
+      $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
     });
 
-  $("#searchList").find("#basic").bind("click", function() {
-      if (!$("#content_basic").is(":visible"))
-        $("#content_basic").show();
-      else
-        $("#content_basic").hide();
-    });
+    $("#searchList").find("#basic").bind("click", function() {
+        if (!$("#content_basic").is(":visible"))
+          $("#content_basic").show();
+        else
+          $("#content_basic").hide();
+      });
 
-  $("#searchList").find("#params").bind("click", function() {
-      $('#params').foundation('tooltips', 'generate', '<img src="http://..../.jpg" />');
-      if (!$("#content_params").is(":visible"))
-        $("#content_params").show();
-      else
-        $("#content_params").hide();
-    });
+    $("#searchList").find("#params").bind("click", function() {
+        $('#params').foundation('tooltips', 'generate', '<img src="http://..../.jpg" />');
+        if (!$("#content_params").is(":visible"))
+          $("#content_params").show();
+        else
+          $("#content_params").hide();
+      });
 
 
 

@@ -52,12 +52,6 @@ class ThreeD
       end
       obj
     end
-    mins = {}
-    maxes = {}
-    argument_ids.each do |arg_name|
-      mins[arg_name] = params[arg_name].min
-      maxes[arg_name] = params[arg_name].max
-    end
 
     data = []
 
@@ -78,7 +72,6 @@ class ThreeD
 
       end
     end
-
 
     counter  = 0
     if argument_ids.index(param_y)
