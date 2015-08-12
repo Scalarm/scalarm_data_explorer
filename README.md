@@ -121,7 +121,7 @@ development:
 test:
   <<: *DEFAULT
 ```
-
+The example file is placed in config/secrets.yml.example and will be copied to config/secrets.yml if there is no configuration.
 In the "config/puma.rb" configuration of the PUMA web server is stored:
 
 ```
@@ -136,6 +136,7 @@ pidfile 'puma.pid'
 threads 1,4     # 1-4 threads
 # workers 2       # 2 processes
 ```
+The example file is placed in config/puma.rb.example and will be copied to config/puma.rb if there is no configuration.
 
 To start/stop the service you can use the provided Rakefile:
 
@@ -155,7 +156,7 @@ Before the first start (in the production mode) of the service you need to compi
 rake service:non_digested
 ```
 
-With the configuration as above Experiment Manager will be listening on linux socket. To make it available for other services we will use a HTTP server - nginx - which will also handle SSL.
+With the configuration as above Data Explorer will be listening on linux socket. To make it available for other services we will use a HTTP server - nginx - which will also handle SSL.
 
 To configure NGINX you basically need to add some information to NGINX configuration, e.g. in the /etc/nginx/conf.d/default.conf file.
 
@@ -198,17 +199,10 @@ server {
 }
 ```
 
-One last thing to do is to register Experiment Manager in the Scalarm Information Service. With the presented configuration (and assuming we are working on a hypothetical IP address 172.16.67.77) we just need to:
+One last thing to do is to register Data Explorer in the Scalarm Information Service. With the presented configuration (and assuming we are working on a hypothetical IP address 172.16.67.77) we just need to:
 ```
 curl -k -u scalarm:scalarm --data "address=172.16.67.77" https://localhost:11300/data_explorers
 ```
-
-
-Updating
--------------
-
-Every time you want to update this service, please shut down service with ```rake service:stop``` update git repository with ```git pull``` and get new Scalarm external packages with ```rake service:update```. Then You can start service with ```git service:start```.
-
 
 
 License
