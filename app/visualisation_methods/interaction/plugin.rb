@@ -25,7 +25,18 @@ class Interaction
     end
   end
 
-
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # Search for min and max values for each of  two input parameters
+  # Compare if data is equal to  min or max values and when is get result(moes) data for these parameters
+  # Four points are added to hash:
+  # low_low (values of outputParam(moes) for min param_x and min param_y)
+  # low_high (values of outputParam(moes) for min param_x and max param_y)
+  # high_low (values of outputParam(moes) for max param_x and min param_y)
+  # high_high (values of outputParam(moes) for max param_x and max param_y)
+  # Funtion return hash with first values in array
   def getInteraction(param_x, param_y, outputParam)
 
     simulation_runs = experiment.simulation_runs.to_a

@@ -26,6 +26,13 @@ class ThreeD
 
 
 
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # This function takes 3 paramaters (submited in modal) and gather all their values from db
+  # return hash (data): id(from 0 to simulation count-1) => array with values from 3 parameters
+  # example: data[0] = [1.9, 2, 5]
   def get3d(param_x, param_y, param_z)
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
