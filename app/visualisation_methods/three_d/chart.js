@@ -60,6 +60,11 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, typ
                 }
             }
         },
+        plotOptions: {
+            series: {
+                turboThreshold: tab.length, //enable to plot more than 1000 points (default), with 0 it check every point format, with specific value only the first point is tested and the rest are assumed to be the same format
+            },
+        },
         title: {
             text: '3d scatter plot'
         },
