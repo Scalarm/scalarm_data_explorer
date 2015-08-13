@@ -22,6 +22,14 @@ class Pareto
 
   end
 
+
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # In first step for each input parameter search it minimum and maximum value
+  # next step is to count occurances for these values and sum all output values for given output parameter(moes)
+  # Finally calculate absolute value of subtraction of average min and max value for parameter
   def get_pareto_data(moes)
 
 

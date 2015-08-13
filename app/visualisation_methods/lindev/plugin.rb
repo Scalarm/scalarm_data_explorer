@@ -31,7 +31,13 @@ class Lindev
   end
 
 
-  # preparing data for lindev chart
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # Function grouped result data as hash x => y (array)
+  # Next it add pointers with standard deviation for each value in datahash
+
   def get_line_dev_data (experiment, param_x, param_y)
 
     simulation_runs = experiment.simulation_runs.to_a
@@ -95,6 +101,8 @@ class Lindev
 
   end
 
+  ##
+  # get parameters values from db and creating hash:    param x value => param y values (array)
   def grouping_by_parameter(argument_ids, grouped_by_param_x, param_x, param_y, simulation_runs)
     simulation_runs = simulation_runs.map do |obj|
       ## search for parameter value value in result or arguments
