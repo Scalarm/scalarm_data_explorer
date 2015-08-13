@@ -4,10 +4,10 @@ class Lindev
 
 
   def handler
-    if parameters["id"] && parameters["param_x"] && parameters["param_y"]
+    if parameters["id"] && parameters["param_x"].to_s && parameters["param_y"].to_s
 
       object = {}
-      data = get_line_dev_data(experiment, parameters["param_x"], parameters["param_y"])
+      data = get_line_dev_data(experiment, parameters["param_x"].to_s, parameters["param_y"].to_s)
       if parameters["type"] == "data"
         object = content[JSON.stringify(data)]
       elsif parameters["chart_id"]
@@ -31,7 +31,7 @@ class Lindev
   end
 
 
-  # TODO: documentation - what this method does? change name
+  # preparing data for lindev chart
   def get_line_dev_data (experiment, param_x, param_y)
 
     simulation_runs = experiment.simulation_runs.to_a
@@ -40,6 +40,7 @@ class Lindev
       raise("No such experiment or no runs done")
     end
 
+    # get input parameter names
     argument_ids = simulation_runs.first.arguments.split(',')
 
     simulation_runs = simulation_runs.map do |data|

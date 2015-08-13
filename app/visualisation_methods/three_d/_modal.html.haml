@@ -10,71 +10,69 @@
 - else
   - outputs = result.result.keys
 
-#three_dModal.reveal-modal(data-reveal="true")
-  %section#threeD_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="3d scatter plot charts"
-    %h3 #{}
-    .row
-      .small-5.columns
-        %label.inline="Select first parameter"
-      .small-7.columns
-        %select(id="firstParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters_labels.each do |parameter|
-              %option{value:parameter} #{parameter}
+%section#threeD_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="3d scatter plot charts"
+  %h3 #{}
+  .row
+    .small-5.columns
+      %label.inline="Select first parameter"
+    .small-7.columns
+      %select(id="firstParam" class ="moes_params_list")
+        %optgroup{:label => "Parameters"}
+          -parameters_labels.each do |parameter|
+            %option{value:parameter} #{parameter}
 
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
+        %optgroup{:label => "MoEs"}
+          -outputs.each do |output|
+            %option{value:output} #{output}
 
-    .row
-      .small-5.columns
-        %label.inline="Select second parameter"
-      .small-7.columns
-        %select(id="secondParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters.each do |parameter|
-              %option{value:parameter} #{parameter}
+  .row
+    .small-5.columns
+      %label.inline="Select second parameter"
+    .small-7.columns
+      %select(id="secondParam" class ="moes_params_list")
+        %optgroup{:label => "Parameters"}
+          -parameters.each do |parameter|
+            %option{value:parameter} #{parameter}
 
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
+        %optgroup{:label => "MoEs"}
+          -outputs.each do |output|
+            %option{value:output} #{output}
 
-    .row
-      .small-5.columns
-        %label.inline="Select third parameter"
-      .small-7.columns
-        %select(id="thirdParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters.each do |parameter|
-              %option{value:parameter} #{parameter}
+  .row
+    .small-5.columns
+      %label.inline="Select third parameter"
+    .small-7.columns
+      %select(id="thirdParam" class ="moes_params_list")
+        %optgroup{:label => "Parameters"}
+          -parameters.each do |parameter|
+            %option{value:parameter} #{parameter}
 
 
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
+        %optgroup{:label => "MoEs"}
+          -outputs.each do |output|
+            %option{value:output} #{output}
 
-    .row
-      %ul.inline-list
-        %li
-          %button.refresh Refresh parameters
-        %li
-          %button.radius Load chart
-        %li
-          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_3d' size='16x16' style='display: none' )
-
+  .row
+    %ul.inline-list
+      %li
+        %button.refresh Refresh parameters
+      %li
+        %button.radius Load chart
+      %li
+        %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_3d' size='16x16' style='display: none' )
 
 
 
-  .charts
-    .scripts
+
+.charts
+  .scripts
 
 :javascript
 
   $(function(){
 
-    $("#three_dModal").foundation("reveal", "close");
 
     var three_d_chart_counter = 0;
     var load_chart = function() {
