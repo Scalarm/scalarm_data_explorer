@@ -19,7 +19,7 @@ class Dendrogram
       elsif parameters["chart_id"]
         object = prepare_dendrogram_chart_content(data)
       else
-        error("Request parameters missing: 'chart_id'");
+        raise("Request parameters missing: 'chart_id'");
 
       end
       object

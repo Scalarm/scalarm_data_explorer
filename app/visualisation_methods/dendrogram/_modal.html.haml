@@ -41,7 +41,7 @@
               %button.radius.load Load chart
             %li
           %a
-            %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' size='16x16' style='display: none' )
+            %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' class='loading_chart_gif' size='16x16' style='display: none' )
 
   .charts
     .scripts
@@ -60,7 +60,7 @@
         $('#dendrogramModal').find('input:checked').map(function () {
             return $(this).attr('id')
         });
-      var array = selectedFiles.toArray();
+      var selected_parameters = selectedFiles.toArray();
 
       var url = "#{@prefix}/chart_instances/dendrogram";
       var handler = function(data) {
@@ -69,7 +69,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {array: array, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler);
+      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler, onErrorHandler);
       chart_counter++;
     };
 
