@@ -1,13 +1,13 @@
 require 'rinruby'
-require 'benchmark'
-class ClusterInfos
 
+class ClusterInfos
   attr_accessor :simulations_index
   attr_accessor :experiment
 
   ##
   # init class and R package
   def initialize(experiment, simulations_index)
+    R.eval ("require ('e1071', quietly=TRUE)")
 
     #getting data
     @experiment = experiment
@@ -18,7 +18,7 @@ class ClusterInfos
   ##
   # function to get all data about simulations
   def evaluate
-    header, result_data = create_result_csv
+    header, result_data = create_data_result
     datas =  statistics(header,result_data)
     datas
   end
@@ -40,22 +40,29 @@ class ClusterInfos
     hash[:kurtosis] = evaluate_r_function(header, "kurtosis")
 
 
-    #in Ruby gem these methods are faster
-    hash[:means] = calculate_function(header, datas,"mean")#evaluate_r_function(header, "mean")
-    hash[:medians] = calculate_function(header, datas,"median") #evaluate_r_quantile(header,3)
+    # in Ruby gem these methods are faster
+    hash[:means] = calculate_function(header, datas,"mean")
+    # evaluate_r_function(header, "mean")
+    hash[:medians] = calculate_function(header, datas,"median")
+    # evaluate_r_quantile(header,3)
 
-    #differences with variance and standard_deviation results between R and Ruby method for now stay Ruby function
-    hash[:variances] = calculate_function(header, datas,"variance") #evaluate_r_function(header, "var")
-    hash[:standard_deviation] = calculate_function(header, datas,"standard_deviation")  #evaluate_r_function(header, "sd")
+    # differences with variance and standard_deviation results between R and Ruby method for now stay Ruby function
+    hash[:variances] = calculate_function(header, datas,"variance")
+    # evaluate_r_function(header, "var")
+    hash[:standard_deviation] = calculate_function(header, datas,"standard_deviation")
+    # evaluate_r_function(header, "sd")
 
-    hash[:lower_quartiles] = calculate_function(header, datas,"q1")#evaluate_r_quantile(header,2)
-    hash[:upper_quartiles] = calculate_function(header, datas,"q3")#evaluate_r_quantile(header,4)
+    hash[:lower_quartiles] = calculate_function(header, datas,"q1")
+    # evaluate_r_quantile(header,2)
+    hash[:upper_quartiles] = calculate_function(header, datas,"q3")
+    # evaluate_r_quantile(header,4)
     iqr = {}
     header.each do |name|
       iqr[name]= hash[:upper_quartiles][name].to_f- hash[:lower_quartiles][name].to_f
 
     end
-    hash[:inter_quartile_ranges] = iqr#evaluate_r_function(header, "IQR")
+    hash[:inter_quartile_ranges] = iqr
+    # evaluate_r_function(header, "IQR")
     hash[:arguments_ranges] = arguments_ranges(header, datas)
 
     hash
@@ -65,17 +72,18 @@ class ClusterInfos
   ##
   # calculate by ruby descriptive statistics gem
   # available functions:
-  # 1. Number
-  # 2 .Sum
-  # 3. Mean
-  # 4. Median
-  # 5. Mode
-  # 6. Variance
-  # 7. Standard Deviation
-  # 8. Percentile
-  # 9. Percentile Rank
-  # 10. Descriptive Statistics
-  # 11. Quartiles
+  # 1. number
+  # 2 .sum
+  # 3. mean
+  # 4. median
+  # 5. mode
+  # 6. variance
+  # 7. standard Deviation
+  # 8. percentile
+  # 9. percentile Rank
+  # 10. descriptive statistics
+  # 11. quartiles
+
   def calculate_function(header, datas, function)
     hash = {}
     header.each do |arg|
@@ -102,7 +110,7 @@ class ClusterInfos
 
   ##
   # executing function in R by RinRuby gem
-  #passing array of arguments (in,out) and name of function
+  # passing array of arguments (in,out) and name of function
   def evaluate_r_function(header, function)
     hash = {}
     header.each do |arg|
