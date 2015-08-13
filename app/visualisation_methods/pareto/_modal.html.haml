@@ -48,10 +48,17 @@
     var pareto_chart_counter = 0;
     var scripts_loaded = false;
     var load_chart = function() {
+      var outputParam = $("#paretoModal .outputParam option:selected").val();
+      var index_of_moe = window.moes_info.moes_names.indexOf(outputParam)
+      var type_of_moe = window.moes_info.moes_types[index_of_moe]
+      if (type_of_moe == 'string') {
+        toastr.error('Cannot plot for string type parameter');
+        $("#busy_pareto").hide()
+        return;
+      }
       var pareto_chart_div = $("<div id=\"pareto_chart_"+pareto_chart_counter+"\">")[0];
       $("#paretoModal .charts").prepend(pareto_chart_div);
 
-      var outputParam = $("#paretoModal .outputParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&output="+outputParam;
       query_params += "&chart_id="+pareto_chart_counter;

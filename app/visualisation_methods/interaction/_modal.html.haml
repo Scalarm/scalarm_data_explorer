@@ -63,12 +63,19 @@
     var scripts_loaded = false;
 
     var load_chart = function(){
-      var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
-      $("#interactionModal .charts").prepend(interaction_chart_div);
-        //TODO - if there's nothing to select -> do nothing
       var x_axis = $("#interactionModal .firstParam option:selected").val();
       var y_axis = $("#interactionModal .secondParam option:selected").val();
       var outputParam = $("#interactionModal .outputParam option:selected").val();
+
+      if (type_of_parameter(x_axis, 'input') == 'string' || type_of_parameter(y_axis, 'input') == 'string' || type_of_parameter(outputParam, 'moe') == 'string') {
+        toastr.error('Cannot plot for string type parameter');
+        $("#busy_interaction").hide();
+        return;
+      }
+
+      var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
+      $("#interactionModal .charts").prepend(interaction_chart_div);
+        //TODO - if there's nothing to select -> do nothing
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
@@ -105,5 +112,14 @@
       });
     });
 
-
+    function type_of_parameter(parameter, character_of_parameter) {
+      if (character_of_parameter == 'moe') {
+        var index_of_moe = window.moes_info.moes_names.indexOf(parameter)
+        return window.moes_info.moes_types[index_of_moe]
+      }
+      else {
+        var index_of_input = window.moes_info.inputs_names.indexOf(parameter)
+        return window.moes_info.inputs_types[index_of_input]
+      }
+    }
 

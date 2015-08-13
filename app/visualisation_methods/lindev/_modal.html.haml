@@ -77,6 +77,12 @@
       $("#lindevModal .charts").prepend(chart_div);
       var x_axis = $("#lindevModal .firstParam option:selected").val();
       var y_axis = $("#lindevModal .secondParam option:selected").val();
+      if (type_of_parameter(x_axis) == 'string' || type_of_parameter(y_axis) == 'string') {
+        toastr.error('Cannot plot for string type parameter');
+        $("#busy_lindev").hide();
+        return;
+      }
+
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&number_of_moes=2";
       query_params += "&param_x="+x_axis;
@@ -111,4 +117,17 @@
       else
         load_chart();
     });
+
+    function type_of_parameter(parameter) {
+      var index_of_moe = window.moes_info.moes_names.indexOf(parameter)
+      if (index_of_moe != -1) {
+        return window.moes_info.moes_types[index_of_moe]
+      }
+      else {
+        var index_of_input = window.moes_info.inputs_names.indexOf(parameter)
+        return window.moes_info.inputs_types[index_of_input]
+      }
+    }
+
   });
+
