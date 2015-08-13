@@ -11,54 +11,53 @@
   - outputs = ["No results found in completed simulation runs"]
 - else
   - outputs = result.result.keys
-#interactionModal.reveal-modal(data-reveal="true")
-  %section#interaction_chart_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="Interaction chart"
-    %h3 #{}
-    .row
-      .small-5.columns
-        %label.inline="Select first parameter"
-      .small-7.columns
-        %select.firstParam
-          -parameters.each do |parameter|
-            %option{:value => parameter}=parameter # TODO: label
 
-    .row
-      .small-5.columns
-        %label.inline="Select second parameter"
-      .small-7.columns
-        %select.secondParam
-          -parameters.each do |parameter|
-            %option{:value => parameter}=parameter
+%section#interaction_chart_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="Interaction chart"
+  %h3 #{}
+  .row
+    .small-5.columns
+      %label.inline="Select first parameter"
+    .small-7.columns
+      %select.firstParam
+        -parameters.each do |parameter|
+          %option{:value => parameter}=parameter # TODO: label
 
-    .row
-      .small-5.columns
-        %label.inline="Select output parameter"
-      .small-7.columns
-        %select.outputParam.moes
-          -outputs.each do |output|
-            %option{:value => output}=output
+  .row
+    .small-5.columns
+      %label.inline="Select second parameter"
+    .small-7.columns
+      %select.secondParam
+        -parameters.each do |parameter|
+          %option{:value => parameter}=parameter
 
-
-
-    .row
-      %ul.inline-list
-        %li
-          %button.radius Load chart
-        %li
-          %img(src="#{image_url("loading.gif")}" id='busy_interaction' class='loading_chart_gif' size='16x16' style='display: none' )
+  .row
+    .small-5.columns
+      %label.inline="Select output parameter"
+    .small-7.columns
+      %select.outputParam.moes
+        -outputs.each do |output|
+          %option{:value => output}=output
 
 
 
-  .charts
-    .scripts
+  .row
+    %ul.inline-list
+      %li
+        %button.radius Load chart
+      %li
+        %img(src="#{image_url("loading.gif")}" id='busy_interaction' class='loading_chart_gif' size='16x16' style='display: none' )
+
+
+
+.charts
+  .scripts
 
 :javascript
 
   $(function(){
 
-    $("#interactionModal").foundation("reveal", "close");
     var interaction_chart_counter = 0;
 
     var load_chart = function(){

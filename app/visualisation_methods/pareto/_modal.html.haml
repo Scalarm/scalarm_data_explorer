@@ -14,24 +14,23 @@
 - else
   - outputs = result.result.keys
 
-#paretoModal.reveal-modal(data-reveal="true")
-  %section#pareto_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="Pareto chart"
-    .row
-      .small-5.columns
-        %label.inline="Select output parameter"
-      .small-7.columns
-        %select.outputParam.moes
-          -outputs.each do |output|
-            %option{value:output} #{output}
+%section#pareto_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="Pareto chart"
+  .row
+    .small-5.columns
+      %label.inline="Select output parameter"
+    .small-7.columns
+      %select.outputParam.moes
+        -outputs.each do |output|
+          %option{value:output} #{output}
 
-    .row
-      %ul.inline-list
-        %li
-          %button.radius Load chart
-        %li
-          %img(src="#{image_url("loading.gif")}" id='busy_pareto' class='loading_chart_gif' size='16x16' style='display: none' )
+  .row
+    %ul.inline-list
+      %li
+        %button.radius Load chart
+      %li
+        %img(src="#{image_url("loading.gif")}" id='busy_pareto' class='loading_chart_gif' size='16x16' style='display: none' )
 
 
 
@@ -43,7 +42,7 @@
 
   $(function(){
 
-    $('#paretoModal').foundation('reveal', 'close');
+   // $('#paretoModal').foundation('reveal', 'close');
 
     var pareto_chart_counter = 0;
     var load_chart = function() {

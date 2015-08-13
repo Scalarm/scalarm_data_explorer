@@ -1,3 +1,4 @@
+=define_helper_functions
 %ul{id: "searchList", style:"list-style-type: circle;"}
   %dl.accordion{"data-accordion" => ""}
     %dd.accordion-navigation
@@ -20,24 +21,11 @@
 
 
 
-
 :javascript
   $(function(){
     $(document).foundation();
 
-    var sessionGetJSON = function(url, params, onSuccess, onError) {
-      return $.ajax({
-        data: params,
-        url: url,
-        xhrFields: {
-          withCredentials: true
-        },
-        success: onSuccess,
-        error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
-          console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
-        }
-      });
-    };
+
     $("#searchList [data-reveal-id=experiment-analysis-modal]").on("click", function(event){
       var modalIdName = $(event.currentTarget).attr('data-reveal-id');
       var className = $(event.currentTarget).attr('em-class');
@@ -48,16 +36,24 @@
 
     $("#searchList .Modal").on("click", function(event){
       var modalIdName = $(event.currentTarget).attr('id');
+
+
       if($("#"+ modalIdName + "Modal").length==0){
+
+        var div = $("<div>", {id: modalIdName + "Modal", class: "reveal-modal", "data-reveal": 'true'});
+        $('body').append(div);
+
+        $('#'+ modalIdName + 'Modal').html(window.loaderHTML);
+        $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
         var url = "#{@prefix}/modals/" + modalIdName + "?experiment_id=#{@experiment.id}&base_url=" + encodeURIComponent("#{@prefix}");
         var handler = function(data) {
-          $('body').append(data);
-          $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
-        };
-        sessionGetJSON(url, {}, handler);
-      }
+          $('#'+ modalIdName + 'Modal').html(data);
 
-      $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
+        };
+        getWithSession(url, {}, handler, onErrorHandler);
+      }
+      else
+        $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
     });
 
     $("#searchList").find("#basic").bind("click", function() {
