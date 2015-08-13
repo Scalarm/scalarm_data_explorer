@@ -15,8 +15,8 @@ class ThreeD
 
 
   def handler
-    if parameters["id"] && parameters["chart_id"] && parameters["param_x"] && parameters["param_y"] && parameters["param_z"]
-      data = get3d(parameters["param_x"], parameters["param_y"], parameters["param_z"])
+    if parameters["id"] && parameters["chart_id"] && parameters["param_x"].to_s && parameters["param_y"].to_s && parameters["param_z"].to_s
+      data = get3d(parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["param_z"].to_s)
       object = prepare_3d_chart_content(data)
       object
     else

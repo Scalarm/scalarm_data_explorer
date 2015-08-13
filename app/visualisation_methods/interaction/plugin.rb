@@ -15,9 +15,9 @@ class Interaction
 
   # create dataset for chart
   def handler
-    if parameters["id"] && parameters["chart_id"] && parameters["param_x"] && parameters["param_y"] && parameters["output"]
+    if parameters["id"] && parameters["chart_id"] && parameters["param_x"].to_s && parameters["param_y"].to_s && parameters["output"].to_s
 
-      data = getInteraction(parameters["param_x"], parameters["param_y"], parameters["output"])
+      data = getInteraction(parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["output"].to_s)
       object = prepare_interaction_chart_content(data)
       object
     else
@@ -32,7 +32,7 @@ class Interaction
     if simulation_runs.length == 0
       raise("No such experiment or no runs done")
     end
-    data = {}
+
     argument_ids = simulation_runs.first.arguments.split(',')
     params = {}
     simulation_runs = simulation_runs.map do |data|
@@ -86,7 +86,7 @@ class Interaction
         # high_high[:result] = data[:result]
       end
     end
-
+    data = {}
     if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
       raise ('Not enough data in database!')
 
