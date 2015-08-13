@@ -1,9 +1,10 @@
 %ul{id: "searchList", style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
-      %dd.accordion-navigation
+      - accordion_id = group["name"].gsub!(/\s+/, "")
+      %dd.accordion-navigation{id: "accordion#{group["name"]}"}
         %a.group_title{:href => "#"+group_id, style: "text-align: left;"}
-          %i.fa.fa-plus-circle{style: "color: 333"}
+          %i.fa.fa-plus-circle.analysis{style: "color: 333"}
           = group["name"]
         %ul.content{"id" => group_id, "style" => "background: none;"  "text-align: left;  list-style-type: circle;"}
           - group["methods"].each do |method|
@@ -32,28 +33,14 @@
     $("#" + modalIdName + " ." + className + "-content").show();
     });
 
-  $("#searchList").find("#basic").bind("click", function() {
-      if (!$("#content_basic").is(":visible"))
-        $("#content_basic").show();
-      else
-        $("#content_basic").hide();
-    });
-
-  $("#searchList").find("#params").bind("click", function() {
-      $('#params').foundation('tooltips', 'generate', '<img src="http://..../.jpg" />');
-      if (!$("#content_params").is(":visible"))
-        $("#content_params").show();
-      else
-        $("#content_params").hide();
-    });
-
-  $(".accordion").on("click", "dd", function (){
-      if(!$(this).hasClass("active")) {
-        $(this).find('i').addClass('fa fa-minus-circle');
-      }
-      else {
-        $(this).find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
-      }
+  $("#searchList").on("click", "a.group_title", function (){
+    var accordion_id = "#accordion" + $(this).text().replace(/\s/g, '');
+    if(!$(accordion_id).hasClass("active")) {
+      $(accordion_id).find('i').addClass('fa fa-minus-circle analysis');
+    }
+    else {
+      $(accordion_id).find('i').removeClass('fa fa-minus-circle analysis').addClass('fa fa-plus-circle analysis');
+    }
   });
 
 
