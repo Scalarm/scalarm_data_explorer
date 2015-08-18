@@ -1,8 +1,8 @@
 %ul{id: "searchList", style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
-      - accordion_id = group["name"].gsub!(/\s+/, "")
-      %dd.accordion-navigation{id: "accordion#{group["name"]}"}
+      - accordion_id = group["name"].dup.gsub!(/\s+/, "")
+      %dd.accordion-navigation{id: "accordion#{accordion_id}"}
         %a.group_title{:href => "#"+group_id, style: "text-align: left;"}
           %i.fa.fa-plus-circle.analysis{style: "color: 333"}
           = group["name"]
