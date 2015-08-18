@@ -1,8 +1,8 @@
 require 'scalarm/database/model'
 require 'scalarm/database/core'
-
+require 'erb'
 class PanelsController < ApplicationController
-
+  include ERB::Util
   before_filter :load_experiment, only: [:show, :index]
 
   # TODO: will be removed some day
@@ -15,11 +15,12 @@ class PanelsController < ApplicationController
   end
 
   def handle_panel_for_experiment
+
     panels = Panels.new
     @methods = panels.methods
     @groups = panels.groups
 
-    experiment_id = params[:id].to_s
+    experiment_id = ERB::Util.h(params[:id].to_s)
 
     if @experiment.nil?
       raise 'No experiment'

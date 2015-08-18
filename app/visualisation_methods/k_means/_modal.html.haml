@@ -1,0 +1,116 @@
+- parameters = @experiment.get_parameter_ids
+-# parameters = %w(a b)
+- parameters_labels = parameters
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
+- count_of_cluster = [2,3,4,5,6,7,8,9,10,11,12]
+- outputs=[]
+- if result.blank?
+  - outputs = ["No results found in completed simulation runs"]
+- else
+  - outputs = result.result.keys
+
+=define_helper_functions
+
+#kmeansModal.reveal-modal(data-reveal="true")
+  %section#kmeans_charts_form.panel.radius.analysis-chart
+    %a.close-reveal-modal &#215
+    %h3.subheader="K-means clustering"
+    %h3 #{}
+    .row
+      .small-5.columns
+        %label.inline="Select number of clusters"
+      .small-7.columns
+        %select.numbClust
+          -count_of_cluster.each do |output|
+            %option{:value => output}=output
+    .row
+      .small-5.columns
+        %label.inline="Select number of subclusters"
+      .small-7.columns
+        %select.numbSubclust
+          -count_of_cluster.each do |output|
+            %option{:value => output}=output
+    .row
+      .small-5.columns
+        %label.inline="Select parameter for clustering:"
+      %table( width="100%")
+        .small-7.columns
+          %select.moes_name
+            -outputs.each do |output|
+              %option{:value => output}=output
+
+    .row
+      %ul.inline-list
+        %li
+          %button.radius.load Load chart
+        %li
+          %a
+            %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_kmeans' size='16x16' style='display: none' )
+
+
+  .charts
+    .scripts
+
+#clusterInfo.reveal-modal(data-reveal="")
+
+:javascript
+  $(function(){
+    $('#kmeansModal').foundation('reveal', 'close');
+    var scripts_loaded = false;
+    var chart_counter = 0;
+    var load_chart = function() {
+      var chart_div = $("<div id=\"kmeans_chart_"+chart_counter+"\">")[0];
+      $("#kmeansModal .charts").prepend(chart_div);
+    /*  var selectedFiles =
+        $('#kmeansModal input:checked').  map(function () {
+            return $(this).attr('id')
+        });
+
+      var array = selectedFiles.toArray();*/
+      var numb_cluster = $("#kmeansModal .numbClust option:selected").val();
+      var numb_subcluster = $("#kmeansModal .numbSubclust option:selected").val();
+      var array = $("#kmeansModal .moes_name option:selected").val();
+      var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&chart_id="+chart_counter;
+      query_params += "&clusters="+numb_cluster;
+      query_params += "&subclusters="+numb_subcluster;
+
+      var url = "#{@prefix}/chart_instances/k_means?"+query_params;
+      var handler = function(data) {
+        $("#busy_kmeans").hide();
+        var targetOffset = $(chart_div).offset().top;
+        $('html,body').animate({ scrollTop: targetOffset }, 1000);
+        $(chart_div).html(data);
+      };
+      getWithSession(url, {array}, handler, onErrorHandler);
+      chart_counter++;
+    };
+
+
+    $("#kmeansModal").find("button.radius.load").bind("click", function() {
+
+        $("#busy_kmeans").show();
+        if(!scripts_loaded) {
+          var url = "#{@prefix}/script_tags/k_means?base_url=" + encodeURIComponent("#{@prefix}");
+          var handler = function(data) {
+            scripts_loaded = true;
+            $("#kmeansModal").find(".scripts").html(data);
+            load_chart();
+          };
+          getWithSession(url, {}, handler);
+        }
+        else
+          load_chart();
+
+    });
+    /*$("button.radius.check_all#check").on('click', function () {
+      if ($("#kmeansModal input:checkbox").length ==  $("#kmeansModal input:checked").length) {
+        $("#kmeansModal input:checkbox").prop('checked', false);
+      }
+      else $("#kmeansModal input:checkbox").prop('checked', true);
+    }); */
+
+
+  });
