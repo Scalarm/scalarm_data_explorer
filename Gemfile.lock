@@ -9,8 +9,9 @@ GIT
       encryptor
       mongo
 
-PATH
-  remote: /Users/jliput/Scalarm/scalarm-service_core
+GIT
+  remote: git://github.com/Scalarm/scalarm-service_core.git
+  revision: ff30916e355282e9776757cd2d1f1d42190ca604
   specs:
     scalarm-service_core (0.6.1)
       actionpack (~> 4.1)
@@ -193,7 +194,7 @@ DEPENDENCIES
   rinruby
   sass-rails (~> 5.0)
   scalarm-database (>= 0.3.3)!
-  scalarm-service_core!
+  scalarm-service_core (~> 0.6.1)!
   sdoc (~> 0.4.0)
   spring
   therubyracer
