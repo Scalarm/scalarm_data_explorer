@@ -63,7 +63,7 @@ class ApplicationController < ActionController::Base
 
     respond_to do |format|
       format.html do
-        flash[:error] = exception.to_s
+        #flash[:error] = exception.to_s
         render html: "An error occurred: #{exception.to_s}", status: 500
       end
 

@@ -31,7 +31,7 @@
         %li
           %button.radius Load chart
         %li
-          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_pareto' size='16x16' style='display: none' )
+          %img(src="#{image_url("loading.gif")}" id='busy_pareto' class='loading_chart_gif' size='16x16' style='display: none' )
 
 
 
@@ -64,7 +64,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(pareto_chart_div).html(data);
       };
-      getWithSession(url, {}, handler,onErrorHandler);
+      getWithSession(url, {}, handler, onErrorHandler);
       pareto_chart_counter++;
 
     };

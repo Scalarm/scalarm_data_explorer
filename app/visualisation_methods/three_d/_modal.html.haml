@@ -76,8 +76,6 @@
 
     var three_d_chart_counter = 0;
     var scripts_loaded = false;
-
-
     var load_chart = function() {
 
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
@@ -100,9 +98,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(three_d_chart_div).html(data);
       };
-
-      getWithSession(url, {}, handler,onErrorHandler);
-     
+      getWithSession(url, {}, handler, onErrorHandler);
       three_d_chart_counter++;
 
     };

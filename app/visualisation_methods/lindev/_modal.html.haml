@@ -78,6 +78,7 @@
       var x_axis = $("#lindevModal .firstParam option:selected").val();
       var y_axis = $("#lindevModal .secondParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
+
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
       query_params += "&chart_id="+chart_counter;
@@ -90,8 +91,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-
-      getWithSession(url, {}, handler,onErrorHandler);
+      getWithSession(url, {}, handler, onErrorHandler);
       chart_counter++;
 
     };

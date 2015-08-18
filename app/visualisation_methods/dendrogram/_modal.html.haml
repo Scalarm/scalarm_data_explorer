@@ -38,6 +38,7 @@
               %a
                 %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_dendrogram' size='16x16' style='display: none' )
 
+
   .charts
     .scripts
 
@@ -58,6 +59,7 @@
       var array = selectedFiles.toArray();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&chart_id="+chart_counter;
+
       var url = "#{@prefix}/chart_instances/dendrogram?"+query_params;
       var handler = function(data) {
         $("#busy_dendrogram").hide();
