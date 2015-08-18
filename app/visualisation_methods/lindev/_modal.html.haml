@@ -97,12 +97,30 @@
       chart_counter++;
 
     };
-   $("#lindevModal").find("button.refresh").bind("click", function() {
+    $("#lindevModal").find("button.refresh").bind("click", function() {
       $("#busy_lindev").show();
-      $.getJSON ("/experiments/#{@experiment.id}/moes", function(data) { update_moes(data)});
+      $.getJSON ("/experiments/#{@experiment.id}/moes_json", function(data){
+
+        var new_select ="";
+        for (var iter in data){
+          var param = JSON.parse(data[iter]);
+          new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+        }
+        update_params_names(new_select);
+       });
       $('#busy_lindev').hide();
-      toastr.success("Parameters refreshed");
+      toastr.success("Moes refreshed");
      });
+
+    var update_params_names = function(data){
+      $(".moes_and_params_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(data);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+    };
 
     $("#lindevModal").find("button.radius").bind("click", function() {
       $("#busy_lindev").show();
