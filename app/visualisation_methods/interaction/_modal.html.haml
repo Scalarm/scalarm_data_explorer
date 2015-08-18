@@ -36,7 +36,7 @@
       .small-5.columns
         %label.inline="Select output parameter"
       .small-7.columns
-        %select.outputParam(class="moes_list")
+        %select(id ="outputParam" class="moe_list")
           -outputs.each do |output|
             %option{:value => output}=output
 
@@ -68,7 +68,7 @@
         //TODO - if there's nothing to select -> do nothing
       var x_axis = $("#interactionModal .firstParam option:selected").val();
       var y_axis = $("#interactionModal .secondParam option:selected").val();
-      var outputParam = $("#interactionModal .outputParam option:selected").val();
+      var outputParam = $("#interactionModal select#outputParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
@@ -90,8 +90,9 @@
     };
      $("#interactionModal").find("button.refresh").bind("click", function() {
       $('#busy_interaction').show();
-      $.getJSON ("/experiments/#{@experiment.id}/moes", function(data) {console.debug(data); update_moes(data)});
+      $.getJSON ("/experiments/#{@experiment.id}/moes", function(data) { update_moes(data)});
       $('#busy_interaction').hide();
+      toastr.success("Moes refreshed");
      });
 
 
