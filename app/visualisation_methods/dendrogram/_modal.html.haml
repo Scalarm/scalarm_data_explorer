@@ -75,7 +75,7 @@
       $('#busy_dendrogram').show();
       var new_checkbox ="";
       for (var iter in moes_info_json){
-        var param = JSON.parse(moes_info_json[iter]);
+        var param = moes_info_json[iter];
         if (param.type == "moes_parameter")
           new_checkbox = new_checkbox + "<span class='small-2 columns end'><label><input id='"+ param.id +"' style='margin-right:5px;' type='checkbox'>"+param.label+"</label></span> ";
       }

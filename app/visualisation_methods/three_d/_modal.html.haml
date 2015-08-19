@@ -110,7 +110,7 @@
       //moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
       var new_select ="<optgroup label='Parameters'>";
       for (var iter in moes_info_json){
-        var param = JSON.parse(moes_info_json[iter]);
+        var param = moes_info_json[iter];
         if (param.type ==null)
           new_select = new_select +"</optgroup> <optgroup label='Moes'>"
         else

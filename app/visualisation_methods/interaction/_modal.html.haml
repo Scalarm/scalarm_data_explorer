@@ -94,7 +94,7 @@
       var new_moe_select ="";
       var new_param_select ="";
       for (var iter in moes_info_json){
-        var param = JSON.parse(moes_info_json[iter]);
+        var param = moes_info_json[iter];
         if (param.type == "input_parameter")
           new_param_select = new_param_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
         if (param.type == "moes_parameter")
