@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/Scalarm/scalarm-database.git
-  revision: 8f1d229ca7f4a53e6fe8adde6272ca6365360962
+  revision: e1b2c4e5ca028a88796f62b18a409aa3081a9027
   specs:
-    scalarm-database (0.3.2)
+    scalarm-database (0.3.3)
       activesupport
       bson
       bson_ext
@@ -11,9 +11,9 @@ GIT
 
 GIT
   remote: git://github.com/Scalarm/scalarm-service_core.git
-  revision: bec82b6d04b8cd5c6c4d40ba1b1188491629f75a
+  revision: ff30916e355282e9776757cd2d1f1d42190ca604
   specs:
-    scalarm-service_core (0.4.2)
+    scalarm-service_core (0.6.1)
       actionpack (~> 4.1)
       activesupport (~> 4.1)
       rest-client (~> 1.8)
@@ -99,6 +99,8 @@ GEM
       metaclass (~> 0.0.1)
     mongo (1.12.3)
       bson (= 1.12.3)
+    mongo_session_store-rails3 (5.1.0)
+      actionpack (>= 3.1)
     multi_json (1.11.0)
     netrc (0.10.3)
     puma (2.11.3)
@@ -173,6 +175,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bson
+  bson_ext
   coffee-rails (~> 4.1.0)
   descriptive_statistics
   foundation-rails
@@ -183,12 +187,14 @@ DEPENDENCIES
   jquery-tmpl-rails
   jquery-ui-rails
   mocha
+  mongo (~> 1.12)
+  mongo_session_store-rails3 (~> 5.1)
   puma
   rails (~> 4.1.12)
   rinruby
   sass-rails (~> 5.0)
-  scalarm-database (>= 0.3.2)!
-  scalarm-service_core (~> 0.4.2)!
+  scalarm-database (>= 0.3.3)!
+  scalarm-service_core (~> 0.6.1)!
   sdoc (~> 0.4.0)
   spring
   therubyracer
