@@ -100,7 +100,7 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
     console.debug(error);
     if (error) {
         $('#kmeans_chart_' + i)[0].remove();
-        toastr.error("to many subclusters. Can not divide data.");
+        toastr.error("Too many subclusters. Can not divide data into subclusters. Please try lower number of sublcaster");
     }else {
         var chart = new Highcharts.Chart({
             chart: {
