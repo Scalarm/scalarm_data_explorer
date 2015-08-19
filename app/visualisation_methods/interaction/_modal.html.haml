@@ -20,7 +20,7 @@
       .small-5.columns
         %label.inline="Select first parameter"
       .small-7.columns
-        %select.firstParam
+        %select(id ="firstParam" class="param_info_list")
           -parameters.each do |parameter|
             %option{:value => parameter}=parameter # TODO: label
 
@@ -28,7 +28,7 @@
       .small-5.columns
         %label.inline="Select second parameter"
       .small-7.columns
-        %select.secondParam
+        %select(id ="secondParam" class="param_info_list")
           -parameters.each do |parameter|
             %option{:value => parameter}=parameter
 
@@ -36,14 +36,14 @@
       .small-5.columns
         %label.inline="Select output parameter"
       .small-7.columns
-        %select.outputParam.moes
+        %select(id ="outputParam" class="moe_info_list")
           -outputs.each do |output|
             %option{:value => output}=output
 
-
-
     .row
       %ul.inline-list
+        %li
+          %button.refresh Refresh moes
         %li
           %button.radius Load chart
         %li
@@ -66,9 +66,9 @@
       var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
       $("#interactionModal .charts").prepend(interaction_chart_div);
         //TODO - if there's nothing to select -> do nothing
-      var x_axis = $("#interactionModal .firstParam option:selected").val();
-      var y_axis = $("#interactionModal .secondParam option:selected").val();
-      var outputParam = $("#interactionModal .outputParam option:selected").val();
+      var x_axis = $("#interactionModal select#firstParam option:selected").val();
+      var y_axis = $("#interactionModal select#secondParam option:selected").val();
+      var outputParam = $("#interactionModal select#outputParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
@@ -88,7 +88,44 @@
       interaction_chart_counter++;
 
     };
-    $("#interactionModal").find("button").bind("click", function() {
+    $("#interactionModal").find("button.refresh").bind("click", function() {
+      $("#busy_interaction").show();
+
+      var new_moe_select ="";
+      var new_param_select ="";
+      for (var iter in moes_info_json){
+        var param = JSON.parse(moes_info_json[iter]);
+        if (param.type == "input_parameter")
+          new_param_select = new_param_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+        if (param.type == "moes_parameter")
+          new_moe_select = new_moe_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+      }
+      update_moes_names(new_param_select,new_moe_select);
+
+      $('#busy_interaction').hide();
+      toastr.success("Moes refreshed");
+     });
+
+
+    var update_moes_names = function(data_param, data_moe){
+      $(".moe_info_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(data_moe);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+      $(".param_info_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(data_param);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+    };
+
+
+    $("#interactionModal").find("button.radius").bind("click", function() {
       $('#busy_interaction').show();
       if(!scripts_loaded){
         var url = "#{@prefix}/script_tags/interaction?base_url=" + encodeURIComponent("#{@prefix}");
