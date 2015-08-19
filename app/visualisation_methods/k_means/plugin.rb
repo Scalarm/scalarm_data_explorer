@@ -40,7 +40,7 @@ class KMeans
   
 
     #getting data
-
+    moes = Array(parameters["array"])
     simulation_ind, result_data = create_data_result
 
     result_data = result_data.sort_by{|x,y|x}
@@ -48,13 +48,25 @@ class KMeans
     result_hash = {}
     result_data.map{|row| result_hash[row[0]]=row[1]}
     result_array = []
+    groped_by_moes = {}
+    result_data.map do |row|
+     # Rails.logger.debug(row)
+      row[1].each_with_index do |moe,ind|
+        groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) :  groped_by_moes[moes[ind]] = [moe]
 
+      end
+
+    end
+   # Rails.logger.debug(groped_by_moes)
     result_data.map{|row| result_array.concat(row[1])}
 
     # for 2 and more moes join arrays of result into one and pass as data
-    R.assign("data" , result_array)
+    groped_by_moes.each do |k,v|
+      R.assign(k , v)
+    end
+
     R.eval <<EOF
-    hdata <- kmeans(data,#{parameters[:clusters]})
+    hdata <- kmeans(data.frame(#{moes.join(",")}),#{parameters[:clusters]})
     clusters <- hdata$cluster
 
 EOF
@@ -120,12 +132,24 @@ EOF
     hash ={}
     subcluster_size = 0
     cluster.keys.each  do |subclust_indx|
-      result_array = []
-      subcluster[subclust_indx].map{|row| result_array.concat(row)}
+    #  result_array = []
+      groped_by_moes = {}
+      subcluster[subclust_indx].map do |row|
+        row.each_with_index do |moe,ind|
+          groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) :  groped_by_moes[moes[ind]] = [moe]
+        end
 
-      R.assign("data" ,result_array)
+
+      end
+      groped_by_moes.each do |k,v|
+        R.assign(k , v)
+      end
+
+     # subcluster[subclust_indx].map{|row| result_array.concat(row)}
+
+     # R.assign("data" ,result_array)
       R.eval <<EOF
-        hdata <- kmeans(data,#{parameters[:subclusters]})
+        hdata <- kmeans(data.frame(#{moes.join(",")}),#{parameters[:subclusters]})
         subclusters <- hdata$cluster
 EOF
       to_merge = R.pull "subclusters"
