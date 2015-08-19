@@ -4,7 +4,7 @@ window.interaction_main = function(i, param_x, param_y, data) {
 			renderTo: $('#interaction_chart_'+ i + " .chart")[0]
 		},
 		title: {
-			text: "Pareto chart"
+			text: "Interaction chart"
 		},
 		xAxis: {
 			title: {

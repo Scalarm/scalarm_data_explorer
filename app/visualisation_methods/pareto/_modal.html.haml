@@ -22,16 +22,18 @@
       .small-5.columns
         %label.inline="Select output parameter"
       .small-7.columns
-        %select.outputParam.moes
+        %select(class="moe_info_list" id ="outputParam")
           -outputs.each do |output|
             %option{value:output} #{output}
 
     .row
       %ul.inline-list
         %li
+          %button.refresh Refresh moes
+        %li
           %button.radius Load chart
         %li
-          %img(src="#{image_url("loading.gif")}" id='busy_pareto' size='16x16' style='display: none' )
+          %img(src="#{image_url("loading.gif")}" id='busy_pareto' class='loading_chart_gif' size='16x16' style='display: none' )
 
 
 
@@ -51,7 +53,7 @@
       var pareto_chart_div = $("<div id=\"pareto_chart_"+pareto_chart_counter+"\">")[0];
       $("#paretoModal .charts").prepend(pareto_chart_div);
 
-      var outputParam = $("#paretoModal .outputParam option:selected").val();
+      var outputParam = $("#paretoModal select#outputParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&output="+outputParam;
       query_params += "&chart_id="+pareto_chart_counter;
@@ -64,12 +66,36 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(pareto_chart_div).html(data);
       };
-      getWithSession(url, {}, handler);
+      getWithSession(url, {}, handler, onErrorHandler);
       pareto_chart_counter++;
 
     };
 
-    $("#paretoModal").find("button").bind("click", function() {
+    $("#paretoModal").find("button.refresh").bind("click", function() {
+      $("#busy_pareto").show();
+      var new_select ="";
+      for (var iter in moes_info_json){
+        var param = moes_info_json[iter];
+
+        if (param.type == "moes_parameter")
+          new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+      }
+      update_moes_names(new_select);
+      $('#busy_pareto').hide();
+      toastr.success("Moes refreshed");
+     });
+
+    var update_moes_names = function(data){
+      $(".moe_info_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(data);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+    };
+
+    $("#paretoModal").find("button.radius").bind("click", function() {
       $('#busy_pareto').show();
       if(!scripts_loaded){
         var url = "#{@prefix}/script_tags/pareto?base_url=" + encodeURIComponent("#{@prefix}");

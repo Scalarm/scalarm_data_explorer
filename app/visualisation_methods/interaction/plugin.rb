@@ -13,15 +13,15 @@ class Interaction
   end
 
 
+  # create dataset for chart
   def handler
-    # dane parameters success error
     if parameters["id"] && parameters["chart_id"] && parameters["param_x"] && parameters["param_y"] && parameters["output"]
 
       data = getInteraction(parameters["param_x"], parameters["param_y"], parameters["output"])
       object = prepare_interaction_chart_content(data)
       object
     else
-      error('Request parameters missing');
+      raise('Request parameters missing');
     end
   end
 
@@ -30,7 +30,7 @@ class Interaction
 
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
-      error("No such experiment or no runs done")
+      raise("No such experiment or no runs done")
     end
     data = {}
     argument_ids = simulation_runs.first.arguments.split(',')
@@ -61,40 +61,42 @@ class Interaction
       mins[arg_name] = params[arg_name].min
       maxes[arg_name] = params[arg_name].max
     end
-    #simulation_runs[:arguments]
+    # simulation_runs[:arguments]
     low_low = {:result => {}}
     low_high = {:result => {}}
     high_low = {:result => {}}
     high_high = {:result => {}}
     simulation_runs.map do |data|
       if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == mins[param_y]
-        low_low[:result] = data[:result]
+        # low_low[:result] = data[:result]
+        low_low[:result].empty? ? low_low[:result] = [data[:result]] : low_low[:result].push(data[:result])
       end
 
       if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == maxes[param_y]
-        low_high[:result] = data[:result]
+        low_high[:result].empty? ? low_high[:result] = [data[:result]] : low_high[:result].push(data[:result])
 
       end
       if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == mins[param_y]
-        high_low[:result] =  data[:result]
+        high_low[:result].empty? ? high_low[:result] = [data[:result]] : high_low[:result].push(data[:result])
+        # high_low[:result] =  data[:result]
 
       end
-
       if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == maxes[param_y]
-        high_high[:result] = data[:result]
+        high_high[:result].empty? ? high_high[:result] = [data[:result]] : high_high[:result].push(data[:result])
+        # high_high[:result] = data[:result]
       end
-  end
+    end
 
-    if (!low_low && low_high && high_low && high_high)
+    if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
       raise ('Not enough data in database!')
 
     else
       result = []
-
-      result.push(low_low.empty? ? 0 : low_low[:result][outputParam],
-                  low_high.empty? ? 0 : low_high[:result][outputParam],
-                  high_low.empty? ? 0 : high_low[:result][outputParam],
-                  high_high.empty? ? 0 : high_high[:result][outputParam])
+      # first result from resultset as in prototype version
+      result.push(low_low[:result].blank? ? 0 : low_low[:result][0][outputParam],
+                  low_high[:result].blank? ? 0 : low_high[:result][0][outputParam],
+                  high_low[:result].blank? ? 0 : high_low[:result][0][outputParam],
+                  high_high[:result].blank? ? 0 : high_high[:result][0][outputParam])
 
       data[param_x] = {domain: [mins[param_x], maxes[param_x]]}
       data[param_y] = {domain: [mins[param_y], maxes[param_y]]}
