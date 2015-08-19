@@ -49,7 +49,6 @@ class KMeans
     result_hash = {}
    # Rails.logger.debug(result_data)
     result_data.map{|row| result_hash[row[0]]=row[1]}
-    result_array = []
     groped_by_moes = {}
     result_data.map do |row|
      # Rails.logger.debug(row)
@@ -59,8 +58,7 @@ class KMeans
       end
 
     end
-   # Rails.logger.debug(groped_by_moes)
-    result_data.map{|row| result_array.concat(row[1])}
+
 
     # for 2 and more moes join arrays of result into one and pass as data
     groped_by_moes.each do |k,v|
@@ -103,6 +101,7 @@ EOF
 
   end
 
+  ##
   # for now is only table with moes names
   def create_header
     header=[]
@@ -174,20 +173,6 @@ EOF
     hash
 
   end
-
-  ##
-  # for testing
-  # moe_names in future from modal
-  def moe_names
-    moe_name_set = []
-    limit = @experiment.size > 1000 ? @experiment.size / 2 : @experiment.size
-    @experiment.simulation_runs.where({ is_done: true }, { fields: %w(result), limit: limit }).each do |simulation_run|
-      moe_name_set += simulation_run.result.keys.to_a
-    end
-
-    moe_name_set.uniq
-  end
-
 
   def create_data_result(with_index=true, with_params=false, with_moes=true)
     moes = Array(parameters["array"])
