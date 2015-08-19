@@ -26,7 +26,7 @@
       .small-5.columns
         %label.inline="Select parameter on X"
       .small-7.columns
-        %select(id="firstParam" class ="moes_and_params_list")
+        %select(id="firstParam" class ="moes_params_list")
           %optgroup{:label => "Parameters"}
             -parameters.each do |parameter|
               %option{value:parameter} #{parameter}
@@ -40,7 +40,7 @@
       .small-5.columns
         %label.inline="Select parameter on Y"
       .small-7.columns
-        %select(id="secondParam" class ="moes_and_params_list")
+        %select(id="secondParam" class ="moes_params_list")
           %optgroup{:label => "Parameters"}
             -parameters.each do |parameter|
               %option{value:parameter} #{parameter}
@@ -99,21 +99,22 @@
     };
     $("#lindevModal").find("button.refresh").bind("click", function() {
       $("#busy_lindev").show();
-      $.getJSON ("/experiments/#{@experiment.id}/moes_json", function(data){
-
-        var new_select ="";
-        for (var iter in data){
-          var param = JSON.parse(data[iter]);
-          new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
-        }
-        update_params_names(new_select);
-       });
+      var new_select ="<optgroup label='Parameters'>";
+      for (var iter in moes_info_json){
+        var param = JSON.parse(moes_info_json[iter]);
+        if (param.type ==null)
+            new_select = new_select +"</optgroup> <optgroup label='Moes'>"
+          else
+            new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+      }
+      new_select = new_select +"</optgroup>"
+      update_params_names(new_select);
       $('#busy_lindev').hide();
       toastr.success("Moes refreshed");
      });
 
     var update_params_names = function(data){
-      $(".moes_and_params_list").each(function(){
+      $(".moes_params_list").each(function(){
         selected_option = $(this).find(":selected").val();
         $(this).html(data);
         $(this).find("option").filter(function(){

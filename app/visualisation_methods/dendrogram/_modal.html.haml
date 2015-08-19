@@ -73,21 +73,18 @@
     };
     $("#dendrogramModal").find("button.refresh").bind("click", function() {
       $('#busy_dendrogram').show();
-      $.getJSON ("/experiments/#{@experiment.id}/moes_json", function(data){
-
-        var new_checkbox ="";
-        for (var iter in data){
-          var param = JSON.parse(data[iter]);
-          if (param.type == "moes_parameter")
-            new_checkbox = new_checkbox + "<span class='small-2 columns end'><label><input id='"+ param.id +"' style='margin-right:5px;' type='checkbox'>"+param.label+"</label></span> ";
-        }
-        $(" .moes_infos").each(function(){
-          $(this).html(new_checkbox);
-        });
+      var new_checkbox ="";
+      for (var iter in moes_info_json){
+        var param = JSON.parse(moes_info_json[iter]);
+        if (param.type == "moes_parameter")
+          new_checkbox = new_checkbox + "<span class='small-2 columns end'><label><input id='"+ param.id +"' style='margin-right:5px;' type='checkbox'>"+param.label+"</label></span> ";
+      }
+      $(" .moes_infos").each(function(){
+        $(this).html(new_checkbox);
       });
       $('#busy_dendrogram').hide();
       toastr.success("Moes refreshed");
-     });
+    });
 
     $("#dendrogramModal").find("button.radius.load").bind("click", function() {
       if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
