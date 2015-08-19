@@ -98,7 +98,7 @@ EOF
     result_subcluster.each do |k,v|
       finite_data[k] = grouping_hash(v, parameters[:subclusters])
     end
-    Rails.logger.debug(finite_data)
+    #Rails.logger.debug(finite_data)
     return clusters, finite_data
 
   end
@@ -134,8 +134,7 @@ EOF
     moes = Array(parameters["array"])
     hash ={}
     subcluster_size = 0
-    Rails.logger.debug(subcluster)
-    Rails.logger.debug(cluster)
+
     cluster.keys.each  do |subclust_indx|
     #  result_array = []
       groped_by_moes = {}
