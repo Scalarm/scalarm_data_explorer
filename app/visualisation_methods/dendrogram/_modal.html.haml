@@ -82,7 +82,7 @@
       toastr.success("Moes refreshed");
     });
 
-    $("#dendrogramModal").find("button").bind("click", function() {
+    $("#dendrogramModal").find("button.radius.load").bind("click", function() {
       $("#busy_dendrogram").show();
       load_chart();
     });
