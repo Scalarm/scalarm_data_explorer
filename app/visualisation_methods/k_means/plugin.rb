@@ -1,3 +1,4 @@
+require 'rinruby'
 class KMeans
   attr_accessor :experiment
   attr_accessor :parameters
@@ -47,7 +48,6 @@ class KMeans
 
     result_hash = {}
     result_data.map{|row| result_hash[row[0]]=row[1]}
-    result_array = []
     groped_by_moes = {}
     result_data.map do |row|
      # Rails.logger.debug(row)
@@ -57,8 +57,7 @@ class KMeans
       end
 
     end
-   # Rails.logger.debug(groped_by_moes)
-    result_data.map{|row| result_array.concat(row[1])}
+
 
     # for 2 and more moes join arrays of result into one and pass as data
     groped_by_moes.each do |k,v|
@@ -101,6 +100,7 @@ EOF
 
   end
 
+  ##
   # for now is only table with moes names
   def create_header
     header=[]
@@ -128,9 +128,11 @@ EOF
   # create second level chart data (sublcasters)
   # from 1 level gather sim_id and then create hash: level1 => {level2=>sim_ids}
 
-  def create_subclusters(simulation_ind, subcluster, cluster)
+  def create_subclusters(simulation_ind, subcluster,cluster)
+    moes = Array(parameters["array"])
     hash ={}
     subcluster_size = 0
+
     cluster.keys.each  do |subclust_indx|
     #  result_array = []
       groped_by_moes = {}
@@ -170,20 +172,6 @@ EOF
     hash
 
   end
-
-  ##
-  # for testing
-  # moe_names in future from modal
-  def moe_names
-    moe_name_set = []
-    limit = @experiment.size > 1000 ? @experiment.size / 2 : @experiment.size
-    @experiment.simulation_runs.where({ is_done: true }, { fields: %w(result), limit: limit }).each do |simulation_run|
-      moe_name_set += simulation_run.result.keys.to_a
-    end
-
-    moe_name_set.uniq
-  end
-
 
   def create_data_result(with_index=true, with_params=false, with_moes=true)
     moes = Array(parameters["array"])
