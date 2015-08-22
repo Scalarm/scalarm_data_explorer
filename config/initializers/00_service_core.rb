@@ -17,4 +17,5 @@ config = default_config.merge(Rails.application.secrets.cors || {})
 Scalarm::ServiceCore::Configuration.cors_allow_all_origins = !!config['allow_all_origins']
 Scalarm::ServiceCore::Configuration.cors_allowed_origins = config['allowed_origins']
 
+Scalarm::Database::Logger.register(Rails.logger)
 Scalarm::ServiceCore::Logger.set_logger(Rails.logger)
