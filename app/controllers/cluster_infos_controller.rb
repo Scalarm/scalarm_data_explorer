@@ -8,16 +8,11 @@ class ClusterInfosController < ApplicationController
       raise "Error: simulation not exists"
     end
     cluster_infos = ClusterInfos.new(@experiment,simulations)
-    #Rails.logger.debug(Benchmark.measure{content = clusterInfos.evaluate})
     @content = cluster_infos.evaluate
-    #render :index => @content, layout: false
 
     respond_to do |format|
-      #change it for display
-      format.html {render :index => @content, layout: false}
+      format.html { render layout: false }
       format.json { render json: {status: 'ok', data: @content } }
-
     end
-
   end
 end
