@@ -4,11 +4,6 @@ class Dendrogram
   attr_accessor :experiment
   attr_accessor :parameters
 
-
-
-
-
-
   def handler
     if parameters["id"] && parameters["array"]
       object = {}
@@ -70,27 +65,28 @@ EOF
     creating_dendrogram_structure(hash)
   end
 
-
+  ##
+  # search for -and pair and creating json with hierarchical structure to draw dendrogram
   def creating_dendrogram_structure(data)
-# search for - and - pairs and creating dict output value -> this pair
     root = data.keys.last
     hash = create_hash(data, root, 0)
-
-
     create_json_max_depth(data, root, 0, get_the_best_depth(data, root, hash))
-    #create_json(data, root)
   end
 
+  ##
+  # get depth of dendrogram with max count of leafs equal 250
   def get_the_best_depth(data, root, hash)
     max_depth = get_max_depth(data, root, 0)
     (0..max_depth).each do |i|
-      if count_of_leafs(hash, i, 0).to_i > 300
+      if count_of_leafs(hash, i, 0).to_i > 250
         return i-1
       end
     end
     return max_depth
   end
 
+  ##
+  # create json with dendrogram structure with all nodes {id: 1, children:[{id, children:[]}]}
   def create_json(hash, node)
     d = hash[node.to_s]
     if d[0] < 0 && d[1] < 0
@@ -104,6 +100,8 @@ EOF
     end if d!=nil
   end
 
+  ##
+  # create hash with strusture of dendrogram with depth {id => 1, depth => 1, children => [{id, depth, children => []}]}
   def create_hash(hash, node, depth)
     d = hash[node.to_s]
     if d[0] < 0 && d[1] < 0
@@ -117,6 +115,8 @@ EOF
     end if d!=nil
   end
 
+  ##
+  # get count of leafs if depth of dendrogram = depth
   def count_of_leafs(tree, depth, count)
     if tree['depth'] != nil
       if tree['depth'] <= depth
@@ -136,7 +136,8 @@ EOF
     end
   end
 
-
+  ##
+  # get count of leafs for each depth
   def count_of_leafs_for_depth(hash, node, depth, leafs)
     d = hash[node.to_s]
     if leafs[depth.to_s] == nil
@@ -159,6 +160,8 @@ EOF
     end if d!=nil
   end
 
+  ##
+  # create json with dendrogram structure where max depth of dendrogram = max_depth
   def create_json_max_depth(hash, node, depth, max_depth)
     d = hash[node.to_s]
     if d[0] < 0 && d[1] < 0
@@ -184,8 +187,8 @@ EOF
     end if d!=nil
   end
 
-  def get_simulations_by_cluster(hash, node)
-    d = hash[node.to_s]
+  def get_simulations_by_cluster(hash, cluster_id)
+    d = hash[cluster_id.to_s]
     if d[0] < 0 && d[1] < 0
       [-d[0], -d[1]].join(', ')
     elsif d[0] < 0 && d[1] > 0
@@ -216,10 +219,7 @@ EOF
     @experiment.simulation_runs.where({ is_done: true }, { fields: %w(result), limit: limit }).each do |simulation_run|
       moe_name_set += simulation_run.result.keys.to_a
     end
-    Rails.logger.debug(moe_name_set.uniq)
-    Rails.logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     moe_name_set.uniq
-
   end
 
   def parameters_names
