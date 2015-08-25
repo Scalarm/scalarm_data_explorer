@@ -60,7 +60,7 @@
         %li
           %button.radius Load chart
         %li
-          %img(src="#{image_url("loading.gif")}" id='busy_3d' size='16x16' style='display: none' )
+          %img(src="#{image_url("loading.gif")}" id='busy_3d' class='loading_chart_gif' size='16x16' style='display: none' )
 
 
 
@@ -74,24 +74,8 @@
 
     $("#threeDModal").foundation("reveal", "close");
 
-    var sessionGetJSON = function(url, params, onSuccess, onError) {
-      return $.ajax({
-       // dataType: "json",
-        url: url,
-        xhrFields: {
-          withCredentials: true
-        },
-        success: onSuccess,
-        error: (onError && onError()) || function(jqXHR, textStatus, errorThrown) {
-          console.log("Error on request to " + url + ": " + textStatus + " " + errorThrown);
-        }
-      });
-    };
-
     var three_d_chart_counter = 0;
     var scripts_loaded = false;
-
-
     var load_chart = function() {
 
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
@@ -114,7 +98,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(three_d_chart_div).html(data);
       };
-      sessionGetJSON(url, {}, handler);
+      getWithSession(url, {}, handler, onErrorHandler);
       three_d_chart_counter++;
 
     };
@@ -128,7 +112,7 @@
           $("#threeDModal").find(".scripts").html(data);
           load_chart();
         };
-       sessionGetJSON(url, {}, handler);
+       getWithSession(url, {}, handler);
       }
       else
         load_chart();

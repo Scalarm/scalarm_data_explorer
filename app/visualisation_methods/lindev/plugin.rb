@@ -13,7 +13,7 @@ class Lindev
       elsif parameters["chart_id"]
         object = prepare_lindev_chart_content(data)
       else
-        error("Request parameters missing: 'chart_id'");
+        raise("Request parameters missing: 'chart_id'");
       end
       object
 
@@ -39,7 +39,7 @@ class Lindev
     simulation_runs = experiment.simulation_runs.to_a
 
     if simulation_runs.length == 0
-      error("No such experiment or no runs done")
+      raise("No such experiment or no runs done")
     end
 
     argument_ids = simulation_runs.first.arguments.split(',')

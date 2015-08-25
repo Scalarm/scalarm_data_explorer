@@ -37,7 +37,7 @@
           %button.radius Load chart
         %li
           %a
-            %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' size='16x16' style='display: none' )
+            %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' class='loading_chart_gif' size='16x16' style='display: none' )
 
   .charts
     .scripts
@@ -80,7 +80,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {}, handler);
+      getWithSession(url, {}, handler, onErrorHandler);
       chart_counter++;
     };
 
