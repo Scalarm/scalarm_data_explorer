@@ -22,12 +22,15 @@
       -else
         .row
           %label.inline="Select parameters of clustering:"
-          .moes_infos
-            -outputs.each do |output|
-              %span.small-2.columns.end
-                %label
-                  %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
-                  #{output}
+          -outputs[0..-2].each do |output|
+            %span.small-2.columns
+              %label
+                %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
+                #{output}
+          %span.small-2.columns.end
+            %label
+              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{outputs.last}"}
+              #{outputs.last}
 
 
         .row
@@ -109,4 +112,5 @@
       }
       else $("input:checkbox").prop('checked', true);
     });
+
   });
