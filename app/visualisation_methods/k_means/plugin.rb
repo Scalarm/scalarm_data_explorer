@@ -37,7 +37,7 @@ class KMeans
   def get_data_for_kmeans
 
     # simulation_runs = experiment.simulation_runs.to_a
-    rinruby = Rails.configuration.r_interpreter
+  
 
     #getting data
 
@@ -52,13 +52,13 @@ class KMeans
     result_data.map{|row| result_array.concat(row[1])}
 
     # for 2 and more moes join arrays of result into one and pass as data
-    rinruby.assign("data" , result_array)
-    rinruby.eval <<EOF
+    R.assign("data" , result_array)
+    R.eval <<EOF
     hdata <- kmeans(data,#{parameters[:clusters]})
     clusters <- hdata$cluster
 
 EOF
-    merge = rinruby.pull "clusters"
+    merge = R.pull "clusters"
     hash = {}
 
     # adding simulation index to result_data
@@ -78,7 +78,7 @@ EOF
       subclusters[counter] = subcluster_moes
     end
 
-    result_subcluster =create_subclusters(simulation_ind, subclusters, clusters, rinruby)
+    result_subcluster =create_subclusters(simulation_ind, subclusters, clusters)
 
     # parsing subcluster data into {cluster_id => { subcluster_id => simulation_ids}} form
     subclusters_data = {}
@@ -116,19 +116,19 @@ EOF
   # create second level chart data (sublcasters)
   # from 1 level gather sim_id and then create hash: level1 => {level2=>sim_ids}
 
-  def create_subclusters(simulation_ind, subcluster, cluster, rinruby)
+  def create_subclusters(simulation_ind, subcluster, cluster)
     hash ={}
     subcluster_size = 0
     cluster.keys.each  do |subclust_indx|
       result_array = []
       subcluster[subclust_indx].map{|row| result_array.concat(row)}
 
-      rinruby.assign("data" ,result_array)
-      rinruby.eval <<EOF
+      R.assign("data" ,result_array)
+      R.eval <<EOF
         hdata <- kmeans(data,#{parameters[:subclusters]})
         subclusters <- hdata$cluster
 EOF
-      to_merge = rinruby.pull "subclusters"
+      to_merge = R.pull "subclusters"
 
       hash_sub ={}
 
