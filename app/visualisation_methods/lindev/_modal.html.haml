@@ -26,9 +26,9 @@
       .small-5.columns
         %label.inline="Select parameter on X"
       .small-7.columns
-        %select.firstParam
+        %select(id="firstParam" class ="moes_params_list")
           %optgroup{:label => "Parameters"}
-            -parameters_labels.each do |parameter|
+            -parameters.each do |parameter|
               %option{value:parameter} #{parameter}
 
 
@@ -40,9 +40,9 @@
       .small-5.columns
         %label.inline="Select parameter on Y"
       .small-7.columns
-        %select.secondParam
+        %select(id="secondParam" class ="moes_params_list")
           %optgroup{:label => "Parameters"}
-            -parameters_labels.each do |parameter|
+            -parameters.each do |parameter|
               %option{value:parameter} #{parameter}
 
 
@@ -53,6 +53,8 @@
 
     .row
       %ul.inline-list
+        %li
+          %button.refresh Refresh parameters
         %li
           %button.radius Load chart
         %li
@@ -75,8 +77,9 @@
 
       var chart_div = $("<div id=\"chart_"+chart_counter+"\">")[0];
       $("#lindevModal .charts").prepend(chart_div);
-      var x_axis = $("#lindevModal .firstParam option:selected").val();
-      var y_axis = $("#lindevModal .secondParam option:selected").val();
+      var x_axis = $("#lindevModal select#firstParam option:selected").val();
+      var y_axis = $("#lindevModal select#secondParam option:selected").val();
+      
       if (type_of_parameter(x_axis) == 'string' || type_of_parameter(y_axis) == 'string') {
         toastr.error('Cannot plot for string type parameter');
         $("#busy_lindev").hide();
@@ -101,8 +104,33 @@
       chart_counter++;
 
     };
+    $("#lindevModal").find("button.refresh").bind("click", function() {
+      $("#busy_lindev").show();
+      var new_select ="<optgroup label='Parameters'>";
+      for (var iter in moes_info_json){
+        var param = moes_info_json[iter];
+        if (param.type =="")
+            new_select = new_select +"</optgroup> <optgroup label='Moes'>"
+          else
+            new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+      }
+      new_select = new_select +"</optgroup>"
+      update_params_names(new_select);
+      $('#busy_lindev').hide();
+      toastr.success("Moes refreshed");
+     });
 
-    $("#lindevModal").find("button").bind("click", function() {
+    var update_params_names = function(data){
+      $(".moes_params_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(data);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+    };
+
+    $("#lindevModal").find("button.radius").bind("click", function() {
       $("#busy_lindev").show();
       if(!scripts_loaded) {
         var url = "#{@prefix}/script_tags/lindev?base_url=" + encodeURIComponent("#{@prefix}");

@@ -34,7 +34,7 @@ window.lindev_main = function(i, param_x, param_y, data) {
             type: 'errorbar',
             data: data[1],
             tooltip: {
-                pointFormat: '(std dev range: {point.low:.3f}-{point.high:.3f})<br/>'
+                pointFormat: '(std dev range: {point.low:.3f} - {point.high:.3f})<br/>'
             }
         }]
     });
