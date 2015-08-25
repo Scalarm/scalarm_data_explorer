@@ -3,5 +3,5 @@
   "id": "interactionModal",
   "group": "params",
   "image": "interaction_icon.png",
-  "description": "<br/>Shows interaction between 2 input parameters"
+  "description": "Shows interaction between 2 input parameters"
 }
