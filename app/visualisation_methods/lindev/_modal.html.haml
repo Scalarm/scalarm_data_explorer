@@ -79,7 +79,9 @@
       $("#lindevModal .charts").prepend(chart_div);
       var x_axis = $("#lindevModal select#firstParam option:selected").val();
       var y_axis = $("#lindevModal select#secondParam option:selected").val();
-      
+      escapeHtml(x_axis)
+      escapeHtml(y_axis)
+
       if (type_of_parameter(x_axis) == 'string' || type_of_parameter(y_axis) == 'string') {
         toastr.error('Cannot plot for string type parameter');
         $("#busy_lindev").hide();

@@ -69,7 +69,10 @@
       var x_axis = $("#interactionModal select#firstParam option:selected").val();
       var y_axis = $("#interactionModal select#secondParam option:selected").val();
       var outputParam = $("#interactionModal select#outputParam option:selected").val();
-      
+      escapeHtml(x_axis)
+      escapeHtml(y_axis)
+      escapeHtml(outputParam)
+
       if (type_of_parameter(x_axis, 'input') == 'string' || type_of_parameter(y_axis, 'input') == 'string' || type_of_parameter(outputParam, 'moe') == 'string') {
         toastr.error('Cannot plot for string type parameter');
         $("#busy_interaction").hide();

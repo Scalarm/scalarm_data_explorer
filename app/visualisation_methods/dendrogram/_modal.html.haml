@@ -64,6 +64,7 @@
       var url = "#{@prefix}/chart_instances/dendrogram";
       for (i = 1; i <= selected_parameters.length; i++) {
         if (type_of_parameter(selected_parameters[i-1].trim()) == 'string') {
+          escapeHtml(selected_parameters[i-1].trim())
           toastr.error('Cannot plot for string type parameter - ' + selected_parameters[i-1].trim());
           $("#busy_dendrogram").hide();
           return;
