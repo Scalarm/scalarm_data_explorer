@@ -1,7 +1,7 @@
 =define_helper_functions
 
 %section#dendrogram_chart_form.panel.radius.plot
-  %h3.subheader Dendrogram for hierarchical clautering by #{Array(params[:array]).to_sentence}
+  %h3.subheader Dendrogram for hierarchical clustering by #{(Array(params[:array])).to_sentence}
   .row
   %span.button.hide= 'Hide chart'
 
@@ -13,8 +13,4 @@
           $("span.button.hide").on('click', function() {
             $("div#dendrogram_chart_#{params["chart_id"]}").remove();
           });
-
-
-
-
         });

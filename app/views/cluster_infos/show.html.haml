@@ -7,39 +7,10 @@
 - else
   - output_parameters = result.result.keys
 - input_parameters = @experiment.get_parameter_ids
-- simulation_array = params[:simulations].split(',').map{|s| s.to_i}.sort
+- simulation_array = params[:simulations].split(',').map(&:to_i).sort
 
 #clusterInfo.reveal-modal(data-reveal="")
 %a.close-reveal-modal &#215
-
--#%h2
--#  Cluster details
--#.row
--#  %span.large-6.medium-8.small-8.columns
--#    %h3{:style => "margin-top: 15px"}
--#      Simulations:
--#    .row
--#      %span.columns{:style => "margin-top: 8px"}
--#        #{params[:simulations].gsub(/,/, ', ')}
--#    %h3{:style => "margin-top: 15px"}
--#      Number of simulations:
--#    .row
--#      %span.columns{:style => "margin-top: 8px"}
--#        #{simulation_array.length}
--#
--#-@content.each do |key, value|
--#  %span.large-6.medium-8.small-8.columns
--#    %h3{:style => "margin-top: 15px"}
--#      #{key.to_s.gsub(/_/, ' ').capitalize}:
--#    .row
--#      -input_parameters.each do |parameter|
--#        %span.columns{:style => "margin-top: 8px"}
--#          #{parameter}: #{value[parameter.to_s]}
--#    .row
--#      -output_parameters.each do |parameter|
--#        %span.columns{:style => "margin-top: 8px"}
--#          #{parameter}: #{value[parameter.to_s]}
-
 %h2
   Details of cluster #{params[:cluster_id]}
 %table{:width => '100%', :style => 'border: 0px'}
@@ -76,6 +47,8 @@
 
 
     %td{:width => "50%", :valign => "top"}
+      %h3.details_label{:style => 'margin-top: 15px', :id => "", :href => "#"}
+        Statistics:
       %ul{id: "detailsList"}
         %dl.accordion{"data-accordion" => "myAccordion",:id => "Accordion", :style=> "text-align: left;"}
           - @content.each do |key, value|
@@ -89,77 +62,28 @@
                     %span{:style => "margin-top: 8px"}
                       #{key}: #{index}
 
--#%h2
--#  Cluster details
--#%table{:width => "100%", :style => "border: 0px"}
--#  %tr
--#    %td{:valign => "top"}
--#      %a
--#        %h3.details_label{:style => "margin-top: 15px", :id => "simulations", :href => "#"}
--#          Simulations
--#      %a
--#        %h3.details_label{:style => "margin-top: 15px", :id => "number_of_simulations", :href => "#"}
--#          Number of simulations
--#
--#      -@content.each do |key, value|
--#        %a
--#          %h3.details_label{:style => "margin-top: 15px", :id => key.to_s, :href => "#"}
--#            #{key.to_s.gsub(/_/, ' ').capitalize}
--#    %td{:width => "50%", :valign => "top"}
--#      .row{:id => "simulations_content", :style => 'display: none'}
--#        %h3.details_content{:style => "margin-top: 15px"}
--#          Simulations:
--#        .row
--#          -simulation_array.each do |simulation|
--#            %a.simulation_number{:id => "#{simulation}", :href => "#"}
--#              #{simulation}
--#      .row{:id => "number_of_simulations_content", :style => 'display: none'}
--#        %h3.details_content{:style => "margin-top: 15px"}
--#          Number of simulations:
--#        %span.columns{:style => "margin-top: 8px"}
--#          #{simulation_array.length}
--#      -@content.each do |key, value|
--#        .row{:id => "#{key.to_s}_content", :style => 'display: none'}
--#          %h3.details_content{:style => "margin-top: 15px"}
--#            #{key.to_s.gsub(/_/, ' ').capitalize}:
--#          -@content[:"#{key.to_s}"].each do |key, index|
--#            %span.columns{:style => "margin-top: 8px"}
--#              #{key}: #{index}
-
 #extension-dialog.reveal-modal(data-reveal="")
 :javascript
   $(function(){
     $('#clusterInfo').foundation('reveal', 'close');
-
-    $(document).ready(function() {
-    $("h3.details_label").click(function(event) {
-      label = "#"+event.target.id;
-      label_content = "#"+event.target.id+"_content";
-      if (!$(label_content).is(":visible"))
-        $(label_content).show();
-      else
-        $(label_content).hide();
-
-    });
-  });
-
 
     $("a.simulation_number").click(function(event) {
       var url = "#{@prefix}/experiments/#{@experiment.id}/simulations/"+event.target.id;
       var handler = function(data) {
         $('#extension-dialog').html(data);
         $('#extension-dialog').foundation('reveal', 'open');
-        $('#extension-dialog').on("closed", function() {
-          $('#clusterInfo').foundation('reveal', 'open');
-        })
       }
       $('#extension-dialog').html(window.loaderHTML);
       getWithSession(url, {}, handler);
-
+      $('#extension-dialog').on("close", function() {
+          $('#clusterInfo').foundation('reveal', 'open');
+        })
     });
 
 
-
+    $("#clusterInfo").on("click", "a.close-reveal-modal", function (){
+      $('#dendrogramModal').foundation('reveal', 'open');
+    });
 
   $(".accordion").on("click", "dd", function (){
     $("dd.active").find(".content").slideUp("slow");
@@ -175,19 +99,15 @@
       $(this).removeClass("active");
     }
   });
-
   $("#show_all_simulations").on("click", function (){
     $("#more_simulations").show();
   });
-
   $("button.radius.tiny.show_all").on('click', function () {
     $("#more_simulations").show();
     $("#less_simulations").hide();
   });
-
   $("button.radius.tiny.hide_sim").on('click', function () {
     $("#more_simulations").hide();
     $("#less_simulations").show();
   });
-
   });

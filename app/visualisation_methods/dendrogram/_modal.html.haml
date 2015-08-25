@@ -18,14 +18,19 @@
     %h3.subheader="Dendrogram for hierarchical clustering"
     .row
       -if result.blank?
-        %label.inline #{outputs}
+        %label.inline #{outputs.to_sentence}
       -else
         .row
           %label.inline="Select parameters of clustering:"
-          -outputs.each do |output|
-            %span.small-12.medium-3.columns
-              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
-              %label #{output}
+          -outputs[0..-2].each do |output|
+            %span.small-2.columns
+              %label
+                %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
+                #{output}
+          %span.small-2.columns.end
+            %label
+              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{outputs.last}"}
+              #{outputs.last}
 
         .row
           %ul.inline-list
@@ -33,11 +38,12 @@
               %button.radius.check_all#check Check / Uncheck all
           %ul.inline-list
             %li
+              %button.refresh Refresh moes
+            %li
               %button.radius.load Load chart
             %li
-              %a
-                %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_dendrogram' size='16x16' style='display: none' )
-
+          %a
+            %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' class='loading_chart_gif' size='16x16' style='display: none' )
 
   .charts
     .scripts
@@ -56,20 +62,32 @@
         $('#dendrogramModal').find('input:checked').map(function () {
             return $(this).attr('id')
         });
-      var array = selectedFiles.toArray();
-      var query_params = "experiment_id=#{@experiment.id}";
-      query_params += "&chart_id="+chart_counter;
-
-      var url = "#{@prefix}/chart_instances/dendrogram?"+query_params;
+      var selected_parameters = selectedFiles.toArray();
+      var url = "#{@prefix}/chart_instances/dendrogram";
       var handler = function(data) {
         $("#busy_dendrogram").hide();
         var targetOffset = $(chart_div).offset().top;
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {array}, handler, onErrorHandler);
+      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler, onErrorHandler);
       chart_counter++;
     };
+    $("#dendrogramModal").find("button.refresh").bind("click", function() {
+      $('#busy_dendrogram').show();
+      var new_checkbox ="";
+      for (var iter in moes_info_json){
+        var param = moes_info_json[iter];
+        if (param.type == "moes_parameter")
+          new_checkbox = new_checkbox + "<span class='small-2 columns end'><label><input id='"+ param.id +"' style='margin-right:5px;' type='checkbox'>"+param.label+"</label></span> ";
+      }
+      $(" .moes_infos").each(function(){
+        $(this).html(new_checkbox);
+      });
+      $('#busy_dendrogram').hide();
+      toastr.success("Moes refreshed");
+    });
+
     $("#dendrogramModal").find("button.radius.load").bind("click", function() {
       if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
       else {
@@ -93,4 +111,5 @@
       }
       else $("input:checkbox").prop('checked', true);
     });
+
   });
