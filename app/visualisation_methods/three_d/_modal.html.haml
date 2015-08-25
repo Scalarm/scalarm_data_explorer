@@ -111,7 +111,8 @@
       var new_select ="<optgroup label='Parameters'>";
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
-        if (param.type ==null)
+        console.debug(param);
+        if (param.type =="")
           new_select = new_select +"</optgroup> <optgroup label='Moes'>"
         else
           new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
