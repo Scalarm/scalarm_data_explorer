@@ -1,0 +1,7 @@
+{
+  "name": "C5.0",
+  "id": "c50Modal",
+  "group": "params",
+  "image": "pareto_icon.png",
+  "description": " C5.0 is an improved algorithm C4.5 which is used to generate a decision tree"
+}

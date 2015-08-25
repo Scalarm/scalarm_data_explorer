@@ -1,0 +1,109 @@
+=define_helper_functions
+
+- parameters = @experiment.get_parameter_ids
+
+- parameters_labels = parameters
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
+- outputs=[]
+- if result.blank?
+  - outputs = ["No results found in completed simulation runs"]
+- else
+  - outputs = result.result.keys
+
+#c50Modal.reveal-modal(data-reveal="true")
+  %section#c50_charts_form.panel.radius.analysis-chart
+    %a.close-reveal-modal &#215
+    %h3.subheader="C5.0 - decision tree"
+    .row
+      .small-5.columns
+        %label.inline="Select string parameter"
+      .small-7.columns
+        %select.firstParam
+          %optgroup{:label => "Parameters"}
+            -parameters_labels.each do |parameter|
+              %option{value:parameter} #{parameter}
+
+          %optgroup{:label => "MoEs"}
+            -outputs.each do |output|
+              %option{value:output} #{output}
+
+    .row
+      %ul.inline-list
+        %li
+          %button.radius Load chart
+        %li
+          %img(src="#{image_url("loading.gif")}" id='busy_c50' class='loading_chart_gif' size='16x16' style='display: none' )
+
+
+
+
+  .charts
+    .scripts
+
+:javascript
+
+  $(function(){
+
+    $('#c50Modal').foundation('reveal', 'close');
+
+    var c50_chart_counter = 0;
+    var scripts_loaded = false;
+    var load_chart = function() {
+      var c50_chart_div = $("<div id=\"c50_chart_"+c50_chart_counter+"\">")[0];
+      $("#c50Modal .charts").prepend(c50_chart_div);
+
+      var param = $("#c50Modal .firstParam option:selected").val();
+      var query_params = "experiment_id=#{@experiment.id}";
+
+      if (type_of_parameter(param) != 'string') {
+        toastr.error('Cannot plot for non-string type parameter');
+        $("#busy_c50").hide();
+        return;
+      }
+      query_params += "&output="+param;
+      query_params += "&chart_id="+c50_chart_counter;
+
+      var url = "#{@prefix}/chart_instances/c50?"+query_params;
+
+      var handler = function(data) {
+        $("#busy_c50").hide();
+        var targetOffset = $(c50_chart_div).offset().top;
+        $('html,body').animate({ scrollTop: targetOffset }, 1000);
+        $(c50_chart_div).html(data);
+      };
+      getWithSession(url, {}, handler, onErrorHandler);
+      c50_chart_counter++;
+
+    };
+
+    $("#c50Modal").find("button").bind("click", function() {
+      $('#busy_c50').show();
+      if(!scripts_loaded){
+        var url = "#{@prefix}/script_tags/c50?base_url=" + encodeURIComponent("#{@prefix}");
+        var handler = function(data) {
+
+          scripts_loaded = true;
+          $("#c50Modal").find(".scripts").html(data);
+          load_chart();
+        };
+       getWithSession(url, {}, handler);
+
+      }
+      else
+        load_chart();
+      });
+
+      function type_of_parameter(parameter) {
+        var index_of_moe = window.moes_info.moes_names.indexOf(parameter)
+        if (index_of_moe != -1) {
+          return window.moes_info.moes_types[index_of_moe]
+        }
+        else {
+          var index_of_input = window.moes_info.inputs_names.indexOf(parameter)
+          return window.moes_info.inputs_types[index_of_input]
+        }
+      }
+  });
+
