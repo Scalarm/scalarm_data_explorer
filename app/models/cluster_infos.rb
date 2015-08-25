@@ -143,9 +143,7 @@ class ClusterInfos
       param_data = result_data[arg]
       param_data = param_data.map{|param| param.to_f}
       hash[arg] = [param_data.min, param_data.max, param_data.max - param_data.min]
-      Rails.logger.debug(hash)
     end
-    Rails.logger.debug(hash)
     hash
   end
 

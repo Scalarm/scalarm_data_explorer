@@ -7,7 +7,7 @@
 - else
   - output_parameters = result.result.keys
 - input_parameters = @experiment.get_parameter_ids
-- simulation_array = params[:simulations].split(',').map{|s| s.to_i}.sort
+- simulation_array = params[:simulations].split(',').map(&:to_i).sort
 
 #clusterInfo.reveal-modal(data-reveal="")
 %a.close-reveal-modal &#215
