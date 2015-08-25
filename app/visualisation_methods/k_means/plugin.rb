@@ -1,4 +1,3 @@
-require 'rinruby'
 class KMeans
   attr_accessor :experiment
   attr_accessor :parameters
@@ -53,13 +52,13 @@ class KMeans
     result_data.map{|row| result_array.concat(row[1])}
 
     # for 2 and more moes join arrays of result into one and pass as data
-    R.assign("data" , result_array)
-    R.eval <<EOF
+    rinruby.assign("data" , result_array)
+    rinruby.eval <<EOF
     hdata <- kmeans(data,#{parameters[:clusters]})
     clusters <- hdata$cluster
 
 EOF
-    merge = R.pull "clusters"
+    merge = rinruby.pull "clusters"
     hash = {}
 
     # adding simulation index to result_data
@@ -79,14 +78,14 @@ EOF
       subclusters[counter] = subcluster_moes
     end
 
-    result_subcluster =create_subclusters(simulation_ind, subclusters,clusters)
+    result_subcluster =create_subclusters(simulation_ind, subclusters, clusters, rinruby)
 
-    finite_data = {}
+    # parsing subcluster data into {cluster_id => { subcluster_id => simulation_ids}} form
+    subclusters_data = {}
     result_subcluster.each do |k,v|
-      finite_data[k] = grouping_hash(v, parameters[:subclusters])
+      subclusters_data[k] = grouping_hash(v, parameters[:subclusters])
     end
-    Rails.logger.debug(finite_data)
-    return clusters, finite_data
+    return clusters, subclusters_data
 
   end
 
@@ -117,19 +116,19 @@ EOF
   # create second level chart data (sublcasters)
   # from 1 level gather sim_id and then create hash: level1 => {level2=>sim_ids}
 
-  def create_subclusters(simulation_ind, subcluster,cluster)
+  def create_subclusters(simulation_ind, subcluster, cluster, rinruby)
     hash ={}
     subcluster_size = 0
     cluster.keys.each  do |subclust_indx|
       result_array = []
       subcluster[subclust_indx].map{|row| result_array.concat(row)}
 
-      R.assign("data" ,result_array)
-      R.eval <<EOF
+      rinruby.assign("data" ,result_array)
+      rinruby.eval <<EOF
         hdata <- kmeans(data,#{parameters[:subclusters]})
         subclusters <- hdata$cluster
 EOF
-      to_merge = R.pull "subclusters"
+      to_merge = rinruby.pull "subclusters"
 
       hash_sub ={}
 
