@@ -1,6 +1,6 @@
 {
   "name": "Linear relationship",
-  "id": "lindevModal",
+  "id": "lindev",
   "group": "basic",
   "image": "lindev_icon.png",
   "description": "<br/>Line chart with standard deviation"

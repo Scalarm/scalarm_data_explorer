@@ -3,19 +3,22 @@ class AnalysisMethodsConfig
   attr_reader :content
 
 
+  ##
+  # read config from file
   def initialize
-    #Rails.logger.debug("INITTTT")
+
     file = File.read("config/methods.json")
     @content = JSON.parse(file)
-    #Rails.logger.debug(@content)
-
   end
 
 
   def get_method_names
     @content["methods"]
-
   end
+
+
+  ##
+  # return information about method from method's catalog
   def get_groups
     groups = @content["groups"]
     methods = get_method_names

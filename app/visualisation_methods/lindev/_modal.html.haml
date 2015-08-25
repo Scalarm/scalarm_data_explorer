@@ -17,60 +17,57 @@
   - outputs = result.result.keys
 
 
-#lindevModal.reveal-modal(data-reveal="true")
-  %section#lindev_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="Line charts with standard deviation"
-    %h3 #{}
-    .row
-      .small-5.columns
-        %label.inline="Select parameter on X"
-      .small-7.columns
-        %select(id="firstParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters.each do |parameter|
-              %option{value:parameter} #{parameter}
+%section#lindev_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="Line charts with standard deviation"
+  %h3 #{}
+  .row
+    .small-5.columns
+      %label.inline="Select parameter on X"
+    .small-7.columns
+      %select(id="firstParam" class ="moes_params_list")
+        %optgroup{:label => "Parameters"}
+          -parameters.each do |parameter|
+            %option{value:parameter} #{parameter}
 
 
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
+        %optgroup{:label => "MoEs"}
+          -outputs.each do |output|
+            %option{value:output} #{output}
 
-    .row
-      .small-5.columns
-        %label.inline="Select parameter on Y"
-      .small-7.columns
-        %select(id="secondParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters.each do |parameter|
-              %option{value:parameter} #{parameter}
-
-
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
+  .row
+    .small-5.columns
+      %label.inline="Select parameter on Y"
+    .small-7.columns
+      %select(id="secondParam" class ="moes_params_list")
+        %optgroup{:label => "Parameters"}
+          -parameters.each do |parameter|
+            %option{value:parameter} #{parameter}
 
 
-    .row
-      %ul.inline-list
-        %li
-          %button.refresh Refresh parameters
-        %li
-          %button.radius Load chart
-        %li
-          %a
-            %img(src="#{image_url("loading.gif")}" id='busy_lindev' class='loading_chart_gif' size='16x16' style='display: none' )
+        %optgroup{:label => "MoEs"}
+          -outputs.each do |output|
+            %option{value:output} #{output}
 
-  .charts
-    .scripts
+
+  .row
+    %ul.inline-list
+      %li
+        %button.refresh Refresh parameters
+      %li
+        %button.radius Load chart
+      %li
+        %a
+          %img(src="#{image_url("loading.gif")}" id='busy_lindev' class='loading_chart_gif' size='16x16' style='display: none' )
+
+.charts
+  .scripts
 
 :javascript
 
 
   $(function(){
 
-    $('#lindevModal').foundation('reveal', 'close');
-    var scripts_loaded = false;
     var chart_counter = 0;
 
     var load_chart = function() {
@@ -125,17 +122,6 @@
 
     $("#lindevModal").find("button.radius").bind("click", function() {
       $("#busy_lindev").show();
-      if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/lindev?base_url=" + encodeURIComponent("#{@prefix}");
-        var handler = function(data) {
-
-          scripts_loaded = true;
-          $("#lindevModal").find(".scripts").html(data);
-          load_chart();
-        };
-        getWithSession(url, {}, handler);
-      }
-      else
-        load_chart();
+      load_chart();
     });
   });

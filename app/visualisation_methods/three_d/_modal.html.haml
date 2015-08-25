@@ -10,82 +10,78 @@
 - else
   - outputs = result.result.keys
 
-#threeDModal.reveal-modal(data-reveal="true")
-  %section#threeD_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="3d scatter plot charts"
-    %h3 #{}
-    .row
-      .small-5.columns
-        %label.inline="Select first parameter"
-      .small-7.columns
-        %select(id="firstParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters_labels.each do |parameter|
-              %option{value:parameter} #{parameter}
+%section#threeD_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="3d scatter plot charts"
+  %h3 #{}
+  .row
+    .small-5.columns
+      %label.inline="Select first parameter"
+    .small-7.columns
+      %select(id="firstParam" class ="moes_params_list")
+        %optgroup{:label => "Parameters"}
+          -parameters_labels.each do |parameter|
+            %option{value:parameter} #{parameter}
 
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
+        %optgroup{:label => "MoEs"}
+          -outputs.each do |output|
+            %option{value:output} #{output}
 
-    .row
-      .small-5.columns
-        %label.inline="Select second parameter"
-      .small-7.columns
-        %select(id="secondParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters.each do |parameter|
-              %option{value:parameter} #{parameter}
+  .row
+    .small-5.columns
+      %label.inline="Select second parameter"
+    .small-7.columns
+      %select(id="secondParam" class ="moes_params_list")
+        %optgroup{:label => "Parameters"}
+          -parameters.each do |parameter|
+            %option{value:parameter} #{parameter}
 
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
+        %optgroup{:label => "MoEs"}
+          -outputs.each do |output|
+            %option{value:output} #{output}
 
-    .row
-      .small-5.columns
-        %label.inline="Select third parameter"
-      .small-7.columns
-        %select(id="thirdParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters.each do |parameter|
-              %option{value:parameter} #{parameter}
+  .row
+    .small-5.columns
+      %label.inline="Select third parameter"
+    .small-7.columns
+      %select(id="thirdParam" class ="moes_params_list")
+        %optgroup{:label => "Parameters"}
+          -parameters.each do |parameter|
+            %option{value:parameter} #{parameter}
 
 
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
+        %optgroup{:label => "MoEs"}
+          -outputs.each do |output|
+            %option{value:output} #{output}
 
-    .row
-      %ul.inline-list
-        %li
-          %button.refresh Refresh parameters
-        %li
-          %button.radius Load chart
-        %li
-          %img(src="#{image_url("loading.gif")}" id='busy_3d' class='loading_chart_gif' size='16x16' style='display: none' )
-
+  .row
+    %ul.inline-list
+      %li
+        %button.refresh Refresh parameters
+      %li
+        %button.radius Load chart
+      %li
+        %img(src="#{image_url("loading.gif")}" id='busy_3d' class='loading_chart_gif' size='16x16' style='display: none' )
 
 
 
-  .charts
-    .scripts
+
+.charts
+  .scripts
 
 :javascript
 
   $(function(){
 
-    $("#threeDModal").foundation("reveal", "close");
-
     var three_d_chart_counter = 0;
-    var scripts_loaded = false;
     var load_chart = function() {
 
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
-      $("#threeDModal .charts").prepend(three_d_chart_div);
+      $("#three_dModal .charts").prepend(three_d_chart_div);
       //TODO - if there's nothing to select -> do nothing
-      var x_axis = $("#threeDModal select#firstParam option:selected").val();
-      var y_axis = $("#threeDModal select#secondParam option:selected").val();
-      var z_axis = $("#threeDModal select#thirdParam option:selected").val();
+      var x_axis = $("#three_dModal select#firstParam option:selected").val();
+      var y_axis = $("#three_dModal select#secondParam option:selected").val();
+      var z_axis = $("#three_dModal select#thirdParam option:selected").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
@@ -105,7 +101,7 @@
 
     };
 
-    $("#threeDModal").find("button.refresh").bind("click", function() {
+    $("#three_dModal").find("button.refresh").bind("click", function() {
       $("#busy_3d").show();
       //moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
       var new_select ="<optgroup label='Parameters'>";
@@ -134,18 +130,8 @@
     };
 
 
-    $("#threeDModal").find("button.radius").bind("click", function() {
+    $("#three_dModal").find("button.radius").bind("click", function() {
       $("#busy_3d").show();
-      if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/three_d?base_url=" + encodeURIComponent("#{@prefix}");
-        var handler = function(data) {
-          scripts_loaded = true;
-          $("#threeDModal").find(".scripts").html(data);
-          load_chart();
-        };
-       getWithSession(url, {}, handler);
-      }
-      else
-        load_chart();
+      load_chart();
     });
   });

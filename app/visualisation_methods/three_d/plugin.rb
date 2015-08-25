@@ -15,8 +15,8 @@ class ThreeD
 
 
   def handler
-    if parameters["id"] && parameters["chart_id"] && parameters["param_x"] && parameters["param_y"] && parameters["param_z"]
-      data = get3d(parameters["param_x"], parameters["param_y"], parameters["param_z"])
+    if parameters["id"] && parameters["chart_id"] && parameters["param_x"].to_s && parameters["param_y"].to_s && parameters["param_z"].to_s
+      data = get3d(parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["param_z"].to_s)
       object = prepare_3d_chart_content(data)
       object
     else
@@ -26,6 +26,13 @@ class ThreeD
 
 
 
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # This function takes 3 paramaters (submited in modal) and gather all their values from db
+  # return hash (data): id(from 0 to simulation count-1) => array with values from 3 parameters
+  # example: data[0] = [1.9, 2, 5]
   def get3d(param_x, param_y, param_z)
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
@@ -52,12 +59,6 @@ class ThreeD
       end
       obj
     end
-    mins = {}
-    maxes = {}
-    argument_ids.each do |arg_name|
-      mins[arg_name] = params[arg_name].min
-      maxes[arg_name] = params[arg_name].max
-    end
 
     data = []
 
@@ -78,7 +79,6 @@ class ThreeD
 
       end
     end
-
 
     counter  = 0
     if argument_ids.index(param_y)

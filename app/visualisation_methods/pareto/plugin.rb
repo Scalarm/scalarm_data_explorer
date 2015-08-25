@@ -12,8 +12,8 @@ class Pareto
   end
 
   def handler()
-    if parameters["id"] && parameters["chart_id"] && parameters["output"]
-      data = get_pareto_data
+    if parameters["id"] && parameters["chart_id"] && parameters["output"].to_s
+      data = get_pareto_data(parameters["output"].to_s)
       object = prepare_pareto_chart_content(data)
       object
     else
@@ -22,7 +22,15 @@ class Pareto
 
   end
 
-  def get_pareto_data
+
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # In first step for each input parameter search it minimum and maximum value
+  # next step is to count occurances for these values and sum all output values for given output parameter(moes)
+  # Finally calculate absolute value of subtraction of average min and max value for parameter
+  def get_pareto_data(moes)
 
 
     simulation_runs = experiment.simulation_runs.to_a
@@ -46,8 +54,10 @@ class Pareto
       obj[:result] = {}
       unless data.result.nil?
         data.result.each do |key, value|
-          obj[:result][key] = value.to_f rescue 0.0
-        end
+          if moes.eql? key
+            obj[:result] = value.to_f rescue 0.0
+          end
+         end
       end
       obj
     end
@@ -72,11 +82,11 @@ class Pareto
       sum_max =0
       simulation_runs.map do |datas|
         if datas[:arguments][arg_name] ==local_max
-          sum_max+=datas[:result].values.reduce(:+)
+          sum_max+=datas[:result]
           end
 
         if datas[:arguments][arg_name] ==local_min
-          sum_min+=datas[:result].values.reduce(:+)
+          sum_min+=datas[:result]
         end
 
       end
