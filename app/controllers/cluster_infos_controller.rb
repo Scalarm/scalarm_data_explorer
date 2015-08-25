@@ -8,7 +8,6 @@ class ClusterInfosController < ApplicationController
       raise "Error: simulation not exists"
     end
     clusterInfos = ClusterInfos.new(@experiment,simulations)
-    #Rails.logger.debug(Benchmark.measure{content = clusterInfos.evaluate})
     content = clusterInfos.evaluate
     respond_to do |format|
       #change it for display
