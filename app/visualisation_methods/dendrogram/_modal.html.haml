@@ -29,6 +29,7 @@
                   %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
                   #{output}
 
+
         .row
           %ul.inline-list
             %li
@@ -102,11 +103,11 @@
           load_chart();
       }
     });
-    $("button.radius.check_all#check").on('click', function () {
-      if ($("input:checkbox").length ==  $("input:checked").length) {
-        $("input:checkbox").prop('checked', false);
+    $("#dendrogramModal button.radius.check_all#check").on('click', function () {
+      if ($("#dendrogramModal input:checkbox").length ==  $("#dendrogramModal input:checked").length) {
+        $("#dendrogramModal input:checkbox").prop('checked', false);
       }
-      else $("input:checkbox").prop('checked', true);
+      else $("#dendrogramModal input:checkbox").prop('checked', true);
     });
 
   });

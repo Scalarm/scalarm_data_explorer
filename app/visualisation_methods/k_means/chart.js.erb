@@ -1,10 +1,5 @@
-window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLevel, experiment_id, prefix) {
-    /*$('body').append(viewer);
-    var dialog = $('#clusters_details');
-    dialog.on("closed", function() {
-        $('#clusteringModal').foundation('reveal', 'open');
-    })
-*/
+window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, secondLevel, experiment_id, prefix) {
+
     function openViewer() {
         return function(){
             var clucter_id = this.id.split("s")[0];
@@ -18,66 +13,31 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
     }
 
     function show_cluster_info_modal(cluster_id, simulations) {
-        //TO DO: baseurl jest na sztywno, trzeba to przekazać
-        var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations;
+        var url = "<%= @prefix %>/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations;
+
         var handler = function(data) {
             $('#clusterInfo').html(data);
             $('#clusterInfo').foundation('reveal', 'open');
-            $('#clusterInfo').on("closed", function() {
-                $('#kmeansModal').foundation('reveal', 'open');
-            })
         }
         $('#clusterInfo').html(window.loaderHTML);
         getWithSession(url, {}, handler);
     }
-/*
-    var clusters = [];
-    var subclusters = [];
-    var subcluster_size;
-    var brightness;
 
-    for(var j in data) {
-        var color = colors[ j%colors.length ];
-        clusters.push({
-            y: data[j]["indexes"].length,
-            id: 'cluster_' + data[j]["cluster"],
-            visible: true,
-            indexes: data[j]["indexes"],
-            means: data[j]["means"],
-            ranges: data[j]["ranges"],
-            color: color
-        });
-        var cluster_size = data[j]["subclusters"].length;
-        for(var k in data[j]["subclusters"]){
-            subcluster_size = data[j]["subclusters"][k]["indexes"].length;
-            brightness = 0.2 - (1.0*k / cluster_size) / 5;
-            subclusters.push({
-                y: subcluster_size,
-                id: 'cluster_' + data[j]["subclusters"][k]['cluster'],
-                visible: true,
-                indexes: data[j]["subclusters"][k]["indexes"],
-                means: data[j]["subclusters"][k]["means"],
-                ranges: data[j]["subclusters"][k]["ranges"],
-                color: Highcharts.Color(color).brighten(brightness).get()
-            });
-        }
-
-    }*/
     var colors = Highcharts.getOptions().colors;
     var clusters = [];
     var subclust = [];
-       for(var j in data) {
+       for(var j in cluster_data) {
            var color = colors[j % colors.length];
            clusters.push({
-               y: data[j].length,
+               y: cluster_data[j].length,
                id: 'cluster_' + j,
                visible: true,
-               indexes: data[j],
-               /*  means: data[j]["means"],
-                ranges: data[j]["ranges"],*/
+               indexes: cluster_data[j],
+               /*  means: cluster_data[j]["means"],
+                ranges: cluster_data[j]["ranges"],*/
                color: color
            });
-           var cluster_size = data[j].length;
+           var cluster_size = cluster_data[j].length;
            for(var k in subclusters[j]){
                subcluster_size = subclusters[j][k].length;
                brightness = 0.2 - (1.0*k / cluster_size) / 5;
@@ -86,8 +46,8 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
                    id: 'cluster_' + j+'s'+k,
                    visible: true,
                    indexes: subclusters[j][k],
-               /*    means: data[j]["subclusters"][k]["means"],
-                   ranges: data[j]["subclusters"][k]["ranges"],*/
+               /*    means: cluster_data[j]["subclusters"][k]["means"],
+                   ranges: cluster_data[j]["subclusters"][k]["ranges"],*/
                    color: Highcharts.Color(color).brighten(brightness).get()
                });
            }
