@@ -2,7 +2,7 @@
   "name": "K-means clustering",
   "id": "kmeansModal",
   "group": "params",
-  "image": "kmeans_icon.png",
+  "image": "k_means_icon.png",
   "description": "Clustering charts - k-means clustering"
 }
 

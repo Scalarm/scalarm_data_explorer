@@ -20,12 +20,11 @@ window.kmeans_main  = function(i,moes, data, subclusters, firstLevel, secondLeve
     function show_cluster_info_modal(cluster_id, simulations) {
         //TO DO: baseurl jest na sztywno, trzeba to przekazać
         var url = "https://localhost:25000/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations;
-        console.log(url);
         var handler = function(data) {
             $('#clusterInfo').html(data);
             $('#clusterInfo').foundation('reveal', 'open');
             $('#clusterInfo').on("closed", function() {
-                $('#dendrogramModal').foundation('reveal', 'open');
+                $('#kmeansModal').foundation('reveal', 'open');
             })
         }
         $('#clusterInfo').html(window.loaderHTML);

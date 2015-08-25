@@ -22,15 +22,12 @@
       -else
         .row
           %label.inline="Select parameters of clustering:"
-          -outputs[0..-2].each do |output|
-            %span.small-2.columns
-              %label
-                %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
-                #{output}
-          %span.small-2.columns.end
-            %label
-              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{outputs.last}"}
-              #{outputs.last}
+          .moes_infos
+            -outputs.each do |output|
+              %span.small-2.columns.end
+                %label
+                  %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
+                  #{output}
 
         .row
           %ul.inline-list

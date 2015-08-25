@@ -16,13 +16,9 @@ class ClusterInfosController < ApplicationController
 
 
     respond_to do |format|
-    cluster_infos = ClusterInfos.new(@experiment,simulations)
-    @content = cluster_infos.evaluate
-
-    respond_to do |format|
       format.html { render layout: false }
       format.json { render json: {status: 'ok', data: @content } }
+
     end
   end
-
 end
