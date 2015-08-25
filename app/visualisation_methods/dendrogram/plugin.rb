@@ -27,7 +27,7 @@ class Dendrogram
     output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\ndendrogram_main(i, \"" + parameters["array"].first + "\", data, experiment_id, prefix);"
+    output += "\ndendrogram_main(i, \"" + parameters["array"] + "\", data, experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
@@ -237,7 +237,7 @@ EOF
   end
 
   def create_result_csv(with_index=true, with_params=true, with_moes=true)
-    moes = parameters["array"]
+    moes = Array(parameters["array"])
     if with_params
       all_parameters = parameters_names.uniq.flatten
     end
