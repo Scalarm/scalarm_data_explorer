@@ -22,7 +22,7 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
         $('#clusterInfo').html(window.loaderHTML);
         getWithSession(url, {}, handler);
     }
-
+    var error = false;
     var colors = Highcharts.getOptions().colors;
     var clusters = [];
     var subclust = [];
@@ -40,6 +40,7 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
            var cluster_size = cluster_data[j].length;
            for(var k in subclusters[j]){
                subcluster_size = subclusters[j][k].length;
+               if (subcluster_size == 0) error = true;
                brightness = 0.2 - (1.0*k / cluster_size) / 5;
                subclust.push({
                    y: subcluster_size,
@@ -53,59 +54,63 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
            }
        }
 
-
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: $('#kmeans_chart_'+ i + " .chart")[0],
-            type: 'pie'
-        },
-        title: {
-            text: JSON.stringify(moes) + ", " + firstLevel + ", " + secondLevel
-        },
-        plotOptions: {
-            pie: {
-                shadow: false,
-                center: ['50%', '50%']
-            }
-        },
-        series: [{
-            //name: 'Cluster size',
-            data: clusters,
-            size: '70%',
-            dataLabels: {
-                formatter: function () {
-                    return null; //this.y > 5 ? this.point.name : null;
-                }//,
-                //color: 'white',
-                //distance: -30
+    if (error) {
+        $('#kmeans_chart_' + i)[0].remove();
+        toastr.error("Too many divisions. Can not divide data into subclusters. Please, try lower number of sublcusters");
+    }else {
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: $('#kmeans_chart_' + i + " .chart")[0],
+                type: 'pie'
             },
-            point: {
-                events: {
-                    click: openViewer(this)
+            title: {
+                text: JSON.stringify(moes) + ", " + firstLevel + ", " + secondLevel
+            },
+            plotOptions: {
+                pie: {
+                    shadow: false,
+                    center: ['50%', '50%']
+                }
+            },
+            series: [{
+                //name: 'Cluster size',
+                data: clusters,
+                size: '70%',
+                dataLabels: {
+                    formatter: function () {
+                        return null; //this.y > 5 ? this.point.name : null;
+                    }//,
+                    //color: 'white',
+                    //distance: -30
+                },
+                point: {
+                    events: {
+                        click: openViewer(this)
+                    }
+                }
+            }, {
+                data: subclust,
+                size: '100%',
+                innerSize: '70%',
+                dataLabels: {
+                    formatter: function () {
+                        return null; //this.y > 5 ? this.point.name : null;
+                    }//,
+                    //color: 'white',
+                    //distance: -30
+                },
+                point: {
+                    events: {
+                        click: openViewer(this)
+                    }
+                }
+            }],
+            tooltip: {
+                formatter: function () {
+                    // console.log(this);
+                    return "Cluster size: " + this.point.indexes.length + "<br/><b>Click for details</b>";
                 }
             }
-        }, {
-            data: subclust,
-            size: '100%',
-            innerSize: '70%',
-            dataLabels: {
-                formatter: function () {
-                    return null; //this.y > 5 ? this.point.name : null;
-                }//,
-                //color: 'white',
-                //distance: -30
-            },
-            point: {
-                events: {
-                    click: openViewer(this)
-                }
-            }
-        }],
-        tooltip: {
-            formatter: function() {
-                // console.log(this);
-                return "Cluster size: " + this.point.indexes.length + "<br/><b>Click for details</b>";
-            }
-        }
-    });
+        });
+    }
 };
