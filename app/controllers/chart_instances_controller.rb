@@ -37,7 +37,7 @@ class ChartInstancesController < ApplicationController
     #escaping html js all parameters for safety
     #params html safety (< 4.2 version)
     params.each do |parameter|
-       params.update(params){ |k, v| ERB::Util.h(v)}
+       params.update(params){ |k, v| v.kind_of?(Array)?v.map!{|array_value| ERB::Util.h(array_value)} :ERB::Util.h(v)}
     end
     handler.parameters = params
 

@@ -22,15 +22,12 @@
       -else
         .row
           %label.inline="Select parameters of clustering:"
-          -outputs[0..-2].each do |output|
-            %span.small-2.columns
-              %label
-                %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
-                #{output}
-          %span.small-2.columns.end
-            %label
-              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{outputs.last}"}
-              #{outputs.last}
+          .moes_infos
+            -outputs.each do |output|
+              %span.small-2.columns.end
+                %label
+                  %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
+                  #{output}
 
 
         .row
@@ -106,11 +103,11 @@
           load_chart();
       }
     });
-    $("button.radius.check_all#check").on('click', function () {
-      if ($("input:checkbox").length ==  $("input:checked").length) {
-        $("input:checkbox").prop('checked', false);
+    $("#dendrogramModal button.radius.check_all#check").on('click', function () {
+      if ($("#dendrogramModal input:checkbox").length ==  $("#dendrogramModal input:checked").length) {
+        $("#dendrogramModal input:checkbox").prop('checked', false);
       }
-      else $("input:checkbox").prop('checked', true);
+      else $("#dendrogramModal input:checkbox").prop('checked', true);
     });
 
   });

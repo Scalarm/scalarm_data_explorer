@@ -10,9 +10,15 @@ class ClusterInfosController < ApplicationController
     cluster_infos = ClusterInfos.new(@experiment,simulations)
     @content = cluster_infos.evaluate
 
+    @content.update(@content){ |k, v| v.kind_of?(Array)?
+        v.map!{|array_value| ERB::Util.h(array_value)} : v.kind_of?(Hash)?
+            v.update(v){ |k_s,v_s| ERB::Util.h(v_s)} : ERB::Util.h(v)}
+
+
     respond_to do |format|
       format.html { render layout: false }
       format.json { render json: {status: 'ok', data: @content } }
+
     end
   end
 end
