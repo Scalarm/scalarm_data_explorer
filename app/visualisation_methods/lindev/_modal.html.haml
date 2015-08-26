@@ -133,6 +133,8 @@
     };
 
     $("#lindevModal").find("button.radius").bind("click", function() {
+      if (check_if_no_results_to_plot() == true) return;
+
       $("#busy_lindev").show();
       if(!scripts_loaded) {
         var url = "#{@prefix}/script_tags/lindev?base_url=" + encodeURIComponent("#{@prefix}");
@@ -156,6 +158,13 @@
       else {
         var index_of_input = window.moes_info.inputs_names.indexOf(parameter)
         return window.moes_info.inputs_types[index_of_input]
+      }
+    }
+
+    function check_if_no_results_to_plot() {
+      if (typeof(window.moes_info.moes_names) == 'undefined') {
+        toastr.error("No results to plot");
+        return true;
       }
     }
 

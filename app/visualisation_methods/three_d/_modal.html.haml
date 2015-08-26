@@ -86,6 +86,10 @@
       var x_axis = $("#threeDModal select#firstParam option:selected").val();
       var y_axis = $("#threeDModal select#secondParam option:selected").val();
       var z_axis = $("#threeDModal select#thirdParam option:selected").val();
+      escapeHtml(x_axis)
+      escapeHtml(y_axis)
+      escapeHtml(z_axis)
+
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
@@ -135,6 +139,8 @@
 
 
     $("#threeDModal").find("button.radius").bind("click", function() {
+      if (check_if_no_results_to_plot() == true) return;
+
       $("#busy_3d").show();
       if(!scripts_loaded) {
         var url = "#{@prefix}/script_tags/three_d?base_url=" + encodeURIComponent("#{@prefix}");
@@ -148,4 +154,12 @@
       else
         load_chart();
     });
+
+    function check_if_no_results_to_plot() {
+      if (typeof(window.moes_info.moes_names) == 'undefined') {
+        toastr.error("No results to plot");
+        return true;
+      }
+    }
+
   });
