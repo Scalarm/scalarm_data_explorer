@@ -22,11 +22,13 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
         $('#clusterInfo').html(window.loaderHTML);
         getWithSession(url, {}, handler);
     }
-    var error = false;
+
+    var empty_subcluster;
     var colors = Highcharts.getOptions().colors;
     var clusters = [];
     var subclust = [];
        for(var j in cluster_data) {
+           empty_subcluster = false;
            var color = colors[j % colors.length];
            clusters.push({
                y: cluster_data[j].length,
@@ -38,26 +40,45 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
                color: color
            });
            var cluster_size = cluster_data[j].length;
-           for(var k in subclusters[j]){
-               subcluster_size = subclusters[j][k].length;
-               if (subcluster_size == 0) error = true;
-               brightness = 0.2 - (1.0*k / cluster_size) / 5;
+
+           /*check if subcluster exists*/
+           for (var k in subclusters[j]) {
+
+               if (subclusters[j][k].length == 0 ) {
+               empty_subcluster = true;
+                }else
+               if(subclusters[j][k][0] == null) {
+                   empty_subcluster = true;
+               }
+           }
+           if (!empty_subcluster) {
+               for (var k in subclusters[j]) {
+                   subcluster_size = subclusters[j][k].length;
+                   brightness = 0.2 - (1.0 * k / cluster_size) / 5;
+                   subclust.push({
+                       y: subcluster_size,
+                       id: 'cluster_' + j + 's' + k,
+                       visible: true,
+                       indexes: subclusters[j][k],
+                       /*    means: cluster_data[j]["subclusters"][k]["means"],
+                        ranges: cluster_data[j]["subclusters"][k]["ranges"],*/
+                       color: Highcharts.Color(color).brighten(brightness).get()
+                   });
+               }
+           }
+           else{
                subclust.push({
-                   y: subcluster_size,
-                   id: 'cluster_' + j+'s'+k,
+                   y: cluster_data[j].length,
+                   id: 'cluster_' + j + 's' + k,
                    visible: true,
-                   indexes: subclusters[j][k],
-               /*    means: cluster_data[j]["subclusters"][k]["means"],
-                   ranges: cluster_data[j]["subclusters"][k]["ranges"],*/
-                   color: Highcharts.Color(color).brighten(brightness).get()
+                   indexes: cluster_data[j],
+                   color: color
                });
+
+
            }
        }
 
-    if (error) {
-        $('#kmeans_chart_' + i)[0].remove();
-        toastr.error("Too many divisions. Can not divide data into subclusters. Please, try lower number of sublcusters");
-    }else {
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: $('#kmeans_chart_' + i + " .chart")[0],
@@ -112,5 +133,5 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
                 }
             }
         });
-    }
+
 };
