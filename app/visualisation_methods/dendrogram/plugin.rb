@@ -7,7 +7,7 @@ class Dendrogram
   def handler
     if parameters["id"] && parameters["array"]
       object = {}
-      data = get_data_for_dendrogram(experiment, parameters["id"], parameters["array"].first)
+      data = get_data_for_dendrogram
       if parameters["type"] == 'data'
 
         object = content[JSON.stringify(data)]
@@ -27,14 +27,14 @@ class Dendrogram
     output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\ndendrogram_main(i, \"" + parameters["array"] + "\", data, experiment_id, prefix);"
+    output += "\ndendrogram_main(i, \"" + Array(parameters["array"]).to_sentence + "\", data, experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
 
 
   # TODO: documentation - what this method does? change name
-  def get_data_for_dendrogram(experiment, id, param_x)
+  def get_data_for_dendrogram
 
     # simulation_runs = experiment.simulation_runs.to_a
     rinruby = Rails.configuration.r_interpreter

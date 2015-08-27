@@ -164,7 +164,7 @@ end
 # TODO
 def install_r_libraries
   puts 'Checking R libraries...'
-  Rails.configuration.r_interpreter.eval(
+  R.eval(
       ".libPaths(c(\"#{Dir.pwd}/r_libs\", .libPaths()))
     if(!require(e1071, quietly=TRUE)){
       install.packages(\"e1071\", repos=\"http://cran.rstudio.com/\")
