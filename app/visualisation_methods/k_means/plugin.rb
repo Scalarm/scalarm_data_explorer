@@ -10,7 +10,6 @@ class KMeans
       object = {}
       data, subclusters = get_data_for_kmeans
       if parameters["type"] == 'data'
-
         object = content[JSON.stringify(data)]
       elsif parameters["chart_id"]
         object = prepare_kmeans_chart_content(data, subclusters)
@@ -34,7 +33,15 @@ class KMeans
   end
 
 
-  # TODO: documentation
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # At the start is created data set with simulations output values (moes) and array with all simulation indexes
+  # Next data is groped into hash {moe_name => [moe values] } and assigned in R as vector
+  # To k-means algorithm is passed a data.frame with all of moe vectors
+  # Results from k-means algorithm are parsed into form {cluster_id => [simulation ids] }
+  # Similarly it works for subclusters
   def get_data_for_kmeans
 
     # simulation_runs = experiment.simulation_runs.to_a
@@ -50,16 +57,12 @@ class KMeans
     result_data.map{|row| result_hash[row[0]]=row[1]}
     groped_by_moes = {}
     result_data.map do |row|
-     # Rails.logger.debug(row)
       row[1].each_with_index do |moe,ind|
         groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) :  groped_by_moes[moes[ind]] = [moe]
-
       end
-
     end
 
-
-    # for 2 and more moes join arrays of result into one and pass as data
+    # for 2 and more moes join arrays of result into one and pass as data.frame
     groped_by_moes.each do |k,v|
       R.assign(k , v)
     end
@@ -77,14 +80,12 @@ EOF
     for counter in 0..(merge.count()-1)
       hash[simulation_ind[counter]] = merge[counter]
     end
-  #  hash
+    # hash
     clusters = grouping_hash(hash, parameters[:clusters])
 
-
-    # sublcusters
+    # creating sublcusters hash
     subclusters={}
     for counter in 1..(parameters[:clusters].to_i)
-      #subcluster_moes=[]
       subcluster_moes = result_hash.select{|k,v| clusters[counter].include?(k)}.values
       subclusters[counter] = subcluster_moes
     end
@@ -134,38 +135,40 @@ EOF
     subcluster_size = 0
 
     cluster.keys.each  do |subclust_indx|
-    #  result_array = []
-      groped_by_moes = {}
-      subcluster[subclust_indx].map do |row|
-        row.each_with_index do |moe,ind|
-          groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) :  groped_by_moes[moes[ind]] = [moe]
+      hash_sub ={}
+      if subcluster[subclust_indx].length >= parameters[:subclusters].to_i
+        groped_by_moes = {}
+
+        # create hash {moe_name => [array of values]} it have only for those simulations which are in this cluster
+        subcluster[subclust_indx].map do |row|
+          row.each_with_index do |moe,ind|
+            groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) :  groped_by_moes[moes[ind]] = [moe]
+          end
+
+        end
+        #assign data in R
+        groped_by_moes.each do |k,v|
+          R.assign(k , v)
         end
 
-
-      end
-      groped_by_moes.each do |k,v|
-        R.assign(k , v)
-      end
-
-     # subcluster[subclust_indx].map{|row| result_array.concat(row)}
-
-     # R.assign("data" ,result_array)
-      R.eval <<EOF
-        hdata <- kmeans(data.frame(#{moes.join(",")}),#{parameters[:subclusters]})
-        subclusters <- hdata$cluster
+        R.eval <<EOF
+          hdata <- kmeans(data.frame(#{moes.join(",")}),#{parameters[:subclusters]})
+          subclusters <- hdata$cluster
 EOF
-      to_merge = R.pull "subclusters"
+        to_merge = R.pull "subclusters"
 
-      hash_sub ={}
+        # iterating from last number node in previus subclaster
+        # to_merge is from zero but simulation_ind continues from the last
+        for counter in subcluster_size..(subcluster_size+to_merge.count()-1)
+          hash_sub[simulation_ind[counter]] = to_merge[counter-subcluster_size]
+        end
+        # adding how many simulations pass already
+        subcluster_size+=to_merge.count()
 
-      # iterating from last number node in previus subclaster
-      # to_merge is from zero but simulation_ind continues from the last
-      for counter in subcluster_size..(subcluster_size+to_merge.count()-1)
 
-        hash_sub[simulation_ind[counter]] = to_merge[counter-subcluster_size]
+      else
+        subcluster_size+=subcluster[subclust_indx].length
       end
-      # adding how many simulations pass already
-      subcluster_size+=to_merge.count()
       hash[subclust_indx] = hash_sub
     end
 
