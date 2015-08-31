@@ -10,62 +10,72 @@
 - else
   - outputs = result.result.keys
   - notation_options = options_for_select([["Default", 'default'], ["Scientific", 'scientific']])
+
 #threeDModal.reveal-modal(data-reveal="true")
   %section#threeD_charts_form.panel.radius.analysis-chart
     %a.close-reveal-modal &#215
     %h3.subheader="3d scatter plot charts"
     %h3 #{}
-    .row
-      .small-4.columns
-        %label.inline="Select parameter for X axis"
-      .small-4.columns
-        %label.inline="Select parameter for Y axis"
-      .small-4.columns
-        %label.inline="Select parameter for Z axis"
-    .row
-      .small-4.columns
-        %select.firstParam
-          %optgroup{:label => "Parameters"}
-            -parameters_labels.each do |parameter|
-              %option{value:parameter} #{parameter}
+    .container-fluid
+      .row
+        .small-3.columns
+          %label="Select parameter for X axis"
+          .row
+            .small-12.columns
+              %select.firstParam
+                %optgroup{:label => "Parameters"}
+                  -parameters_labels.each do |parameter|
+                    %option{value:parameter} #{parameter}
 
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
-      .small-4.columns
-        %select.secondParam
-          %optgroup{:label => "Parameters"}
-            -parameters_labels.each do |parameter|
-              %option{value:parameter} #{parameter}
-
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
-      .small-4.columns
-        %select.thirdParam
-          %optgroup{:label => "Parameters"}
-            -parameters_labels.each do |parameter|
-              %option{value:parameter} #{parameter}
-
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
-    .row
-      .small-4.columns
-        %label.inline= label_tag :x_axis_notation, "Select notation for X axis" + ':', class: 'inline'
-      .small-4.columns.end
-        %label.inline= label_tag :y_axis_notation, "Select notation for Y axis" + ':', class: 'inline'
-    .row
-      .small-4.columns
-        = select_tag 'x_axis_notation', notation_options
-      .small-4.columns.end
-        =select_tag 'y_axis_notation', notation_options
-    .row
-      %ul.inline-list
-        %li
-          %button.radius Load chart
-        %li
-          %img(src="#{image_url("loading.gif")}" id='busy_3d' size='16x16' style='display: none' )
+                %optgroup{:label => "MoEs"}
+                  -outputs.each do |output|
+                    %option{value:output} #{output}
+              .row
+                .small-12.columns
+                  %label= label_tag :x_axis_notation, "Select notation for X axis" + ':', class: 'inline'
+                  .row
+                    .small-12.columns
+                      = select_tag 'x_axis_notation', notation_options
+        .small-1.columns
+          &nbsp
+        .small-3.columns
+          %label="Select parameter for Y axis"
+          .row
+            .small-12.columns
+              %select.secondParam
+                %optgroup{:label => "Parameters"}
+                  -parameters_labels.each do |parameter|
+                    %option{value:parameter} #{parameter}
+                %optgroup{:label => "MoEs"}
+                  -outputs.each do |output|
+                    %option{value:output} #{output}
+              .row
+                .small-12.columns
+                  %label= label_tag :y_axis_notation, "Select notation for Y axis" + ':', class: 'inline'
+                  .row
+                    .small-12.columns
+                      = select_tag 'y_axis_notation', notation_options
+        .small-1.columns
+          &nbsp
+        .small-3.columns
+          %label="Select parameter for Z axis"
+          .row
+            .small-12.columns
+              %select.thirdParam
+                %optgroup{:label => "Parameters"}
+                  -parameters_labels.each do |parameter|
+                    %option{value:parameter} #{parameter}
+                %optgroup{:label => "MoEs"}
+                  -outputs.each do |output|
+                    %option{value:output} #{output}
+        .small-1.columns
+          &nbsp
+      .row
+        %ul.inline-list
+          %li
+            %button.radius Load chart
+          %li
+            %img(src="#{image_url("loading.gif")}" id='busy_3d' size='16x16' style='display: none' )
 
 
 
