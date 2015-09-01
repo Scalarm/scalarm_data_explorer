@@ -73,10 +73,33 @@
 
   $(function(){
 
+    window.reload_three_d_params = function(){
+      $("#busy_3d").show();
+      //moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
+      var new_select ="<optgroup label='Parameters'>";
+      for (var iter in moes_info_json){
+        var param = moes_info_json[iter];
+        if (param.id == "delimiter")
+          new_select = new_select +"</optgroup> <optgroup label='Moes'>";
+        else
+          new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+      }
+      new_select = new_select +"</optgroup>";
+      $(".moes_params_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(new_select);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+      $('#busy_3d').hide();
+      toastr.success("Parameters refreshed");
+
+    };
+    reload_three_d_params();
 
     var three_d_chart_counter = 0;
     var load_chart = function() {
-
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
       $("#three_dModal .charts").prepend(three_d_chart_div);
       //TODO - if there's nothing to select -> do nothing
@@ -102,32 +125,9 @@
 
     };
 
-    $("#three_dModal").find("button.refresh").bind("click", function() {
-      $("#busy_3d").show();
-      //moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
-      var new_select ="<optgroup label='Parameters'>";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.id == "delimiter")
-          new_select = new_select +"</optgroup> <optgroup label='Moes'>"
-        else
-          new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
-      }
-      new_select = new_select +"</optgroup>"
-      update_params_names(new_select);
-      $('#busy_3d').hide();
-      toastr.success("Parameters refreshed");
-     });
+    $("#three_dModal").find("button.refresh").bind("click", reload_three_d_params);
 
-    var update_params_names = function(data){
-      $(".moes_params_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(data);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-    };
+
 
 
     $("#three_dModal").find("button.radius").bind("click", function() {
