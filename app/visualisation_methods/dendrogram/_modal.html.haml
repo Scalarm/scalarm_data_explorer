@@ -30,18 +30,18 @@
                   #{output}
 
 
-        .row
-          %ul.inline-list
-            %li
-              %button.radius.check_all#check Check / Uncheck all
-          %ul.inline-list
-            %li
-              %button.refresh Refresh moes
-            %li
-              %button.radius.load Load chart
-            %li
-          %a
-            %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' class='loading_chart_gif' size='16x16' style='display: none' )
+    .row
+      %ul.inline-list
+        %li
+          %button.radius.check_all#check Check / Uncheck all
+      %ul.inline-list
+        %li
+          %button.refresh Refresh moes
+        %li
+          %button.radius.load Load chart
+        %li
+      %a
+        %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' class='loading_chart_gif' size='16x16' style='display: none' )
 
   .charts
     .scripts
@@ -103,10 +103,11 @@
           load_chart();
       }
     });
-    $("button.radius.check_all#check").on('click', function () {
-      if ($("input:checkbox").length ==  $("input:checked").length) {
-        $("input:checkbox").prop('checked', false);
+    $("#dendrogramModal button.radius.check_all#check").on('click', function () {
+      if ($("#dendrogramModal input:checkbox").length ==  $("#dendrogramModal input:checked").length) {
+        $("#dendrogramModal input:checkbox").prop('checked', false);
       }
-      else $("input:checkbox").prop('checked', true);
+      else $("#dendrogramModal input:checkbox").prop('checked', true);
     });
+
   });

@@ -62,7 +62,7 @@
         %li
           %button.radius Load chart
         %li
-          %img(src="#{image_url("loading.gif")}" id='busy_3d' class='loading_chart_gif' size='16x16' style='display: none' )
+          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_3d' size='16x16' style='display: none' )
 
 
 
@@ -111,8 +111,7 @@
       var new_select ="<optgroup label='Parameters'>";
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
-        console.debug(param);
-        if (param.type =="")
+        if (param.id == "delimiter")
           new_select = new_select +"</optgroup> <optgroup label='Moes'>"
         else
           new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";

@@ -1,0 +1,113 @@
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
+- output_parameters=[]
+- if result.blank?
+  - output_parameters = ["No results found in completed simulation runs"]
+- else
+  - output_parameters = result.result.keys
+- input_parameters = @experiment.get_parameter_ids
+- simulation_array = params[:simulations].split(',').map(&:to_i).sort
+
+#clusterInfo.reveal-modal(data-reveal="")
+%a.close-reveal-modal &#215
+%h2
+  Details of cluster #{params[:cluster_id]}
+%table{:width => '100%', :style => 'border: 0px'}
+  %tr
+    %td{:valign => "top"}
+      %h3.details_label{:style => 'margin-top: 15px', :id => "", :href => "#"}
+        Simulations (#{simulation_array.length}):
+      -if simulation_array.length >= 100
+        .row{:id => 'less_simulations'}
+          %p.less_simulations
+            -simulation_array[0..98].each do |simulation|
+              %a.simulation_number{:id => "#{simulation}", :href => "#"}
+                #{simulation}
+              ,
+            %a.simulation_number{:id => "#{simulation_array[99].to_s}", :href => "#"}
+              #{simulation_array[99]}...
+          %button.radius.tiny.show_all Show all
+        .row{:id => 'more_simulations', :style => 'display: none'}
+          %p.more_simulations
+            -simulation_array[0..-1].each do |simulation|
+              %a.simulation_number{:id => "#{simulation}", :href => "#"}
+                #{simulation}
+              ,
+            %a.simulation_number{:id => "#{simulation_array[99].to_s}", :href => "#"}
+              #{simulation_array.last}
+          %button.radius.tiny.hide_sim Hide
+      -else
+        -simulation_array[0..-2].each do |simulation|
+          %a.simulation_number{:id => "#{simulation}", :href => "#"}
+            #{simulation}
+          ,
+        %a.simulation_number{:id => "#{simulation_array.last.to_s}", :href => "#"}
+          #{simulation_array.last}
+
+
+    %td{:width => "50%", :valign => "top"}
+      %h3.details_label{:style => 'margin-top: 15px', :id => "", :href => "#"}
+        Statistics:
+      %ul{id: "detailsList"}
+        %dl.accordion{"data-accordion" => "myAccordion",:id => "Accordion", :style=> "text-align: left;"}
+          - @content.each do |key, value|
+            %dd.accordion-navigation{:style => "background: transparent;"}
+              %a{:href => "##{key.to_s}", style: "text-align: left;"}
+                %i.fa.fa-plus-circle{style: "color: 333"}
+                #{key.to_s.gsub(/_/, ' ').capitalize}:
+              %ul.content{:id => "#{key.to_s}", :style => "background: none; text-align: left;"}
+                - @content[:"#{key.to_s}"].each do |key, index|
+                  %li
+                    %span{:style => "margin-top: 8px"}
+                      #{key}: #{index}
+
+#extension-dialog.reveal-modal(data-reveal="")
+:javascript
+  $(function(){
+    $('#clusterInfo').foundation('reveal', 'close');
+
+    $("a.simulation_number").click(function(event) {
+      var url = "#{@prefix}/experiments/#{@experiment.id}/simulations/"+event.target.id;
+      var handler = function(data) {
+        $('#extension-dialog').html(data);
+        $('#extension-dialog').foundation('reveal', 'open');
+      }
+      $('#extension-dialog').html(window.loaderHTML);
+      getWithSession(url, {}, handler);
+      $('#extension-dialog').on("close", function() {
+          $('#clusterInfo').foundation('reveal', 'open');
+        })
+    });
+
+
+    $("#clusterInfo").on("click", "a.close-reveal-modal", function (){
+      $('#dendrogramModal').foundation('reveal', 'open');
+    });
+
+  $(".accordion").on("click", "dd", function (){
+    $("dd.active").find(".content").slideUp("slow");
+    if(!$(this).hasClass("active")) {
+      $(this).find(".content").slideToggle("slow");
+      $("dd").find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
+      $(this).find('i').addClass('fa fa-minus-circle');
+      $("dd").removeClass("active");
+      $(this).addClass("active");
+    }
+    else {
+      $(this).find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
+      $(this).removeClass("active");
+    }
+  });
+  $("#show_all_simulations").on("click", function (){
+    $("#more_simulations").show();
+  });
+  $("button.radius.tiny.show_all").on('click', function () {
+    $("#more_simulations").show();
+    $("#less_simulations").hide();
+  });
+  $("button.radius.tiny.hide_sim").on('click', function () {
+    $("#more_simulations").hide();
+    $("#less_simulations").show();
+  });
+  });

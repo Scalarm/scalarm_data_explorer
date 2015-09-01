@@ -15,7 +15,7 @@ class ScriptTagsController < ApplicationController
         end
     )
     #rendering hmtl script for experiment
-    render html: ("<script type=\"text/javascript\" src=\"#{@prefix}/scripts/#{ERB::Util.h(params[:id])}\"/>").to_s.html_safe,
+    render html: ("<script type=\"text/javascript\" src=\"#{@prefix}/scripts/#{ERB::Util.h(params[:id])}?base_url=#{@prefix}\"/>").to_s.html_safe,
            layout: false
 	end
 	
