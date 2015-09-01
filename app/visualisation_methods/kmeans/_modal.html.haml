@@ -13,61 +13,59 @@
 
 =define_helper_functions
 
-#kmeansModal.reveal-modal(data-reveal="true")
-  %section#kmeans_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="K-means clustering"
-    %h3 #{}
-    .row
-      .small-5.columns
-        %label.inline="Select number of clusters"
-      .small-7.columns
-        %select.numbClust
-          -count_of_cluster.each do |output|
-            %option{:value => output}=output
-    .row
-      .small-5.columns
-        %label.inline="Select number of subclusters"
-      .small-7.columns
-        %select.numbSubclust
-          -count_of_cluster.each do |output|
-            %option{:value => output}=output
-    .row
-      -if result.blank?
-        %label.inline #{outputs.to_sentence}
-      -else
-        %label.inline="Select parameters of clustering:"
-        .moes_infos
-          -outputs.each do |output|
-            %span.small-2.columns.end
-              %label
-                %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
-                #{output}
+
+%section#kmeans_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="K-means clustering"
+  %h3 #{}
+  .row
+    .small-5.columns
+      %label.inline="Select number of clusters"
+    .small-7.columns
+      %select.numbClust
+        -count_of_cluster.each do |output|
+          %option{:value => output}=output
+  .row
+    .small-5.columns
+      %label.inline="Select number of subclusters"
+    .small-7.columns
+      %select.numbSubclust
+        -count_of_cluster.each do |output|
+          %option{:value => output}=output
+  .row
+    -if result.blank?
+      %label.inline #{outputs.to_sentence}
+    -else
+      %label.inline="Select parameters of clustering:"
+      .moes_infos
+        -outputs.each do |output|
+          %span.small-2.columns.end
+            %label
+              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
+              #{output}
 
 
-    .row
-      %ul.inline-list
-        %li
-          %button.radius.check_all#check Check / Uncheck all
-      %ul.inline-list
-        %li
-          %button.refresh Refresh moes
-        %li
-          %button.radius.load Load chart
-        %li
-          %a
-            %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_kmeans' size='16x16' style='display: none' )
+  .row
+    %ul.inline-list
+      %li
+        %button.radius.check_all#check Check / Uncheck all
+    %ul.inline-list
+      %li
+        %button.refresh Refresh moes
+      %li
+        %button.radius.load Load chart
+      %li
+        %a
+          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_kmeans' size='16x16' style='display: none' )
 
 
-  .charts
-    .scripts
+.charts
+  .scripts
 
 #clusterInfo.reveal-modal(data-reveal="")
 
 :javascript
   $(function(){
-    $('#kmeansModal').foundation('reveal', 'close');
-    var scripts_loaded = false;
     var chart_counter = 0;
     var load_chart = function() {
       var chart_div = $("<div id=\"kmeans_chart_"+chart_counter+"\">")[0];
@@ -85,7 +83,7 @@
       query_params += "&clusters="+numb_cluster;
       query_params += "&subclusters="+numb_subcluster;
 
-      var url = "#{@prefix}/chart_instances/k_means?"+query_params;
+      var url = "#{@prefix}/chart_instances/kmeans?"+query_params;
       var handler = function(data) {
         $("#busy_kmeans").hide();
         var targetOffset = $(chart_div).offset().top;
@@ -115,16 +113,6 @@
       if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
       else {
         $("#busy_kmeans").show();
-        if(!scripts_loaded) {
-          var url = "#{@prefix}/script_tags/k_means?base_url=" + encodeURIComponent("#{@prefix}");
-          var handler = function(data) {
-            scripts_loaded = true;
-            $("#kmeansModal").find(".scripts").html(data);
-            load_chart();
-          };
-          getWithSession(url, {}, handler);
-        }
-        else
           load_chart();
       }
     });

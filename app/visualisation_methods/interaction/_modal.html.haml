@@ -36,18 +36,19 @@
     .small-5.columns
       %label.inline="Select output parameter"
     .small-7.columns
-      %select.outputParam.moes
+      %select(id ="outputParam" class="moe_info_list")
         -outputs.each do |output|
           %option{:value => output}=output
-
-
 
   .row
     %ul.inline-list
       %li
+        %button.refresh Refresh moes
+      %li
         %button.radius Load chart
       %li
         %img(src="#{image_url("loading.gif")}" id='busy_interaction' class='loading_chart_gif' size='16x16' style='display: none' )
+
 
 
 

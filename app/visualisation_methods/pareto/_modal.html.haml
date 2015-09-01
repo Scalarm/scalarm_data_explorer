@@ -14,8 +14,8 @@
 - else
   - outputs = result.result.keys
 
-  %section#pareto_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
+%section#pareto_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
   %h3.subheader="Pareto chart"
   .row
     .small-5.columns
@@ -43,8 +43,6 @@
 :javascript
 
   $(function(){
-
-   // $('#paretoModal').foundation('reveal', 'close');
 
     var pareto_chart_counter = 0;
     var load_chart = function() {
@@ -74,6 +72,7 @@
       var new_select ="";
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
+
         if (param.type == "moes_parameter")
           new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
       }

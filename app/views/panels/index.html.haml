@@ -15,7 +15,7 @@
                   %span= method["name"]
             - else
               %li
-                %a.tip-right.text-left{href:"#method"+method["name"], "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{image_url(method["image"])}/></div>", "id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
+                %a.tip-right.text-left{href:"#method"+method["name"], "class" => 'Modal',  "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{image_url(method["image"])}/></div>", "id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
                   %span= method["name"]
 
 :javascript
@@ -37,7 +37,7 @@
 
       if($("#"+ modalIdName + "Modal").length==0){
 
-        var div = $("<div>", {id: modalIdName + "Modal", class: "reveal-modal", "data-reveal": 'true'});
+        var div = $("<div>", {id: modalIdName + "Modal", class: "reveal-modal", "data-reveal": 'true', style:"max-width: 90rem;"});
         $('body').append(div);
 
         $('#'+ modalIdName + 'Modal').html(window.loaderHTML);

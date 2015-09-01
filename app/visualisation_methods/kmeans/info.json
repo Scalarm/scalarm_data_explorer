@@ -1,6 +1,6 @@
 {
   "name": "K-means clustering",
-  "id": "kmeansModal",
+  "id": "kmeans",
   "group": "params",
   "image": "k_means_icon.png",
   "description": "Clustering charts - k-means clustering"

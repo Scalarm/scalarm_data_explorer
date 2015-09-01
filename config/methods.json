@@ -1,5 +1,5 @@
 {
-    "methods": ["lindev", "three_d", "pareto", "interaction", "dendrogram", "k_means"],
+    "methods": ["lindev", "three_d", "pareto", "interaction", "dendrogram", "kmeans"],
 
     "groups": {
 

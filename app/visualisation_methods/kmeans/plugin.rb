@@ -1,5 +1,5 @@
 require 'rinruby'
-class KMeans
+class Kmeans
   attr_accessor :experiment
   attr_accessor :parameters
 
