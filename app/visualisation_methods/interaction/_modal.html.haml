@@ -67,9 +67,9 @@
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
         if (param.type == "input_parameter")
-          new_param_select = new_param_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+          new_param_select = new_param_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
         if (param.type == "moes_parameter")
-          new_moe_select = new_moe_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
+          new_moe_select = new_moe_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
       }
 
       /* replace old values with new ones (moes) */
