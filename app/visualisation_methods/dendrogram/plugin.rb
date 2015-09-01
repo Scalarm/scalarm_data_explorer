@@ -44,7 +44,6 @@ class Dendrogram
     result_csv = create_result_csv
 
     IO.write(result_file.path, result_csv)
-
     #evaluate R commands
     R.eval <<EOF
     hdata <- hclust(dist(read.csv('#{result_file.path}')), 'complete')
