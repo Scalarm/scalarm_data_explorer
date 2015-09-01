@@ -82,11 +82,7 @@
       escapeHtml(x_axis)
       escapeHtml(y_axis)
 
-      if (type_of_parameter(x_axis) == 'string' || type_of_parameter(y_axis) == 'string') {
-        toastr.error('Cannot plot for string type parameter');
-        $("#busy_lindev").hide();
-        return;
-      }
+      if (check_if_string_parameter(x_axis) == true || check_if_string_parameter(y_axis) == true) return;
 
       var query_params = "experiment_id=#{@experiment.id}";
 
@@ -133,8 +129,6 @@
     };
 
     $("#lindevModal").find("button.radius").bind("click", function() {
-      if (check_if_no_results_to_plot() == true) return;
-
       $("#busy_lindev").show();
       if(!scripts_loaded) {
         var url = "#{@prefix}/script_tags/lindev?base_url=" + encodeURIComponent("#{@prefix}");
@@ -161,9 +155,10 @@
       }
     }
 
-    function check_if_no_results_to_plot() {
-      if (typeof(window.moes_info.moes_names) == 'undefined') {
-        toastr.error("No results to plot");
+    function check_if_string_parameter(name_of_parameter) {
+      if (type_of_parameter(name_of_parameter) == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
+        $("#busy_lindev").hide();
         return true;
       }
     }

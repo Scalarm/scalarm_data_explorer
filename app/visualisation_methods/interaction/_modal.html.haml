@@ -73,11 +73,9 @@
       escapeHtml(y_axis)
       escapeHtml(outputParam)
 
-      if (type_of_parameter(x_axis, 'input') == 'string' || type_of_parameter(y_axis, 'input') == 'string' || type_of_parameter(outputParam, 'moe') == 'string') {
-        toastr.error('Cannot plot for string type parameter');
-        $("#busy_interaction").hide();
-        return;
-      }
+      if (check_if_string_parameter(x_axis, 'input') == true
+        || check_if_string_parameter(y_axis, 'input') == true
+        || check_if_string_parameter(outputParam, 'moe') == true) return;
       
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
@@ -136,8 +134,6 @@
 
 
     $("#interactionModal").find("button.radius").bind("click", function() {
-      if (check_if_no_results_to_plot() == true) return;
-
       $('#busy_interaction').show();
       if(!scripts_loaded){
         var url = "#{@prefix}/script_tags/interaction?base_url=" + encodeURIComponent("#{@prefix}");
@@ -165,9 +161,10 @@
       }
     }
 
-    function check_if_no_results_to_plot() {
-      if (typeof(window.moes_info.input_names) == 'undefined') {
-        toastr.error("No results to plot");
+    function check_if_string_parameter(name_of_parameter, character_of_parameter) {
+      if (type_of_parameter(name_of_parameter, character_of_parameter) == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
+        $("#busy_interaction").hide();
         return true;
       }
     }

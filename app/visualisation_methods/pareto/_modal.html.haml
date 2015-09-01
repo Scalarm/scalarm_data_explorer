@@ -105,8 +105,6 @@
     };
 
     $("#paretoModal").find("button.radius").bind("click", function() {
-      if (check_if_no_results_to_plot() == true) return;
-
       $('#busy_pareto').show();
       if(!scripts_loaded){
         var url = "#{@prefix}/script_tags/pareto?base_url=" + encodeURIComponent("#{@prefix}");
@@ -123,11 +121,5 @@
         load_chart();
       });
 
-    function check_if_no_results_to_plot() {
-      if (typeof(window.moes_info.moes_names) == 'undefined') {
-        toastr.error("No results to plot");
-        return true;
-      }
-    }
   });
 

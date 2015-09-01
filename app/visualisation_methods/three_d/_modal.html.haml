@@ -138,8 +138,6 @@
 
 
     $("#threeDModal").find("button.radius").bind("click", function() {
-      if (check_if_no_results_to_plot() == true) return;
-
       $("#busy_3d").show();
       if(!scripts_loaded) {
         var url = "#{@prefix}/script_tags/three_d?base_url=" + encodeURIComponent("#{@prefix}");
@@ -153,12 +151,5 @@
       else
         load_chart();
     });
-
-    function check_if_no_results_to_plot() {
-      if (typeof(window.moes_info.moes_names) == 'undefined') {
-        toastr.error("No results to plot");
-        return true;
-      }
-    }
 
   });
