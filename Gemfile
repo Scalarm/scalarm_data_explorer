@@ -1,14 +1,22 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-# TODO: user rails ~> 4.1.x
-gem 'rails', '4.1.1'
+gem 'rails', '~> 4.1.12'
 
 # use puma as the app server
 gem 'puma'
 
 # wrapper for R interpreter
 gem 'rinruby'
+
+# sessions stored in mongodb
+gem 'bson'
+gem 'bson_ext'
+gem 'mongo', '~> 1.12'
+gem 'mongo_session_store-rails4',
+    git: 'git://github.com/kliput/mongo_session_store.git',
+    branch: 'issue-31-mongo_store-deserialization'
+
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -62,9 +70,9 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # for local development - set path to scalarm-database
 # gem 'scalarm-database', path: '/home/jliput/Scalarm/scalarm-database'
-gem 'scalarm-database', '>= 0.3.1', git: 'git://github.com/Scalarm/scalarm-database.git'
+gem 'scalarm-database', '>= 0.3.3', git: 'git://github.com/Scalarm/scalarm-database.git'
 
 # for local development - set path to scalarm-core
-# gem 'scalarm-service_core', path: '/home/jliput/Scalarm/scalarm-service_core'
-gem 'scalarm-service_core', '~> 0.4.1', git: 'git://github.com/Scalarm/scalarm-service_core.git'
+# gem 'scalarm-service_core', path: '/Users/jliput/Scalarm/scalarm-service_core'
+gem 'scalarm-service_core', '~> 0.7', git: 'git://github.com/Scalarm/scalarm-service_core.git'
 

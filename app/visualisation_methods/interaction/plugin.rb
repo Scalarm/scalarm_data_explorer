@@ -21,7 +21,7 @@ class Interaction
       object = prepare_interaction_chart_content(data)
       object
     else
-      error('Request parameters missing');
+      raise('Request parameters missing');
     end
   end
 
@@ -30,7 +30,7 @@ class Interaction
 
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
-      error("No such experiment or no runs done")
+      raise("No such experiment or no runs done")
     end
     data = {}
     argument_ids = simulation_runs.first.arguments.split(',')
@@ -88,7 +88,7 @@ class Interaction
     end
 
     if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
-      error ('Not enough data in database!')
+      raise ('Not enough data in database!')
 
     else
       result = []
