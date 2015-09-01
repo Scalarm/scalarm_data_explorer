@@ -2,7 +2,7 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
 
     function openViewer() {
         return function(){
-            var clucter_id = this.id.split("s")[0];
+            var clucter_id = this.id;
             var simulations = this.indexes.join();
 
             show_cluster_info_modal(clucter_id, simulations);
@@ -13,7 +13,7 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
     }
 
     function show_cluster_info_modal(cluster_id, simulations) {
-        var url = "<%= @prefix %>/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations;
+        var url = "<%= @prefix %>/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations + "&chart_id=kmeans";
 
         var handler = function(data) {
             $('#clusterInfo').html(data);
