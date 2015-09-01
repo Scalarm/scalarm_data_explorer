@@ -59,6 +59,7 @@
 
   $(function(){
 
+    /* function from global variable moes_info_json create html selectbox with moe and params values and then replacing exiting values with new ones*/
     window.reload_interaction_params = function(){
       $("#busy_interaction").show();
       var new_moe_select ="";
@@ -71,6 +72,7 @@
           new_moe_select = new_moe_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
       }
 
+      /* replace old values with new ones (moes) */
       $(".moe_info_list").each(function(){
         selected_option = $(this).find(":selected").val();
         $(this).html(new_moe_select);
@@ -79,6 +81,7 @@
         }).attr('selected', true)
       });
 
+      /* replace old values with new ones (input parameters) */
       $(".param_info_list").each(function(){
         selected_option = $(this).find(":selected").val();
         $(this).html(new_param_select);

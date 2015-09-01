@@ -37,7 +37,7 @@
 
       if($("#"+ modalIdName + "Modal").length==0){
 
-        var div = $("<div>", {id: modalIdName + "Modal", class: "reveal-modal", "data-reveal": 'true', style:"max-width: 90rem;", onload: "reload_params()"});
+        var div = $("<div>", {id: modalIdName + "Modal", class: "reveal-modal", "data-reveal": 'true', style:"max-width: 90rem;"});
         $('body').append(div);
 
         $('#'+ modalIdName + 'Modal').html(window.loaderHTML);

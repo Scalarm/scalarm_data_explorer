@@ -50,6 +50,7 @@
 :javascript
   $(function(){
 
+    /* function from global variable moes_info_json create html checkbox and then replacing exiting with new ones*/
     window.reload_dendrogram_params = function(){
       $('#busy_dendrogram').show();
       var new_checkbox ="";
@@ -58,6 +59,8 @@
         if (param.type == "moes_parameter")
           new_checkbox = new_checkbox + "<span class='small-2 columns end'><label><input id='"+ param.id +"' style='margin-right:5px;' type='checkbox'>"+param.label+"</label></span> ";
       }
+
+      /* append new values*/
       $(" .moes_infos").each(function(){
         $(this).html(new_checkbox);
       });

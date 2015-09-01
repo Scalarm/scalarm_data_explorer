@@ -67,6 +67,7 @@
 
   $(function(){
 
+    /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
     window.reload_lindev_params = function(){
       $("#busy_lindev").show();
       var new_select ="<optgroup label='Parameters'>";
@@ -78,6 +79,8 @@
             new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
       }
       new_select = new_select +"</optgroup>";
+
+      /* replace old values with new ones (moes) */
       $(".moes_params_list").each(function(){
         selected_option = $(this).find(":selected").val();
         $(this).html(new_select);
@@ -86,7 +89,7 @@
         }).attr('selected', true)
       });
       $('#busy_lindev').hide();
-      toastr.success("Moes refreshed");
+      toastr.success("Parameters refreshed");
     };
     reload_lindev_params();
 

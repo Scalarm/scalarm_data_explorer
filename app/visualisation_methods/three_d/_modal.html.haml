@@ -73,6 +73,7 @@
 
   $(function(){
 
+    /* function from global variable moes_info_json create html selectbox with moe and params values and then replacing exiting values with new ones*/
     window.reload_three_d_params = function(){
       $("#busy_3d").show();
       //moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
@@ -85,6 +86,8 @@
           new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
       }
       new_select = new_select +"</optgroup>";
+
+      /* replace old values with new ones (input parameters and moes) */
       $(".moes_params_list").each(function(){
         selected_option = $(this).find(":selected").val();
         $(this).html(new_select);

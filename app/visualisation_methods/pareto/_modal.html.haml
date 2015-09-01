@@ -44,15 +44,17 @@
 
   $(function(){
 
+    /* function from global variable moes_info_json create html selectbox with moe values and then replacing exiting values with new ones */
     window.reload_pareto_params = function(){
       $("#busy_pareto").show();
       var new_select ="";
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
-
         if (param.type == "moes_parameter")
           new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
       }
+
+      /* replace old values with new ones (moes) */
       $(".moe_info_list").each(function(){
         selected_option = $(this).find(":selected").val();
         $(this).html(new_select);
