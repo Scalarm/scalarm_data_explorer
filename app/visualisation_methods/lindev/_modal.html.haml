@@ -11,6 +11,7 @@
 - fields = {fields: {result: 1}}
 - result = @experiment.simulation_runs.where(filter, fields).first
 - outputs=[]
+- notation_options = options_for_select([["Default", 'default'], ["Scientific", 'scientific']])
 - if result.blank?
   - outputs = ["No results found in completed simulation runs"]
 - else
@@ -23,9 +24,9 @@
     %h3.subheader="Line charts with standard deviation"
     %h3 #{}
     .row
-      .small-5.columns
+      .small-3.columns
         %label.inline="Select parameter on X"
-      .small-7.columns
+      .small-4.columns
         %select.firstParam
           %optgroup{:label => "Parameters"}
             -parameters_labels.each do |parameter|
@@ -35,11 +36,15 @@
           %optgroup{:label => "MoEs"}
             -outputs.each do |output|
               %option{value:output} #{output}
+      .small-2.columns
+        %label= label_tag :x_axis_notation, "Select notation for X axis" + ':', class: 'inline'
+      .small-3.columns
+        = select_tag 'x_axis_notation', notation_options
 
     .row
-      .small-5.columns
+      .small-3.columns
         %label.inline="Select parameter on Y"
-      .small-7.columns
+      .small-4.columns
         %select.secondParam
           %optgroup{:label => "Parameters"}
             -parameters_labels.each do |parameter|
@@ -49,7 +54,10 @@
           %optgroup{:label => "MoEs"}
             -outputs.each do |output|
               %option{value:output} #{output}
-
+      .small-2.columns
+        %label= label_tag :y_axis_notation, "Select notation for Y axis" + ':', class: 'inline'
+      .small-3.columns
+        = select_tag 'y_axis_notation', notation_options
 
     .row
       %ul.inline-list
@@ -77,10 +85,14 @@
       $("#lindevModal .charts").prepend(chart_div);
       var x_axis = $("#lindevModal .firstParam option:selected").val();
       var y_axis = $("#lindevModal .secondParam option:selected").val();
+      var notationx =$("#lindevModal select[name=\'x_axis_notation\']").val();
+      var notationy = $("#lindevModal select[name=\'y_axis_notation\']").val();
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&number_of_moes=2";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
+      query_params += "&notationx="+notationx;
+      query_params += "&notationy="+notationy;
       query_params += "&chart_id="+chart_counter;
 
       var url = "#{@prefix}/chart_instances/lindev?"+query_params;

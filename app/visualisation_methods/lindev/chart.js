@@ -1,4 +1,5 @@
-window.lindev_main = function(i, param_x, param_y, data) {
+window.lindev_main = function(i, notationx, notationy, param_x, param_y, data) {
+
     var chart = new Highcharts.Chart({
         chart: {
             zoomType: 'xy',
@@ -11,11 +12,27 @@ window.lindev_main = function(i, param_x, param_y, data) {
             text: "Line chart - " + param_x + " vs " + param_y
         },
         xAxis: {
+            labels:{
+                formatter: function(){
+                    if (notationx == "scientific")
+                        return this.value.toExponential(2);
+                    else
+                        return this.value;
+                }
+            },
             title: {
                 text: param_x
             }
         },
         yAxis: {
+            labels:{
+                formatter: function(){
+                    if (notationy == "scientific")
+                        return this.value.toExponential(2);
+                    else
+                        return this.value;
+                }
+            },
             title: {
                 text: param_y
             }

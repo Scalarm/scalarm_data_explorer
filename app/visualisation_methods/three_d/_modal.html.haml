@@ -5,12 +5,13 @@
 - fields = {fields: {result: 1}}
 - result = @experiment.simulation_runs.where(filter, fields).first
 - outputs=[]
+- notation_options = options_for_select([["Default", 'default'], ["Scientific", 'scientific']])
 - if result.blank?
   - outputs = ["No results found in completed simulation runs"]
 - else
   - outputs = result.result.keys
-  - notation_options = options_for_select([["Default", 'default'], ["Scientific", 'scientific']])
-
+%script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"}
+%script{:src => "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"}
 #threeDModal.reveal-modal(data-reveal="true")
   %section#threeD_charts_form.panel.radius.analysis-chart
     %a.close-reveal-modal &#215
