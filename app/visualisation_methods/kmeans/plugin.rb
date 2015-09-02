@@ -133,9 +133,10 @@ EOF
     moes = Array(parameters["array"])
     hash ={}
     subcluster_size = 0
-
+    previus_devide_subclust = []
     cluster.keys.each  do |subclust_indx|
       hash_sub ={}
+
       if subcluster[subclust_indx].length >= parameters[:subclusters].to_i
         groped_by_moes = {}
 
@@ -156,18 +157,21 @@ EOF
           subclusters <- hdata$cluster
 EOF
         to_merge = R.pull "subclusters"
-
-        # iterating from last number node in previus subclaster
-        # to_merge is from zero but simulation_ind continues from the last
-        for counter in subcluster_size..(subcluster_size+to_merge.count()-1)
-          hash_sub[simulation_ind[counter]] = to_merge[counter-subcluster_size]
+        if to_merge != previus_devide_subclust
+          # iterating from last number node in previus subclaster
+          # to_merge is from zero but simulation_ind continues from the last
+          for counter in subcluster_size..(subcluster_size+to_merge.count()-1)
+            hash_sub[simulation_ind[counter]] = to_merge[counter-subcluster_size]
+          end
+          # adding how many simulations pass already
+          subcluster_size+=to_merge.count()
+          previus_devide_subclust = to_merge
+        else
+          subcluster_size+=subcluster[subclust_indx].length
         end
-        # adding how many simulations pass already
-        subcluster_size+=to_merge.count()
-
-
       else
         subcluster_size+=subcluster[subclust_indx].length
+
       end
       hash[subclust_indx] = hash_sub
     end
