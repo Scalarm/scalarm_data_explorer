@@ -59,8 +59,43 @@
 
   $(function(){
 
-    var interaction_chart_counter = 0;
+    /* function from global variable moes_info_json create html selectbox with moe and params values and then replacing exiting values with new ones*/
+    window.reload_interaction_params = function(){
+      $("#busy_interaction").show();
+      var new_moe_select ="";
+      var new_param_select ="";
+      for (var iter in moes_info_json){
+        var param = moes_info_json[iter];
+        if (param.type == "input_parameter")
+          new_param_select = new_param_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
+        if (param.type == "moes_parameter")
+          new_moe_select = new_moe_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
+      }
 
+      /* replace old values with new ones (moes) */
+      $(".moe_info_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(new_moe_select);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+
+      /* replace old values with new ones (input parameters) */
+      $(".param_info_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(new_param_select);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+
+      $('#busy_interaction').hide();
+      toastr.success("Parameters refreshed");
+    };
+    reload_interaction_params();
+
+    var interaction_chart_counter = 0;
     var load_chart = function(){
       var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
       $("#interactionModal .charts").prepend(interaction_chart_div);
@@ -87,42 +122,7 @@
       interaction_chart_counter++;
 
     };
-    $("#interactionModal").find("button.refresh").bind("click", function() {
-      $("#busy_interaction").show();
-
-      var new_moe_select ="";
-      var new_param_select ="";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.type == "input_parameter")
-          new_param_select = new_param_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
-        if (param.type == "moes_parameter")
-          new_moe_select = new_moe_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
-      }
-      update_moes_names(new_param_select,new_moe_select);
-
-      $('#busy_interaction').hide();
-      toastr.success("Moes refreshed");
-     });
-
-
-    var update_moes_names = function(data_param, data_moe){
-      $(".moe_info_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(data_moe);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-      $(".param_info_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(data_param);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-    };
-
+    $("#interactionModal").find("button.refresh").bind("click", reload_interaction_params);
 
     $("#interactionModal").find("button.radius").bind("click", function() {
       $('#busy_interaction').show();

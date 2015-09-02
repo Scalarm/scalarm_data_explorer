@@ -49,8 +49,10 @@
         };
         getWithSession(url, {}, handler, onErrorHandler);
       }
-      else
+      else{
         $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
+        window["reload_"+modalIdName+"_params"]();
+        }
     });
 
     $("#searchList").find("#basic").bind("click", function() {
