@@ -15,9 +15,9 @@ class Interaction
 
   # create dataset for chart
   def handler
-    if parameters["id"] && parameters["chart_id"] && parameters["param_x"] && parameters["param_y"] && parameters["output"]
+    if parameters["id"] && parameters["chart_id"] && parameters["param_x"].to_s && parameters["param_y"].to_s && parameters["output"].to_s
 
-      data = getInteraction(parameters["param_x"], parameters["param_y"], parameters["output"])
+      data = getInteraction(parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["output"].to_s)
       object = prepare_interaction_chart_content(data)
       object
     else
@@ -25,14 +25,25 @@ class Interaction
     end
   end
 
-
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # Search for min and max values for each of  two input parameters
+  # Compare if data is equal to  min or max values and when is get result(moes) data for these parameters
+  # Four points are added to hash:
+  # low_low (values of outputParam(moes) for min param_x and min param_y)
+  # low_high (values of outputParam(moes) for min param_x and max param_y)
+  # high_low (values of outputParam(moes) for max param_x and min param_y)
+  # high_high (values of outputParam(moes) for max param_x and max param_y)
+  # Funtion return hash with first values in array
   def getInteraction(param_x, param_y, outputParam)
 
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
       raise("No such experiment or no runs done")
     end
-    data = {}
+
     argument_ids = simulation_runs.first.arguments.split(',')
     params = {}
     simulation_runs = simulation_runs.map do |data|
@@ -86,7 +97,7 @@ class Interaction
         # high_high[:result] = data[:result]
       end
     end
-
+    data = {}
     if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
       raise ('Not enough data in database!')
 

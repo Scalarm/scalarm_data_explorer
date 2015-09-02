@@ -11,3 +11,6 @@
 // about supported directives.
 //
 //= require_tree .
+
+
+window.loaderHTML = '<div class="row small-1 small-centered" style="margin-bottom: 10px;"><img src="/assets/loading.gif"/></div>'

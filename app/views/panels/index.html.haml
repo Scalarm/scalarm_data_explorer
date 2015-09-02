@@ -1,3 +1,4 @@
+=define_helper_functions
 %ul{id: "searchList", style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
@@ -14,34 +15,61 @@
                   %span= method["name"]
             - else
               %li
-                %a.tip-right.text-left{href:"#method"+method["name"], "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{image_url(method["image"])}/></div>", "data-reveal-id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
-                  %span= method["name"]                      
-
-
-
-- @methods.each do |method|
-  = render "/../visualisation_methods/#{method}/modal"
+                %a.tip-right.text-left{href:"#method"+method["name"], "class" => 'Modal',  "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{image_url(method["image"])}/></div>", "id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
+                  %span= method["name"]
 
 :javascript
   $(function(){
     $(document).foundation();
 
-  $("#searchList [data-reveal-id=experiment-analysis-modal]").on("click", function(event){
-    var modalIdName = $(event.currentTarget).attr('data-reveal-id');
-    var className = $(event.currentTarget).attr('em-class');
-    $("#" + modalIdName + " .content").hide();
-    $("#" + modalIdName + " ." + className + "-content").show();
+
+    $("#searchList [data-reveal-id=experiment-analysis-modal]").on("click", function(event){
+      var modalIdName = $(event.currentTarget).attr('data-reveal-id');
+      var className = $(event.currentTarget).attr('em-class');
+
+      $("#" + modalIdName + " .content").hide();
+      $("#" + modalIdName + " ." + className + "-content").show();
+     });
+
+    $("#searchList .Modal").on("click", function(event){
+      var modalIdName = $(event.currentTarget).attr('id');
+
+
+      if($("#"+ modalIdName + "Modal").length==0){
+
+        var div = $("<div>", {id: modalIdName + "Modal", class: "reveal-modal", "data-reveal": 'true', style:"max-width: 90rem;"});
+        $('body').append(div);
+
+        $('#'+ modalIdName + 'Modal').html(window.loaderHTML);
+        $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
+        var url = "#{@prefix}/modals/" + modalIdName + "?experiment_id=#{@experiment.id}&base_url=" + encodeURIComponent("#{@prefix}");
+        var handler = function(data) {
+          $('#'+ modalIdName + 'Modal').html(data);
+
+        };
+        getWithSession(url, {}, handler, onErrorHandler);
+      }
+      else
+        $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
     });
 
-  $("#searchList").on("click", "a.group_title", function (){
-    var accordion_id = "#accordion" + $(this).text().replace(/\s/g, '');
-    if(!$(accordion_id).hasClass("active")) {
-      $(accordion_id).find('i').addClass('fa fa-minus-circle analysis');
-    }
-    else {
-      $(accordion_id).find('i').removeClass('fa fa-minus-circle analysis').addClass('fa fa-plus-circle analysis');
-    }
-  });
+    $("#searchList").find("#basic").bind("click", function() {
+        if (!$("#content_basic").is(":visible"))
+          $("#content_basic").show();
+        else
+          $("#content_basic").hide();
+      });
+
+    $("#searchList").find("#params").bind("click", function() {
+        $('#params').foundation('tooltips', 'generate', '<img src="http://..../.jpg" />');
+        if (!$("#content_params").is(":visible"))
+          $("#content_params").show();
+        else
+          $("#content_params").hide();
+      });
+
+
+
 
 
   });

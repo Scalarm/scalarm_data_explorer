@@ -3,7 +3,6 @@ class MoesController < ApplicationController
   before_filter :load_experiment, only: :show
   include ERB::Util
   def show
-    experiment_id = ERB::Util.h(params[:id].to_s)
 
     filter = {is_done: true, is_error: {'$exists'=> false}}
     fields = {fields: {result: 1}}

@@ -43,6 +43,10 @@ class ApplicationController < ActionController::Base
   # otherwise, exception will be raised
   # TODO: create special error classes to raise
   def load_experiment
+    validate(
+      experiment_id: [:security_default, :optional],
+      id: [:security_default, :optional]
+    )
     experiment_id = (params[:experiment_id] || params[:id])
     raise 'No experiment ID specified, cannot load experiment' unless experiment_id
     @experiment = Scalarm::Database::Model::Experiment.visible_to(current_user).find_by_id(experiment_id)
@@ -52,7 +56,7 @@ class ApplicationController < ActionController::Base
   ##
   # Base url adding escaping html
   def get_prefix
-    text =(params[:base_url].to_s) || PREFIXc
+    text =(params[:base_url].to_s) || PREFIX
     @prefix = ERB::Util.h(text)
   end
 
