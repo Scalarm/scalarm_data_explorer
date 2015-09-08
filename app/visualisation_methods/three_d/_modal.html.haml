@@ -86,9 +86,9 @@
       var x_axis = $("#threeDModal select#firstParam option:selected").val();
       var y_axis = $("#threeDModal select#secondParam option:selected").val();
       var z_axis = $("#threeDModal select#thirdParam option:selected").val();
-      escapeHtml(x_axis)
-      escapeHtml(y_axis)
-      escapeHtml(z_axis)
+      x_axis = escapeHtml(x_axis)
+      y_axis = escapeHtml(y_axis)
+      z_axis = escapeHtml(z_axis)
 
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
