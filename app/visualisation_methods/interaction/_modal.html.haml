@@ -69,9 +69,9 @@
       var x_axis = $("#interactionModal select#firstParam option:selected").val();
       var y_axis = $("#interactionModal select#secondParam option:selected").val();
       var outputParam = $("#interactionModal select#outputParam option:selected").val();
-      escapeHtml(x_axis)
-      escapeHtml(y_axis)
-      escapeHtml(outputParam)
+      x_axis = escapeHtml(x_axis);
+      y_axis = escapeHtml(y_axis);
+      outputParam = escapeHtml(outputParam);
 
       if (check_if_string_parameter(x_axis, 'input') == true
         || check_if_string_parameter(y_axis, 'input') == true

@@ -79,8 +79,8 @@
       $("#lindevModal .charts").prepend(chart_div);
       var x_axis = $("#lindevModal select#firstParam option:selected").val();
       var y_axis = $("#lindevModal select#secondParam option:selected").val();
-      escapeHtml(x_axis)
-      escapeHtml(y_axis)
+      x_axis = escapeHtml(x_axis);
+      y_axis = escapeHtml(y_axis);
 
       if (check_if_string_parameter(x_axis) == true || check_if_string_parameter(y_axis) == true) return;
 
