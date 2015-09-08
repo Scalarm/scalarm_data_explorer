@@ -106,9 +106,9 @@
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
       $("#three_dModal .charts").prepend(three_d_chart_div);
       //TODO - if there's nothing to select -> do nothing
-      var x_axis = $("#threeDModal select#firstParam option:selected").val();
-      var y_axis = $("#threeDModal select#secondParam option:selected").val();
-      var z_axis = $("#threeDModal select#thirdParam option:selected").val();
+      var x_axis = $("#three_dModal select#firstParam option:selected").val();
+      var y_axis = $("#three_dModal select#secondParam option:selected").val();
+      var z_axis = $("#three_dModal select#thirdParam option:selected").val();
       x_axis = escapeHtml(x_axis)
       y_axis = escapeHtml(y_axis)
       z_axis = escapeHtml(z_axis)
