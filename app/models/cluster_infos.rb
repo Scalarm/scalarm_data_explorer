@@ -160,28 +160,11 @@ class ClusterInfos
   end
 
   ##
-  # get input paramaters names as an array
-  def parameters_names
-    parameters_names = []
-
-    @experiment.experiment_input.each do |entity_group|
-      entity_group['entities'].each do |entity|
-        entity['parameters'].each do |parameter|
-          parameters_names << @experiment.get_parameter_ids unless parameter.include?('in_doe') and parameter['in_doe'] == true
-        end
-      end
-    end
-
-    parameters_names
-  end
-
-
-  ##
   # no simulation index in header and with input and output paramameters
   def create_data_result(with_index=false, with_params=true, with_moes=true)
     moes = moe_names
     if with_params
-      all_parameters = parameters_names.uniq.flatten
+      all_parameters = @experiment.get_parameter_ids.uniq.flatten
     end
     data_array=[]
     header = []

@@ -14,41 +14,60 @@
 - else
   - outputs = result.result.keys
 
-#paretoModal.reveal-modal(data-reveal="true")
-  %section#pareto_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="Pareto chart"
-    .row
-      .small-5.columns
-        %label.inline="Select output parameter"
-      .small-7.columns
-        %select(class="moe_info_list" id ="outputParam")
-          -outputs.each do |output|
-            %option{value:output} #{output}
+%section#pareto_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="Pareto chart"
+  .row
+    .small-5.columns
+      %label.inline="Select output parameter"
+    .small-7.columns
+      %select(class="moe_info_list" id ="outputParam")
+        -outputs.each do |output|
+          %option{value:output} #{output}
 
-    .row
-      %ul.inline-list
-        %li
-          %button.refresh Refresh moes
-        %li
-          %button.radius Load chart
-        %li
-          %img(src="#{image_url("loading.gif")}" id='busy_pareto' class='loading_chart_gif' size='16x16' style='display: none' )
-
+  .row
+    %ul.inline-list
+      %li
+        %button.refresh Refresh moes
+      %li
+        %button.radius Load chart
+      %li
+        %img(src="#{image_url("loading.gif")}" id='busy_pareto' class='loading_chart_gif' size='16x16' style='display: none' )
 
 
 
-  .charts
-    .scripts
+
+.charts
+  .scripts
 
 :javascript
 
   $(function(){
 
-    $('#paretoModal').foundation('reveal', 'close');
+    /* function from global variable moes_info_json create html selectbox with moe values and then replacing exiting values with new ones */
+    window.reload_pareto_params = function(){
+      $("#busy_pareto").show();
+      var new_select ="";
+      for (var iter in moes_info_json){
+        var param = moes_info_json[iter];
+        if (param.type == "moes_parameter")
+          new_select = new_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
+      }
+
+      /* replace old values with new ones (moes) */
+      $(".moe_info_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(new_select);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+      $('#busy_pareto').hide();
+      toastr.success("Moes refreshed");
+    };
+    reload_pareto_params();
 
     var pareto_chart_counter = 0;
-    var scripts_loaded = false;
     var load_chart = function() {
       var pareto_chart_div = $("<div id=\"pareto_chart_"+pareto_chart_counter+"\">")[0];
       $("#paretoModal .charts").prepend(pareto_chart_div);
@@ -81,44 +100,11 @@
 
     };
 
-    $("#paretoModal").find("button.refresh").bind("click", function() {
-      $("#busy_pareto").show();
-      var new_select ="";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.type == "moes_parameter")
-          new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
-      }
-      update_moes_names(new_select);
-      $('#busy_pareto').hide();
-      toastr.success("Moes refreshed");
-     });
-
-    var update_moes_names = function(data){
-      $(".moe_info_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(data);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-    };
+    $("#paretoModal").find("button.refresh").bind("click", reload_pareto_params);
 
     $("#paretoModal").find("button.radius").bind("click", function() {
       $('#busy_pareto').show();
-      if(!scripts_loaded){
-        var url = "#{@prefix}/script_tags/pareto?base_url=" + encodeURIComponent("#{@prefix}");
-        var handler = function(data) {
-
-          scripts_loaded = true;
-          $("#paretoModal").find(".scripts").html(data);
-          load_chart();
-        };
-       getWithSession(url, {}, handler);
-
-      }
-      else
-        load_chart();
+      load_chart();
       });
 
   });
