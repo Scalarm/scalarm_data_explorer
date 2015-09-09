@@ -8,6 +8,9 @@
   %br
     .chart
 
+      - if params[:using_em] == 'false'
+        = javascript_include_tag 'application'
+
       :javascript
         $(function() {
           $("span.button.hide").on('click', function() {
