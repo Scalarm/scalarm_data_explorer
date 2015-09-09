@@ -73,6 +73,16 @@
       $("#paretoModal .charts").prepend(pareto_chart_div);
 
       var outputParam = $("#paretoModal select#outputParam option:selected").val();
+      var index_of_moe = window.moes_info.moes_names.indexOf(outputParam)
+      var type_of_moe = window.moes_info.moes_types[index_of_moe]
+      outputParam = escapeHtml(outputParam);
+
+      if (type_of_moe == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + outputParam);
+        $("#busy_pareto").hide()
+        return;
+      }
+
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&output="+outputParam;
       query_params += "&chart_id="+pareto_chart_counter;
@@ -96,5 +106,6 @@
       $('#busy_pareto').show();
       load_chart();
       });
+
   });
 

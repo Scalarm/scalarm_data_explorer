@@ -79,6 +79,15 @@
         });
       var selected_parameters = selectedFiles.toArray();
       var url = "#{@prefix}/chart_instances/dendrogram";
+      for (i = 1; i <= selected_parameters.length; i++) {
+        selected_parameters[i-1] = escapeHtml(selected_parameters[i-1].trim());
+        if (type_of_parameter(selected_parameters[i-1].trim()) == 'string') {
+          toastr.error('Cannot plot for string type parameter - ' + selected_parameters[i-1].trim());
+          $("#busy_dendrogram").hide();
+          return;
+        }
+      }
+
       var handler = function(data) {
         $("#busy_dendrogram").hide();
         var targetOffset = $(chart_div).offset().top;
@@ -103,5 +112,10 @@
       }
       else $("#dendrogramModal input:checkbox").prop('checked', true);
     });
+
+    function type_of_parameter(parameter) {
+      var index_of_moe = window.moes_info.moes_names.indexOf(parameter);
+      return window.moes_info.moes_types[index_of_moe];
+    }
 
   });
