@@ -70,6 +70,16 @@
           $("#content_params").hide();
       });
 
+    $("#searchList").on("click", "a.group_title", function (){
+      var accordion_id = "#accordion" + $(this).text().replace(/\s/g, '');
+      if(!$(accordion_id).hasClass("active")) {
+        $(accordion_id).find('i').addClass('fa fa-minus-circle analysis');
+      }
+      else {
+        $(accordion_id).find('i').removeClass('fa fa-minus-circle analysis').addClass('fa fa-plus-circle analysis');
+      }
+    });
+
 
 
 
