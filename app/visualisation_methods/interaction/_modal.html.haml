@@ -103,6 +103,14 @@
       var x_axis = $("#interactionModal select#firstParam option:selected").val();
       var y_axis = $("#interactionModal select#secondParam option:selected").val();
       var outputParam = $("#interactionModal select#outputParam option:selected").val();
+      x_axis = escapeHtml(x_axis);
+      y_axis = escapeHtml(y_axis);
+      outputParam = escapeHtml(outputParam);
+
+      if (check_if_string_parameter(x_axis, 'input') == true
+        || check_if_string_parameter(y_axis, 'input') == true
+        || check_if_string_parameter(outputParam, 'moe') == true) return;
+      
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
@@ -130,5 +138,22 @@
       });
     });
 
+    function type_of_parameter(parameter, character_of_parameter) {
+      if (character_of_parameter == 'moe') {
+        var index_of_moe = window.moes_info.moes_names.indexOf(parameter)
+        return window.moes_info.moes_types[index_of_moe]
+      }
+      else {
+        var index_of_input = window.moes_info.inputs_names.indexOf(parameter)
+        return window.moes_info.inputs_types[index_of_input]
+      }
+    }
 
+    function check_if_string_parameter(name_of_parameter, character_of_parameter) {
+      if (type_of_parameter(name_of_parameter, character_of_parameter) == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
+        $("#busy_interaction").hide();
+        return true;
+      }
+    }
 
