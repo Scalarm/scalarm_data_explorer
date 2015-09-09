@@ -40,9 +40,14 @@ gem 'jquery-ui-rails'
 gem 'jquery-tmpl-rails'
 gem 'jit-rails'
 gem 'haml'
+gem 'foundation-rails'
+gem 'foundation-icons-sass-rails'
+gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-rails.git'
+gem 'font-awesome-sass', '4.1'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-gem 'foundation-rails'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
