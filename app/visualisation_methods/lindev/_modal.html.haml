@@ -100,6 +100,11 @@
       $("#lindevModal .charts").prepend(chart_div);
       var x_axis = $("#lindevModal select#firstParam option:selected").val();
       var y_axis = $("#lindevModal select#secondParam option:selected").val();
+      x_axis = escapeHtml(x_axis);
+      y_axis = escapeHtml(y_axis);
+
+      if (check_if_string_parameter(x_axis) == true || check_if_string_parameter(y_axis) == true) return;
+
       var query_params = "experiment_id=#{@experiment.id}";
 
       query_params += "&param_x="+x_axis;
@@ -124,4 +129,25 @@
       $("#busy_lindev").show();
       load_chart();
     });
+
+    function type_of_parameter(parameter) {
+      var index_of_moe = window.moes_info.moes_names.indexOf(parameter)
+      if (index_of_moe != -1) {
+        return window.moes_info.moes_types[index_of_moe]
+      }
+      else {
+        var index_of_input = window.moes_info.inputs_names.indexOf(parameter)
+        return window.moes_info.inputs_types[index_of_input]
+      }
+    }
+
+    function check_if_string_parameter(name_of_parameter) {
+      if (type_of_parameter(name_of_parameter) == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
+        $("#busy_lindev").hide();
+        return true;
+      }
+    }
+
   });
+

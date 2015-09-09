@@ -95,6 +95,16 @@
             return $(this).attr('id')
         });
       var selected_parameters = selectedFiles.toArray();
+
+      for (i = 1; i <= selected_parameters.length; i++) {
+        selected_parameters[i-1] = escapeHtml(selected_parameters[i-1].trim());
+        if (type_of_parameter(selected_parameters[i-1].trim()) == 'string') {
+          toastr.error('Cannot plot for string type parameter - ' + selected_parameters[i-1].trim());
+          $("#busy_kmeans").hide();
+          return;
+        }
+      }
+
       var numb_cluster = $("#kmeansModal .numbClust option:selected").val();
       var numb_subcluster = $("#kmeansModal .numbSubclust option:selected").val();
       var array = $("#kmeansModal select#moes_name option:selected").val();
@@ -131,5 +141,9 @@
       else $("#kmeansModal input:checkbox").prop('checked', true);
     });
 
+    function type_of_parameter(parameter) {
+      var index_of_moe = window.moes_info.moes_names.indexOf(parameter);
+      return window.moes_info.moes_types[index_of_moe];
+    }
 
   });
