@@ -50,10 +50,17 @@
 :javascript
   $(function(){
 
+
     /* function from global variable moes_info_json create html checkbox and then replacing exiting with new ones*/
     window.reload_dendrogram_params = function(){
       $('#busy_dendrogram').show();
       var new_checkbox ="";
+
+      // TO:DO get moes_info_json available without EM
+      if ("#{params[:using_em]}" == "false") {
+        moes_info_json = getMoesInfoJson(#{parameters}, #{result.result.keys.length});
+      }
+
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
         if (param.type == "moes_parameter")
