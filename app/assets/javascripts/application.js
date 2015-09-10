@@ -15,7 +15,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require foundation
-
+//= require toastr.min
 //= require_tree .
 
 $(function(){ $(document).foundation(); });
