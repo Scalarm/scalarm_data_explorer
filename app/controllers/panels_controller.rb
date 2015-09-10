@@ -24,7 +24,13 @@ class PanelsController < ApplicationController
       raise 'No experiment'
     end
 
-    render :index, :layout => false
+    if params[:using_em] == 'true' || params[:using_em].nil?
+      layout_value = false
+    else
+      layout_value = true
+    end
+
+    render :index, :layout => layout_value
   end
 
 end

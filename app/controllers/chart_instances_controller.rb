@@ -35,8 +35,14 @@ class ChartInstancesController < ApplicationController
       params.update(params){ |k, v| ERB::Util.h(v)}
     end
 
+    # set layout
+    if params[:using_em] == 'true' || params[:using_em].nil?
+      layout_value = false
+    else
+      layout_value = true
+    end
     @content = generate_content_with_plugin(chart_id, @experiment, params)
-    chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, 'chart.html.haml'), layout: false
+    chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, 'chart.html.haml'), layout: layout_value
     render :html => (chart_header + @content.to_s.html_safe), layout: false
   end
 
