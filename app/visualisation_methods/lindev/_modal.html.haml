@@ -1,53 +1,19 @@
 =define_helper_functions
 
-- parameters = @experiment.get_parameter_ids
--# parameters = %w(a b)
-- parameters_labels = parameters
-
-
-- #experiment_id = params[:id].to_s
-- #experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
-- filter = {is_done: true, is_error: {'$exists'=> false}}
-- fields = {fields: {result: 1}}
-- result = @experiment.simulation_runs.where(filter, fields).first
-- outputs=[]
-- if result.blank?
-  - outputs = ["No results found in completed simulation runs"]
-- else
-  - outputs = result.result.keys
-
 %section#lindev_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Line charts with standard deviation"
-  %h3 #{}
+
   .row
     .small-5.columns
       %label.inline="Select parameter on X"
     .small-7.columns
       %select(id="firstParam" class ="moes_params_list")
-        %optgroup{:label => "Parameters"}
-          -parameters.each do |parameter|
-            %option{value:parameter} #{parameter}
-
-
-        %optgroup{:label => "MoEs"}
-          -outputs.each do |output|
-            %option{value:output} #{output}
-
   .row
     .small-5.columns
       %label.inline="Select parameter on Y"
     .small-7.columns
       %select(id="secondParam" class ="moes_params_list")
-        %optgroup{:label => "Parameters"}
-          -parameters.each do |parameter|
-            %option{value:parameter} #{parameter}
-
-
-        %optgroup{:label => "MoEs"}
-          -outputs.each do |output|
-            %option{value:output} #{output}
-
 
   .row
     %ul.inline-list

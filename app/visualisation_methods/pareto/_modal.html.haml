@@ -1,29 +1,14 @@
 =define_helper_functions
 
-- parameters = @experiment.get_parameter_ids
-
--# parameters_labels = parameters
-
-
-- filter = {is_done: true, is_error: {'$exists'=> false}}
-- fields = {fields: {result: 1}}
-- result = @experiment.simulation_runs.where(filter, fields).first
-- outputs=[]
-- if result.blank?
-  - outputs = ["No results found in completed simulation runs"]
-- else
-  - outputs = result.result.keys
-
 %section#pareto_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Pareto chart"
+
   .row
     .small-5.columns
       %label.inline="Select output parameter"
     .small-7.columns
       %select(class="moe_info_list" id ="outputParam")
-        -outputs.each do |output|
-          %option{value:output} #{output}
 
   .row
     %ul.inline-list
