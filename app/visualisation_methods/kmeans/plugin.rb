@@ -84,7 +84,7 @@ EOF
     clusters = grouping_hash(hash, parameters[:clusters])
 
     # creating sublcusters hash
-    subclusters={}
+    subclusters = {}
     for counter in 1..(parameters[:clusters].to_i)
       subcluster_moes = result_hash.select{|k,v| clusters[counter].include?(k)}.values
       subclusters[counter] = subcluster_moes
@@ -104,11 +104,11 @@ EOF
   ##
   # for now is only table with moes names
   def create_header
-    header=[]
+    header = []
    # moes= moe_names#[parameters["array"]]
     moes = Array(parameters["array"])
   #  header+=['simulation_index']
-    header+=moes
+    header += moes
     header
 
   end
@@ -117,9 +117,9 @@ EOF
   # input hash: simulation_indx => cluster_id
   # creating hash: key -> cluster_id, value -> array of simulation_ids
   def grouping_hash(data, number_of_subclusters)
-    data_hash= {}
+    data_hash = {}
     for counter in 1..(number_of_subclusters.to_i)
-      data_hash[counter] = data.select{ |k, v| v== counter }.keys
+      data_hash[counter] = data.select{ |k, v| v == counter }.keys
     end
     data_hash
   end
@@ -131,11 +131,11 @@ EOF
 
   def create_subclusters(simulation_ind, subcluster,cluster)
     moes = Array(parameters["array"])
-    hash ={}
+    hash = {}
     subcluster_size = 0
-    previous_devide_subclust = []
+    previous_divide_subclust = []
     cluster.keys.each  do |subclust_indx|
-      hash_sub ={}
+      hash_sub = {}
 
       if subcluster[subclust_indx].length >= parameters[:subclusters].to_i
         groped_by_moes = {}
@@ -157,7 +157,7 @@ EOF
           subclusters <- hdata$cluster
 EOF
         to_merge = R.pull "subclusters"
-        if to_merge != previous_devide_subclust
+        if to_merge != previous_divide_subclust
           # iterating from last number node in previus subclaster
           # to_merge is from zero but simulation_ind continues from the last
           for counter in subcluster_size..(subcluster_size+to_merge.count()-1)
@@ -165,7 +165,7 @@ EOF
           end
           # adding how many simulations pass already
           subcluster_size += to_merge.count()
-          previous_devide_subclust = to_merge
+          previous_divide_subclust = to_merge
         else
           subcluster_size += subcluster[subclust_indx].length
         end
@@ -200,7 +200,7 @@ EOF
       moes.map { |moe_name|
         moes_list.push(simulation_run.result[moe_name] || '') } if with_moes
       line << moes_list
-      data_array<<line
+      data_array << line
 
     end
 
