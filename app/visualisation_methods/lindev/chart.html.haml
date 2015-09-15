@@ -1,7 +1,7 @@
 %section#lindev_chart_form.panel.radius.plot
   %h3.subheader Line chart #{params["param_x"]} vs. #{params["param_y"]}
   .row
-  %span.button.hide= 'Hide chart'
+    %span.button.hide{id: "lindev_hide_#{params['chart_id']}"} Hide chart
   %br
     .chart
 
@@ -71,7 +71,7 @@
         getWithSession(url, params, handler);
       }
     });
-     $("span.button.hide").on('click', function() {
-      $("div#chart_#{params["chart_id"]}").remove();
+    $("#lindev_hide_#{params['chart_id']}").on('click', function() {
+      $("#lindev_chart_#{params["chart_id"]}").remove();
     });
   });

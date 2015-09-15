@@ -3,13 +3,13 @@
 %section#kmeans_chart_form.panel.radius.plot
   %h3.subheader K-means clustering by #{Array(params[:array]).to_sentence}
   .row
-  %span.button.hide= 'Hide chart'
+  %span.button.hide{id: "kmeans_hide_#{params['chart_id']}"} Hide chart
   %br
     .chart
 
       :javascript
         $(function() {
-          $("span.button.hide").on('click', function() {
-            $("div#kmeans_chart_#{params["chart_id"]}").remove();
+          $("#kmeans_hide_#{params['chart_id']}").on('click', function() {
+            $("#kmeans_chart_#{params["chart_id"]}").remove();
           });
         });

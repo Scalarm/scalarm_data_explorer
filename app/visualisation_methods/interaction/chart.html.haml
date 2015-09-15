@@ -1,14 +1,14 @@
 %section.panel.radius.plot
   %h3.subheader "Interaction chart - #{params["output"]} - #{params["param_x"]} vs #{params["param_y"]}
   .row
-  %span.button.hide= 'Hide chart'
+  %span.button.hide{id: "interaction_hide_#{params['chart_id']}"} Hide chart
   %br
     .chart
 
 :javascript
   $(function() {
     var div_id = "#interaction_chart_#{params['chart_id']}";
-    $("span.button.hide").on('click', function() {
+    $("#interaction_hide_#{params['chart_id']}").on('click', function() {
       $(div_id).remove();
     });
   });

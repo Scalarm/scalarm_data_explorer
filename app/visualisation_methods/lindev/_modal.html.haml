@@ -62,7 +62,7 @@
     var chart_counter = 0;
     var load_chart = function() {
 
-      var chart_div = $("<div id=\"chart_"+chart_counter+"\">")[0];
+      var chart_div = $("<div id=\"lindev_chart_"+chart_counter+"\">")[0];
       $("#lindevModal .charts").prepend(chart_div);
       var x_axis = $("#lindevModal select#firstParam option:selected").val();
       var y_axis = $("#lindevModal select#secondParam option:selected").val();
