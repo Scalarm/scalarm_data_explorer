@@ -62,6 +62,13 @@
     /* function from global variable moes_info_json create html selectbox with moe and params values and then replacing exiting values with new ones*/
     window.reload_interaction_params = function(){
       $("#busy_interaction").show();
+
+      // TO:DO get moes_info_json available without EM
+      if (("#{params[:using_em]}" == "false") || ("#{params[:using_em]}" == "true" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys});
+      }
+
       var new_moe_select ="";
       var new_param_select ="";
       for (var iter in moes_info_json){
@@ -116,6 +123,7 @@
       query_params += "&param_y="+y_axis;
       query_params += "&output="+outputParam;
       query_params += "&chart_id="+interaction_chart_counter;
+      query_params += "&using_em=true";
 
 
       var url = "#{@prefix}/chart_instances/interaction?"+query_params;

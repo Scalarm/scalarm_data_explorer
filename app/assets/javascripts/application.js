@@ -17,6 +17,10 @@
 //= require foundation
 //= require toastr.min
 //= require d3
+//= require highcharts/highcharts
+//= require highcharts/highcharts-more
+//= require highcharts/highcharts-3d
+//= require highcharts/modules/exporting
 //= require_tree .
 
 $(function() {

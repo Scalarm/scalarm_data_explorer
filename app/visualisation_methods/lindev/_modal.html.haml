@@ -70,6 +70,13 @@
     /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
     window.reload_lindev_params = function(){
       $("#busy_lindev").show();
+
+      // TO:DO get moes_info_json available without EM
+      if (("#{params[:using_em]}" == "false") || ("#{params[:using_em]}" == "true" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys});
+      }
+
       var new_select ="<optgroup label='Parameters'>";
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
@@ -110,6 +117,7 @@
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
       query_params += "&chart_id="+chart_counter;
+      query_params += "&using_em=true";
 
       var url = "#{@prefix}/chart_instances/lindev?"+query_params;
 

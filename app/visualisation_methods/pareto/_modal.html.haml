@@ -47,6 +47,13 @@
     /* function from global variable moes_info_json create html selectbox with moe values and then replacing exiting values with new ones */
     window.reload_pareto_params = function(){
       $("#busy_pareto").show();
+
+      // TO:DO get moes_info_json available without EM
+      if (("#{params[:using_em]}" == "false") || ("#{params[:using_em]}" == "true" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys});
+      }
+
       var new_select ="";
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
@@ -86,6 +93,7 @@
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&output="+outputParam;
       query_params += "&chart_id="+pareto_chart_counter;
+      query_params += "&using_em=true";
 
       var url = "#{@prefix}/chart_instances/pareto?"+query_params;
 
