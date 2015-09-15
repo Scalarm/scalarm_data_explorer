@@ -77,20 +77,21 @@ class Pareto
     argument_ids.each do |arg_name|
       local_max =  maxes[arg_name]
       local_min = mins[arg_name]
+      normalization_coefficient = 100 / (local_max - local_min)
       count_min = params[arg_name].count(local_min)
       count_max = params[arg_name].count(local_max)
       sum_min =0
       sum_max =0
       simulation_runs.map do |datas|
         if datas[:arguments][arg_name] ==local_max
-          sum_max+=datas[:result]
+          sum_max+=(datas[:result] - local_min)
         end
 
         if datas[:arguments][arg_name] ==local_min
-          sum_min+=datas[:result]
+          sum_min+=(datas[:result] - local_min)
         end
       end
-      data.push({ name: arg_name, value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
+      data.push({ name: arg_name, value: (((sum_max * normalization_coefficient)/count_max)-((sum_min * normalization_coefficient)/count_min)).to_f.abs})
     end
 
     data
