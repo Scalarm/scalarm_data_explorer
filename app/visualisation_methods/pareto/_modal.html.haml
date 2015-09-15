@@ -32,23 +32,8 @@
     /* function from global variable moes_info_json create html selectbox with moe values and then replacing exiting values with new ones */
     window.reload_pareto_params = function(){
       $("#busy_pareto").show();
-      var new_select ="";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.type == "moes_parameter")
-          new_select = new_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
-      }
-
-      /* replace old values with new ones (moes) */
-      $(".moe_info_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(new_select);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
+      reload_selectbox_parameters();
       $('#busy_pareto').hide();
-      toastr.success("Moes refreshed");
     };
     reload_pareto_params();
 
