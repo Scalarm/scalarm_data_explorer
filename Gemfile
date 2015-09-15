@@ -63,6 +63,7 @@ end
 
 group :test do
   gem 'mocha'
+  gem 'ci_reporter_minitest'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
