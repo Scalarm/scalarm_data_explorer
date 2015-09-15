@@ -16,6 +16,7 @@
 //= require jquery_ujs
 //= require foundation
 //= require toastr.min
+//= require d3
 //= require_tree .
 
 $(function() {
