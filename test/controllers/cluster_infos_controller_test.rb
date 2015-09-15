@@ -43,12 +43,15 @@ class ClusterInfosControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+
   test "Should return json with status ok" do
     ClusterInfos.any_instance.expects(:create_data_result).returns([params, data])
     get :show, format: :json, id: @experiment.id.to_s, simulations: "1,2,3,4,5", using_em: 'false'
     assert_response :success
     assert_includes(response.body,'"status":"ok"',response.body)
   end
+
+
   test "Should pass with status ok when is less parameters than in data" do
     ClusterInfos.any_instance.expects(:create_data_result).returns([["parameter1", "parameter2"], data])
     get :show, format: :json, id: @experiment.id.to_s, simulations: "1,2,3,4,5", using_em: 'false'
@@ -56,31 +59,35 @@ class ClusterInfosControllerTest < ActionController::TestCase
     assert_includes(response.body,'"status":"ok"',response.body)
   end
 
+
   test "Should no pass when is more parameters than in data" do
     ClusterInfos.any_instance.expects(:create_data_result).returns([["parameter1", "parameter2", "product", "product_2", "Ala"], data])
     get :show, format: :json, id: @experiment.id.to_s, simulations: "1,2,3,4,5", using_em: 'false'
-    assert_response  500, response.body
+    assert_response  500, "Response should be error, but it is: #{response.body}"
     assert_includes(response.body,'"status":"error"',response.body)
   end
-  test "Should be error when wrong simulation ids are given" do
 
+
+  test "Should be error when wrong simulation ids are given" do
     get :show, id: @experiment.id.to_s, simulations: "Ala,1,2,3", using_em: 'false'
-    assert_response 500, response.body
+    assert_response 500, "Response should be error, but it is: #{response.body}"
   end
+
 
   test "Should be error with no experiment id" do
-
     get :show, id: "No experiment ", simulations: "1,2,3", using_em: 'false'
-    assert_response 500, response.body
+    assert_response 500, "Response should be error, but it is: #{response.body}"
   end
+
+
   test "Should be error with no experiment id (JSON)" do
-
     get :show, format: :json, id: "No experiment ", using_em: 'false'
-    assert_response 500, response.body
+    assert_response 500, "Response should be error, but it is: #{response.body}"
   end
-  test "Should return error when no simulation ids" do
 
+
+  test "Should return error when no simulation ids" do
     get :show, id: @experiment.id.to_s,  using_em: 'false'
-    assert_response 500, response.body
+    assert_response 500, "Response should be error, but it is: #{response.body}"
   end
 end

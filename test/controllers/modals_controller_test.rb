@@ -36,17 +36,18 @@ class ModalsControllerTest < ActionController::TestCase
 
   end
 
-  test "Should be success" do
 
+  test "Should be success" do
     get :show, id: 'lindev', experiment_id: @experiment.id.to_s, using_em: 'false'
     assert_response :success
   end
 
-  test "Should report error with message: Wrong Chart name" do
 
+  test "Should report error with message: Wrong Chart name" do
     get :show, id: 'Ala', experiment_id: @experiment.id.to_s, using_em: 'false'
-    assert_response 500, "Response should be status 412"
+    assert_response 500, "Response should be error, but it is: #{response.body}"
   end
+
 
   test "Should render modal content" do
     pareto_content = "<section class='panel radius analysis-chart' id='pareto_charts_form'>"
@@ -56,6 +57,7 @@ class ModalsControllerTest < ActionController::TestCase
     assert_includes(response.body, pareto_header, "Not valid modal header")
 
   end
+
 
   test "Should render valid chart draw function" do
     pareto_function="window.pareto_main = function (i, data)"
