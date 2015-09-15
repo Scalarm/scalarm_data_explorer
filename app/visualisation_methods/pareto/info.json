@@ -1,6 +1,6 @@
 {
   "name": "Pareto",
-  "id": "paretoModal",
+  "id": "pareto",
   "group": "params",
   "image": "pareto_icon.png",
   "description": "Chart showing significance of parameters (or interaction)"

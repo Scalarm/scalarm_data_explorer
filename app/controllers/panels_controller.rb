@@ -20,13 +20,10 @@ class PanelsController < ApplicationController
     @methods = panels.methods
     @groups = panels.groups
 
-    experiment_id = ERB::Util.h(params[:id].to_s)
-
     if @experiment.nil?
       raise 'No experiment'
     end
 
-    # #params = @experiment.get_parameter_ids controler or model?
     render :index, :layout => false
   end
 

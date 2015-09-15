@@ -11,11 +11,12 @@ GIT
 
 GIT
   remote: git://github.com/Scalarm/scalarm-service_core.git
-  revision: 5ea9c70d8acab8073562b12101e46142ebb7dc23
+  revision: a0488b9a9168a268c17c8e53a4d609a48925346c
   specs:
-    scalarm-service_core (0.7)
+    scalarm-service_core (0.9.1)
       actionpack (~> 4.1)
       activesupport (~> 4.1)
+      grid-proxy (~> 0.1)
       rest-client (~> 1.8)
 
 GIT
@@ -79,6 +80,7 @@ GEM
     foundation-rails (5.5.2.1)
       railties (>= 3.1.0)
       sass (>= 3.3.0, < 3.5)
+    grid-proxy (0.1.0)
     haml (4.0.6)
       tilt
     http-cookie (1.0.2)
@@ -200,7 +202,7 @@ DEPENDENCIES
   rinruby
   sass-rails (~> 5.0)
   scalarm-database (>= 0.3.3)!
-  scalarm-service_core (~> 0.7)!
+  scalarm-service_core (~> 0.9)!
   sdoc (~> 0.4.0)
   spring
   therubyracer

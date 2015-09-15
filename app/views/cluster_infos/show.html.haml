@@ -12,7 +12,11 @@
 #clusterInfo.reveal-modal(data-reveal="")
 %a.close-reveal-modal &#215
 %h2
-  Details of cluster #{params[:cluster_id]}
+  - if params[:chart_id] == 'kmeans'
+    - ids = params[:cluster_id].split("_")[1].split("s")
+    - cluster_id = "#{ids[0]}, subcluster: #{ids[1]}"
+  - else cluster_id = params[:cluster_id]
+  Details of cluster #{cluster_id}
 %table{:width => '100%', :style => 'border: 0px'}
   %tr
     %td{:valign => "top"}
@@ -82,16 +86,17 @@
 
 
     $("#clusterInfo").on("click", "a.close-reveal-modal", function (){
-      $('#dendrogramModal').foundation('reveal', 'open');
+      var modal_id = "#" + "#{params[:chart_id]}" + "Modal";
+      $(modal_id).foundation('reveal', 'open');
     });
 
-  $(".accordion").on("click", "dd", function (){
-    $("dd.active").find(".content").slideUp("slow");
+  $("#detailsList").find(".accordion").on("click", "dd", function (){
+    $("#detailsList").find("dd.active").find(".content").slideUp("slow");
     if(!$(this).hasClass("active")) {
       $(this).find(".content").slideToggle("slow");
-      $("dd").find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
+      $("#detailsList").find("dd").find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
       $(this).find('i').addClass('fa fa-minus-circle');
-      $("dd").removeClass("active");
+      $("#detailsList").find("dd").removeClass("active");
       $(this).addClass("active");
     }
     else {

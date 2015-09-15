@@ -1,9 +1,19 @@
 =define_helper_functions
 
-%section#dendrogram_charts_form.panel.radius.analysis-chart
+%section#kmeans_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
-  %h3.subheader="Dendrogram for hierarchical clustering"
+  %h3.subheader="K-means clustering"
 
+  .row
+    .small-5.columns
+      %label.inline="Select number of clusters"
+    .small-7.columns
+      %select.numbClust
+  .row
+    .small-5.columns
+      %label.inline="Select number of subclusters"
+    .small-7.columns
+      %select.numbSubclust
   .row
     %label.inline="Select parameters of clustering:"
     .moes_infos
@@ -18,8 +28,9 @@
       %li
         %button.radius.load Load chart
       %li
-    %a
-      %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' class='loading_chart_gif' size='16x16' style='display: none' )
+        %a
+          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_kmeans' size='16x16' style='display: none' )
+
 
 .charts
   .scripts
@@ -30,8 +41,8 @@
   $(function(){
 
     /* function from global variable moes_info_json create html checkbox and then replacing exiting with new ones*/
-    window.reload_dendrogram_params = function(){
-      $('#busy_dendrogram').show();
+    window.reload_kmeans_params = function(){
+      $('#busy_kmeans').show();
       var new_checkbox ="";
       for (var iter in moes_info_json){
         var param = moes_info_json[iter];
@@ -43,32 +54,41 @@
       $(" .moes_infos").each(function(){
         $(this).html(new_checkbox);
       });
-      $('#busy_dendrogram').hide();
+      $('#busy_kmeans').hide();
       toastr.success("Moes refreshed");
     };
-    reload_dendrogram_params();
+    reload_kmeans_params();
 
     var chart_counter = 0;
     var load_chart = function() {
-      var chart_div = $("<div id=\"dendrogram_chart_"+chart_counter+"\">")[0];
-      $("#dendrogramModal .charts").prepend(chart_div);
+      var chart_div = $("<div id=\"kmeans_chart_"+chart_counter+"\">")[0];
+      $("#kmeansModal .charts").prepend(chart_div);
       var selectedFiles =
-        $('#dendrogramModal').find('input:checked').map(function () {
+        $('#kmeansModal').find('input:checked').map(function () {
             return $(this).attr('id')
         });
       var selected_parameters = selectedFiles.toArray();
-      var url = "#{@prefix}/chart_instances/dendrogram";
+
       for (i = 1; i <= selected_parameters.length; i++) {
         selected_parameters[i-1] = escapeHtml(selected_parameters[i-1].trim());
         if (type_of_parameter(selected_parameters[i-1].trim()) == 'string') {
           toastr.error('Cannot plot for string type parameter - ' + selected_parameters[i-1].trim());
-          $("#busy_dendrogram").hide();
+          $("#busy_kmeans").hide();
           return;
         }
       }
 
+      var numb_cluster = $("#kmeansModal .numbClust option:selected").val();
+      var numb_subcluster = $("#kmeansModal .numbSubclust option:selected").val();
+      var array = $("#kmeansModal select#moes_name option:selected").val();
+      var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&chart_id="+chart_counter;
+      query_params += "&clusters="+numb_cluster;
+      query_params += "&subclusters="+numb_subcluster;
+
+      var url = "#{@prefix}/chart_instances/kmeans?"+query_params;
       var handler = function(data) {
-        $("#busy_dendrogram").hide();
+        $("#busy_kmeans").hide();
         var targetOffset = $(chart_div).offset().top;
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
@@ -76,20 +96,22 @@
       getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler, onErrorHandler);
       chart_counter++;
     };
-    $("#dendrogramModal").find("button.refresh").bind("click", reload_dendrogram_params);
 
-    $("#dendrogramModal").find("button.radius.load").bind("click", function() {
+   $("#kmeansModal").find("button.refresh").bind("click", reload_kmeans_params);
+
+    $("#kmeansModal").find("button.radius.load").bind("click", function() {
       if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
       else {
-        $("#busy_dendrogram").show();
+        $("#busy_kmeans").show();
           load_chart();
       }
     });
-    $("#dendrogramModal button.radius.check_all#check").on('click', function () {
-      if ($("#dendrogramModal input:checkbox").length ==  $("#dendrogramModal input:checked").length) {
-        $("#dendrogramModal input:checkbox").prop('checked', false);
+
+    $("#kmeansModal button.radius.check_all#check").on('click', function () {
+      if ($("#kmeansModal input:checkbox").length ==  $("#kmeansModal input:checked").length) {
+        $("#kmeansModal input:checkbox").prop('checked', false);
       }
-      else $("#dendrogramModal input:checkbox").prop('checked', true);
+      else $("#kmeansModal input:checkbox").prop('checked', true);
     });
 
     function type_of_parameter(parameter) {

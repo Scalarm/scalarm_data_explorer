@@ -1,6 +1,14 @@
-window.threeD_main = function(i, param_x, param_y, param_z, data) {
-    var min_z = data.reduce(function(a, b) { return a <= b[2] ? a : b[2];}, Infinity);
-    var max_z = data.reduce(function(a, b) { return a >= b[2] ? a : b[2];}, -Infinity);
+window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, type_of_y, type_of_z, categories_for_x, categories_for_y, categories_for_z) {
+    var min_z
+    var max_z
+
+    if (type_of_z == 'string') {
+        min_z = 0;
+        max_z = categories_for_z.length;
+    } else {
+        min_z = data.reduce(function(a, b) { return a <= b[2] ? a : b[2];}, Infinity);
+        max_z = data.reduce(function(a, b) { return a >= b[2] ? a : b[2];}, -Infinity);
+    }
 
     function scale(z, min, max){
         return max-Math.round((z-min_z)/(max_z-min_z)*(max-min));
@@ -33,7 +41,6 @@ window.threeD_main = function(i, param_x, param_y, param_z, data) {
     //         ]
     //     };
     // });
-
     // Set up the chart
 	var chart = new Highcharts.Chart({
         chart: {
@@ -52,6 +59,11 @@ window.threeD_main = function(i, param_x, param_y, param_z, data) {
                     side: { size: 1, color: 'rgba(0,0,0,0.06)' }
                 }
             }
+        },
+        plotOptions: {
+            series: {
+                turboThreshold: tab.length, //enable to plot more than 1000 points (default), with 0 it check every point format, with specific value only the first point is tested and the rest are assumed to be the same format
+            },
         },
         title: {
             text: '3d scatter plot'
@@ -82,16 +94,50 @@ window.threeD_main = function(i, param_x, param_y, param_z, data) {
         legend: {
             enabled: false
         },
-        series: [{
-            data: tab
-        }],
         tooltip: {
             formatter: function(){
-                return param_x + ": " + this.x + "<br/>" + param_y + ": " + this.y + "<br>" + param_z + ": " + this.key;
+                //need to this way, because
+                //can't do this on single label above (no support) && low support for y and z axis to display string value
+                var y, z;
+                if (type_of_y == 'string')
+                    y = categories_for_y[this.y];
+                else {
+                    y = this.y;
+                }
+                if (type_of_z == 'string')
+                    z = categories_for_z[this.point.z];
+                else {
+                    z = this.point.z;
+                }
+                return param_x + ": " + this.x + "<br/>" + param_y + ": " + y + "<br>" + param_z + ": " + z;
             }
         }
     });
 
+    //need to this, because of (#1), better remove than sorry
+    while(chart.series.length > 0)
+        chart.series[0].remove(true);
+
+    if ( type_of_x == 'string') {
+        chart.xAxis[0].setCategories(categories_for_x);
+    }
+
+    if ( type_of_y == 'string') {
+        chart.yAxis[0].setCategories(categories_for_y);
+    }
+
+    //chart.zAxis[0] is not supported, need to this global for zAxis ... (#1)
+    if ( type_of_z == 'string') {
+        Highcharts.setOptions({
+            zAxis: {
+                categories: categories_for_z,
+            },
+        });
+    }
+
+    chart.addSeries({
+        data: tab
+    });
 
     // Add mouse events for rotation
     $(chart.container).bind('mousedown.hc touchstart.hc', function (e) {

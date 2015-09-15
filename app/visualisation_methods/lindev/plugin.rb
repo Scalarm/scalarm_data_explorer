@@ -4,10 +4,10 @@ class Lindev
 
 
   def handler
-    if parameters["id"] && parameters["param_x"] && parameters["param_y"]
+    if parameters["id"] && parameters["param_x"].to_s && parameters["param_y"].to_s
 
       object = {}
-      data = get_line_dev_data(experiment, parameters["id"], parameters["param_x"], parameters["param_y"])
+      data = get_line_dev_data(experiment, parameters["param_x"].to_s, parameters["param_y"].to_s)
       if parameters["type"] == "data"
         object = content[JSON.stringify(data)]
       elsif parameters["chart_id"]
@@ -16,7 +16,6 @@ class Lindev
         raise("Request parameters missing: 'chart_id'");
       end
       object
-
     end
   end
 
@@ -29,12 +28,17 @@ class Lindev
 
     output
 
-
   end
 
 
-  # TODO: documentation - what this method does? change name
-  def get_line_dev_data (experiment, id, param_x, param_y)
+  ##
+  # prepare data for draw function
+  #
+  # Details:
+  # Function grouped result data as hash x => y (array)
+  # Next it add pointers with standard deviation for each value in datahash
+
+  def get_line_dev_data (experiment, param_x, param_y)
 
     simulation_runs = experiment.simulation_runs.to_a
 
@@ -42,6 +46,7 @@ class Lindev
       raise("No such experiment or no runs done")
     end
 
+    # get input parameter names
     argument_ids = simulation_runs.first.arguments.split(',')
 
     simulation_runs = simulation_runs.map do |data|
@@ -83,6 +88,8 @@ class Lindev
     end
     values= values.sort_by { |e| e }
     with_stddev= with_stddev.sort_by { |e| e }
+
+    # using descriptive statistics gem for this
     #creating result table -> mean values
   #  values = calculate_mean_values(grouped_by_param_x, values)
 
@@ -94,7 +101,26 @@ class Lindev
 
   end
 
+  ##
+  # get parameters values from db and creating hash:    param x value => param y values (array)
+  def grouping_by_parameter(argument_ids, grouped_by_param_x, param_x, param_y, simulation_runs)
+    simulation_runs = simulation_runs.map do |obj|
+      ## search for parameter value value in result or arguments
+      param_x_val = argument_ids.index(param_x) ? obj[:arguments][param_x] : obj[:result][param_x]
+      param_y_val = argument_ids.index(param_y) ? obj[:arguments][param_y] : obj[:result][param_y]
 
+      if grouped_by_param_x.include? param_x_val
+        grouped_by_param_x[param_x_val].push(param_y_val)
+      else
+        grouped_by_param_x[param_x_val] = [param_y_val]
+      end
+      obj
+    end
+  end
+
+
+  # resign for   descriptive statistics gem
+=begin
   def calculate_standard_deviation(grouped_by_param_x, with_stddev)
     grouped_by_param_x.each do |key, value|
       sum = value.kind_of?(Array) ? value.inject(0){ |accum, i| accum + i }: value
@@ -114,8 +140,10 @@ class Lindev
 
     with_stddev
   end
+=end
 
-
+  # resign for   descriptive statistics gem
+=begin
   def calculate_mean_values(grouped_by_param_x, values)
     grouped_by_param_x.each do |key, value|
       sum = value.kind_of?(Array) ? value.reduce(:+) : value
@@ -127,24 +155,7 @@ class Lindev
 
     values
   end
-
-
-  def grouping_by_parameter(argument_ids, grouped_by_param_x, param_x, param_y, simulation_runs)
-    simulation_runs = simulation_runs.map do |obj|
-      ## search for parameter value value in result or arguments
-      param_x_val = argument_ids.index(param_x) ? obj[:arguments][param_x] : obj[:result][param_x]
-      param_y_val = argument_ids.index(param_y) ? obj[:arguments][param_y] : obj[:result][param_y]
-
-      if grouped_by_param_x.include? param_x_val
-        grouped_by_param_x[param_x_val].push(param_y_val)
-      else
-        grouped_by_param_x[param_x_val] = [param_y_val]
-      end
-      obj
-    end
-  end
-
-
+=end
 
 
 end

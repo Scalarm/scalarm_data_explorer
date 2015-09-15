@@ -1,67 +1,82 @@
 =define_helper_functions
 
-- parameters = @experiment.get_parameter_ids
--# parameters = %w(a b)
+%section#interaction_chart_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="Interaction chart"
 
-- filter = {is_done: true, is_error: {'$exists'=> false}}
-- fields = {fields: {result: 1}}
-- result = @experiment.simulation_runs.where(filter, fields).first
-- outputs=[]
-- if result.blank?
-  - outputs = ["No results found in completed simulation runs"]
-- else
-  - outputs = result.result.keys
-#interactionModal.reveal-modal(data-reveal="true")
-  %section#interaction_chart_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="Interaction chart"
-    %h3 #{}
-    .row
-      .small-5.columns
-        %label.inline="Select first parameter"
-      .small-7.columns
-        %select(id ="firstParam" class="param_info_list")
-          -parameters.each do |parameter|
-            %option{:value => parameter}=parameter # TODO: label
+  .row
+    .small-5.columns
+      %label.inline="Select first parameter"
+    .small-7.columns
+      %select(id ="firstParam" class="param_info_list")
+  .row
+    .small-5.columns
+      %label.inline="Select second parameter"
+    .small-7.columns
+      %select(id ="secondParam" class="param_info_list")
 
-    .row
-      .small-5.columns
-        %label.inline="Select second parameter"
-      .small-7.columns
-        %select(id ="secondParam" class="param_info_list")
-          -parameters.each do |parameter|
-            %option{:value => parameter}=parameter
+  .row
+    .small-5.columns
+      %label.inline="Select output parameter"
+    .small-7.columns
+      %select(id ="outputParam" class="moe_info_list")
 
-    .row
-      .small-5.columns
-        %label.inline="Select output parameter"
-      .small-7.columns
-        %select(id ="outputParam" class="moe_info_list")
-          -outputs.each do |output|
-            %option{:value => output}=output
-
-    .row
-      %ul.inline-list
-        %li
-          %button.refresh Refresh moes
-        %li
-          %button.radius Load chart
-        %li
-          %img(src="#{image_url("loading.gif")}" id='busy_interaction' class='loading_chart_gif' size='16x16' style='display: none' )
+  .row
+    %ul.inline-list
+      %li
+        %button.refresh Refresh moes
+      %li
+        %button.radius Load chart
+      %li
+        %img(src="#{image_url("loading.gif")}" id='busy_interaction' class='loading_chart_gif' size='16x16' style='display: none' )
 
 
 
-  .charts
-    .scripts
+
+.charts
+  .scripts
 
 :javascript
 
   $(function(){
 
-    $("#interactionModal").foundation("reveal", "close");
-    var interaction_chart_counter = 0;
-    var scripts_loaded = false;
+    /* function from global variable moes_info_json create html selectbox with moe and params values and then replacing exiting values with new ones*/
+    window.reload_interaction_params = function(){
+      $("#busy_interaction").show();
+      var new_moe_select ="";
+      var new_param_select ="";
+      for (var iter in moes_info_json){
+        var param = moes_info_json[iter];
+        if (param.type == "input_parameter")
+          new_param_select = new_param_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
+        if (param.type == "moes_parameter")
+          new_moe_select = new_moe_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
+      }
 
+      /* replace old values with new ones (moes) */
+      $(".moe_info_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(new_moe_select);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+
+      /* replace old values with new ones (input parameters) */
+      $(".param_info_list").each(function(){
+        selected_option = $(this).find(":selected").val();
+        $(this).html(new_param_select);
+        $(this).find("option").filter(function(){
+          return $(this).val() == selected_option
+        }).attr('selected', true)
+      });
+
+      $('#busy_interaction').hide();
+      toastr.success("Parameters refreshed");
+    };
+    reload_interaction_params();
+
+    var interaction_chart_counter = 0;
     var load_chart = function(){
       var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
       $("#interactionModal .charts").prepend(interaction_chart_div);
@@ -69,6 +84,14 @@
       var x_axis = $("#interactionModal select#firstParam option:selected").val();
       var y_axis = $("#interactionModal select#secondParam option:selected").val();
       var outputParam = $("#interactionModal select#outputParam option:selected").val();
+      x_axis = escapeHtml(x_axis);
+      y_axis = escapeHtml(y_axis);
+      outputParam = escapeHtml(outputParam);
+
+      if (check_if_string_parameter(x_axis, 'input') == true
+        || check_if_string_parameter(y_axis, 'input') == true
+        || check_if_string_parameter(outputParam, 'moe') == true) return;
+
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
@@ -88,59 +111,30 @@
       interaction_chart_counter++;
 
     };
-    $("#interactionModal").find("button.refresh").bind("click", function() {
-      $("#busy_interaction").show();
-
-      var new_moe_select ="";
-      var new_param_select ="";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.type == "input_parameter")
-          new_param_select = new_param_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
-        if (param.type == "moes_parameter")
-          new_moe_select = new_moe_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
-      }
-      update_moes_names(new_param_select,new_moe_select);
-
-      $('#busy_interaction').hide();
-      toastr.success("Moes refreshed");
-     });
-
-
-    var update_moes_names = function(data_param, data_moe){
-      $(".moe_info_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(data_moe);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-      $(".param_info_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(data_param);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-    };
-
+    $("#interactionModal").find("button.refresh").bind("click", reload_interaction_params);
 
     $("#interactionModal").find("button.radius").bind("click", function() {
       $('#busy_interaction').show();
-      if(!scripts_loaded){
-        var url = "#{@prefix}/script_tags/interaction?base_url=" + encodeURIComponent("#{@prefix}");
-        var handler = function(data) {
-
-          scripts_loaded = true;
-          $("#interactionModal").find(".scripts").html(data);
-          load_chart();
-        };
-        getWithSession(url, {}, handler);
-      }
-      else
-        load_chart();
+      load_chart();
       });
     });
 
+    function type_of_parameter(parameter, character_of_parameter) {
+      if (character_of_parameter == 'moe') {
+        var index_of_moe = window.moes_info.moes_names.indexOf(parameter)
+        return window.moes_info.moes_types[index_of_moe]
+      }
+      else {
+        var index_of_input = window.moes_info.inputs_names.indexOf(parameter)
+        return window.moes_info.inputs_types[index_of_input]
+      }
+    }
 
+    function check_if_string_parameter(name_of_parameter, character_of_parameter) {
+      if (type_of_parameter(name_of_parameter, character_of_parameter) == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
+        $("#busy_interaction").hide();
+        return true;
+      }
+    }
 

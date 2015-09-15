@@ -44,7 +44,6 @@ class Dendrogram
     result_csv = create_result_csv
 
     IO.write(result_file.path, result_csv)
-
     #evaluate R commands
     R.eval <<EOF
     hdata <- hclust(dist(read.csv('#{result_file.path}')), 'complete')
@@ -213,33 +212,11 @@ EOF
     end if d!=nil
   end
 
-  def moe_names
-    moe_name_set = []
-    limit = @experiment.size > 1000 ? @experiment.size / 2 : @experiment.size
-    @experiment.simulation_runs.where({ is_done: true }, { fields: %w(result), limit: limit }).each do |simulation_run|
-      moe_name_set += simulation_run.result.keys.to_a
-    end
-    moe_name_set.uniq
-  end
-
-  def parameters_names
-    parameters_names = []
-
-    @experiment.experiment_input.each do |entity_group|
-      entity_group['entities'].each do |entity|
-        entity['parameters'].each do |parameter|
-          parameters_names << @experiment.get_parameter_ids unless parameter.include?('in_doe') and parameter['in_doe'] == true
-        end
-      end
-    end
-
-    parameters_names
-  end
 
   def create_result_csv(with_index=true, with_params=true, with_moes=true)
     moes = Array(parameters["array"])
     if with_params
-      all_parameters = parameters_names.uniq.flatten
+      all_parameters = @experiment.get_parameter_ids.uniq.flatten
     end
     CSV.generate do |csv|
       header = []
