@@ -20,12 +20,21 @@ window.escapeHtml = (str) =>
   div.appendChild(document.createTextNode(str))
   div.innerHTML
 
-  
+
 window.getMoesInfoJson = (input_params, output_params) =>
   moes_info_json_tmp = []
-  for i in [0..input_params.length]
+  for i in [0..input_params.length-1]
     moes_info_json_tmp.push({label: input_params[i], id: input_params[i], type: "input_parameter"})
   moes_info_json_tmp.push({ label: "-----------", id: "nil", type: "" })
-  for i in [0..output_params.length]
-    moes_info_json_tmp.push({label: output_params[i], id: output_params, type: "output_parameter"})
+  for i in [0..output_params.length-1]
+    moes_info_json_tmp.push({label: output_params[i], id: output_params[i], type: "moes_parameter"})
   moes_info_json_tmp
+
+
+# always return integer as type
+window.getMoeInfo = (output_params) =>
+  moes_info_tmp = {"moes": "", "moes_and_params": "", "params": "", "moes_types": [], "moes_names": [], "inputs_types": "", "inputs_names": ""}
+  for i in [0..output_params.length-1]
+    moes_info_tmp["moes_names"].push(output_params[i])
+    moes_info_tmp["moes_types"].push("integer")
+  moes_info_tmp

@@ -57,8 +57,9 @@
       var new_checkbox ="";
 
       // TO:DO get moes_info_json available without EM
-      if ("#{params[:using_em]}" == "false") {
-        moes_info_json = getMoesInfoJson(#{parameters}, #{result.result.keys.length});
+      if (("#{params[:using_em]}" == "false") || ("#{params[:using_em]}" == "true" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys});
       }
 
       for (var iter in moes_info_json){
