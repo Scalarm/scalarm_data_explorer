@@ -64,7 +64,7 @@ $(function() {
   $("#lindevModal button").bind("click", function() {
     $("#busy_lindev").show();
     if(!scripts_loaded) {
-      $("#lindevModal .scripts").load("#{prefix}/script_tags/lindev?base_url=#{prefix}", function(){
+      $("#lindevModal .scripts").load("#{prefix}/script_tags/lindev", function(){
         load_chart();
         scripts_loaded = true;
       });

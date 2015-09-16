@@ -137,7 +137,7 @@
     $("#threeDModal").find("button.radius").bind("click", function() {
       $("#busy_3d").show();
       if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/three_d?base_url=" + encodeURIComponent("#{@prefix}");
+        var url = "#{@prefix}/script_tags/three_d";
         var handler = function(data) {
           scripts_loaded = true;
           $("#threeDModal").find(".scripts").html(data);

@@ -126,7 +126,7 @@
     $("#lindevModal").find("button.radius").bind("click", function() {
       $("#busy_lindev").show();
       if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/lindev?base_url=" + encodeURIComponent("#{@prefix}");
+        var url = "#{@prefix}/script_tags/lindev";
         var handler = function(data) {
 
           scripts_loaded = true;

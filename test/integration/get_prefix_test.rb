@@ -32,21 +32,53 @@ class GetPrefixTest < ActionDispatch::IntegrationTest
   def teardown
     super
     Rails.application.reload_routes!
+    Rails.cache.clear
   end
 
-  test '@prefix controller variable should be set to value given as base_url parameter' do
+  test 'base_url given in request parameters should be ignored' do
     prefix = 'bar'
+    Utils.stubs(:random_data_explorer_public_url)
+        .returns(nil)
 
     get '/foo', base_url: prefix, format: :json
 
-    assert_response :success
+    assert_response :success, body
+    refute_equal prefix, body.to_s, body
+  end
+
+  test '@prefix controller variable should be set to value from configuration if given' do
+    prefix = 'bar'
+
+    Rails.application.secrets.stubs(:base_url).returns(prefix)
+
+    get '/foo', format: :json
+
+    assert_response :success, body
     assert_equal prefix, body.to_s, body
   end
 
-  test '@prefix controller variable should be set to PREFIX const if base_url parameter not given' do
+  # Also "https://" will be as IS address prefix
+  test '@prefix should be set to random value from IS if no base_url in configuration given' do
+    addresses = ['one', 'two']
+    urls = addresses.collect {|a| "https://#{a}"}
+    information_service = mock 'information_service' do
+      stubs(:get_list_of).with('data_explorers').returns(addresses)
+    end
+    InformationService.stubs(:instance).returns(information_service)
+
     get '/foo', format: :json
 
-    assert_response :success
+    assert_response :success, "Not success response: #{body}"
+    assert_includes urls, body.to_s, body
+  end
+
+  test '@prefix controller variable should be set to PREFIX const if there is no other prefix cantidates' do
+    Utils.stubs(:random_data_explorer_public_url)
+        .returns(nil)
+
+    get '/foo', format: :json
+
+    assert_response :success, body
     assert_equal ApplicationController::PREFIX, body.to_s, body
   end
 

@@ -71,7 +71,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler, onErrorHandler);
+      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}"}, handler, onErrorHandler);
       chart_counter++;
     };
     $("#dendrogramModal").find("button.refresh").bind("click", function() {
@@ -94,7 +94,7 @@
       else {
         $("#busy_dendrogram").show();
         if(!scripts_loaded) {
-          var url = "#{@prefix}/script_tags/dendrogram?base_url=" + encodeURIComponent("#{@prefix}");
+          var url = "#{@prefix}/script_tags/dendrogram";
           var handler = function(data) {
             scripts_loaded = true;
             $("#dendrogramModal").find(".scripts").html(data);

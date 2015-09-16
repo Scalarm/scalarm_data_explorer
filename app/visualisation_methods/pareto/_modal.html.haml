@@ -98,7 +98,7 @@
     $("#paretoModal").find("button.radius").bind("click", function() {
       $('#busy_pareto').show();
       if(!scripts_loaded){
-        var url = "#{@prefix}/script_tags/pareto?base_url=" + encodeURIComponent("#{@prefix}");
+        var url = "#{@prefix}/script_tags/pareto";
         var handler = function(data) {
 
           scripts_loaded = true;

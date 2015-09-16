@@ -128,7 +128,7 @@
     $("#interactionModal").find("button.radius").bind("click", function() {
       $('#busy_interaction').show();
       if(!scripts_loaded){
-        var url = "#{@prefix}/script_tags/interaction?base_url=" + encodeURIComponent("#{@prefix}");
+        var url = "#{@prefix}/script_tags/interaction";
         var handler = function(data) {
 
           scripts_loaded = true;
