@@ -2,7 +2,6 @@ require 'erb'
 class ScriptTagsController < ApplicationController
   include ERB::Util
 
-  PREFIX = "/"
   def show
     analysisMethodsConfig = AnalysisMethodsConfig.new
     methods = analysisMethodsConfig.get_method_names
