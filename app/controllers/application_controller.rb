@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate, except: :status
   rescue_from Scalarm::ServiceCore::AuthenticationError, with: :authentication_failed
   rescue_from StandardError, with: :generic_exception_handler
-
+  rescue_from SecurityError, with: :generic_exception_handler
   PREFIX = '/'
   before_filter :get_prefix
 
