@@ -3,14 +3,13 @@
 %section#dendrogram_chart_form.panel.radius.plot
   %h3.subheader Dendrogram for hierarchical clustering by #{(Array(params[:array])).to_sentence}
   .row
-  %span.button.hide= 'Hide chart'
-
+  %span.button.hide{id: "dendrogram_hide_#{params['chart_id']}"} Hide chart
   %br
     .chart
 
-      :javascript
-        $(function() {
-          $("span.button.hide").on('click', function() {
-            $("div#dendrogram_chart_#{params["chart_id"]}").remove();
-          });
-        });
+  :javascript
+    $(function() {
+      $("#dendrogram_hide_#{params['chart_id']}").on('click', function() {
+        $("div#dendrogram_chart_#{params["chart_id"]}").remove();
+      });
+    });

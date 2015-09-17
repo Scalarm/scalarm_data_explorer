@@ -1,7 +1,7 @@
 %section.panel.radius.plot
   %h3.subheader 3D scatter plot chart - xAxis: #{params["param_x"]} yAxis: #{params["param_y"]} zAxis:  #{params["param_z"]}
   .row
-  %span.button.hide= 'Hide chart'
+  %span.button.hide{id: "three_d_hide_#{params['chart_id']}"} Hide chart
   %br
     .chart
 
@@ -9,7 +9,7 @@
 :javascript
   $(function() {
     var div_id = "#three_d_chart_#{params['chart_id']}";
-    $("span.button.hide").on('click', function() {
+    $("#three_d_hide_#{params['chart_id']}").on('click', function() {
       $(div_id).remove();
     });
   });
