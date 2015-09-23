@@ -85,42 +85,57 @@ EOF
   end
 
   ##
-  # create json with dendrogram structure with all nodes {id: 1, children:[{id, children:[]}]}
-  def create_json(hash, node)
-    d = hash[node.to_s]
+  # create hash with structure of dendrogram with depth, data = {'1'=>[-2,3],'3'=>[-4,-5]}, root = 1. depth = 0
+  # return {"id"=>1, "depth"=>0, "children"=>[{"id"=>3, "depth"=>1, "children"=>[{"id"=>4}, {"id"=>5}]}, {"id"=>2}]}
+  def create_hash(data, root, depth)
+    d = data[root.to_s]
     if d[0] < 0 && d[1] < 0
-      "{\"id\":\"#{node}\",\"children\":[{\"id\":\"#{-d[0]}\"},{\"id\":\"#{-d[1]}\"}]}"
+      {"id" => root, "depth" => depth, "children" => [{"id" => -d[0]}, {"id" => -d[1]}]}
     elsif d[0] < 0 && d[1] > 0
-      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[1])},{\"id\":\"#{-d[0]}\"}]}"
+      {"id" => root, "depth" => depth, "children" => [create_hash(data, d[1], depth+1), {"id" => -d[0]}]}
     elsif d[0] > 0 && d[1] < 0
-      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[0])},{\"id\":\"#{-d[1]}\"}]}"
+      {"id" => root, "depth" => depth, "children" => [create_hash(data, d[0], depth+1), {"id" => -d[1]}]}
     elsif d[0] > 0 && d[1] > 0
-      "{\"id\":\"#{node}\",\"children\":[#{create_json(hash, d[0])},#{create_json(hash, d[1])}]}"
+      {"id" => root, "depth" => depth, "children" => [create_hash(data, d[0], depth+1), create_hash(data, d[1], depth+1)]}
     end if d!=nil
   end
 
   ##
-  # create hash with strusture of dendrogram with depth {id => 1, depth => 1, children => [{id, depth, children => []}]}
-  def create_hash(hash, node, depth)
-    d = hash[node.to_s]
+  # get depth of dendrogram with max count of leafs equal 250, data = {'1'=>[-2,3],'3'=>[-4,-5]}
+  # hash = {"id"=>1, "depth"=>0, "children"=>[{"id"=>3, "depth"=>1, "children"=>[{"id"=>4}, {"id"=>5}]}, {"id"=>2}]}
+  # return integer
+  def get_the_best_depth(data, root, hash)
+    max_depth = get_max_depth(data, root, 0)
+    (0..max_depth).each do |depth|
+      if count_of_leafs(hash, depth, 0).to_i > 250
+        return depth-1
+      end
+    end
+    return max_depth
+  end
+
+  ##
+  # return maximum depth of dendrogram, data = {'1'=>[-2,3],'3'=>[-4,-5]}
+  def get_max_depth(data, root, depth)
+    d = data[root.to_s]
     if d[0] < 0 && d[1] < 0
-      {"id" => node, "depth" => depth, "children" => [{"id" => -d[0]}, {"id" => -d[1]}]}
+      depth+1
     elsif d[0] < 0 && d[1] > 0
-      {"id" => node, "depth" => depth, "children" => [create_hash(hash, d[1], depth+1), {"id" => -d[0]}]}
+      [get_max_depth(data, d[1], depth+1), depth].max
     elsif d[0] > 0 && d[1] < 0
-      {"id" => node, "depth" => depth, "children" => [create_hash(hash, d[0], depth+1), {"id" => -d[1]}]}
+      [get_max_depth(data, d[0], depth+1), depth]
     elsif d[0] > 0 && d[1] > 0
-      {"id" => node, "depth" => depth, "children" => [create_hash(hash, d[0], depth+1), create_hash(hash, d[1], depth+1)]}
+      [get_max_depth(data, d[0], depth+1), get_max_depth(data, d[1], depth+1)].max
     end if d!=nil
   end
 
   ##
-  # get count of leafs if depth of dendrogram = depth
-  def count_of_leafs(tree, depth, count)
-    if tree['depth'] != nil
-      if tree['depth'] <= depth
-        if tree['children'].kind_of?(Array)
-          count = count + count_of_leafs(tree['children'][0], depth, count) + count_of_leafs(tree['children'][1], depth, count)
+  # get count of leafs (clusters and simulations) if depth of dendrogram = depth, hash = {'id'=>1, 'depth'=>0, 'children'=>[{'id'=>2}, {'id'=>3}]}
+  def count_of_leafs(hash, depth, count)
+    if hash['depth'] != nil
+      if hash['depth'] < depth
+        if hash['children'].kind_of?(Array)
+          count = count + count_of_leafs(hash['children'][0], depth, count) + count_of_leafs(hash['children'][1], depth, count)
         else
           count = count + 1
           count
@@ -136,56 +151,51 @@ EOF
   end
 
   ##
-  # get count of leafs for each depth
-  def count_of_leafs_for_depth(hash, node, depth, leafs)
-    d = hash[node.to_s]
-    if leafs[depth.to_s] == nil
-      leafs[depth.to_s] = d
-    else
-      leafs[depth.to_s] = leafs[depth.to_s] + d
-    end
+  # create json with dendrogram structure with all nodes, return {id: 1, children:[{id, children:[]}]}
+  def create_json(data, root)
+    d = data[root.to_s]
     if d[0] < 0 && d[1] < 0
-      leafs
+      "{\"id\":\"#{root}\",\"children\":[{\"id\":\"#{-d[0]}\"},{\"id\":\"#{-d[1]}\"}]}"
     elsif d[0] < 0 && d[1] > 0
-      count_of_leafs_for_depth(hash, d[1], depth+1, leafs)
-      leafs
+      "{\"id\":\"#{root}\",\"children\":[#{create_json(data, d[1])},{\"id\":\"#{-d[0]}\"}]}"
     elsif d[0] > 0 && d[1] < 0
-      count_of_leafs_for_depth(hash, d[0], depth+1, leafs)
-      leafs
+      "{\"id\":\"#{root}\",\"children\":[#{create_json(data, d[0])},{\"id\":\"#{-d[1]}\"}]}"
     elsif d[0] > 0 && d[1] > 0
-      count_of_leafs_for_depth(hash, d[0], depth+1, leafs)
-      count_of_leafs_for_depth(hash, d[1], depth+1, leafs)
-      leafs
+      "{\"id\":\"#{root}\",\"children\":[#{create_json(data, d[0])},#{create_json(data, d[1])}]}"
     end if d!=nil
   end
 
   ##
   # create json with dendrogram structure where max depth of dendrogram = max_depth
-  def create_json_max_depth(hash, node, depth, max_depth)
-    d = hash[node.to_s]
+  # input data: {'1'=>[-2,3],'3'=>[-4,-5]}, root = 1, depth = 0, max_depth = 2
+  # return {"id"=>1, "children"=>[{"id"=>3, "children"=>[{"id"=>4}, {"id"=>5}]}, {"id"=>2}]}
+  def create_json_max_depth(data, root, depth, max_depth)
+    d = data[root.to_s]
     if d[0] < 0 && d[1] < 0
-      "{\"id\":\"#{node}\",\"children\":[{\"id\":\"#{-d[0]}\"},{\"id\":\"#{-d[1]}\"}]}"
+      "{\"id\":\"#{root}\",\"children\":[{\"id\":\"#{-d[0]}\"},{\"id\":\"#{-d[1]}\"}]}"
     elsif d[0] < 0 && d[1] > 0
-      if depth < max_depth
-        "{\"id\":\"#{node}\",\"children\":[#{create_json_max_depth(hash, d[1], depth+1, max_depth)},{\"id\":\"#{-d[0]}\"}]}"
+      if depth < max_depth-1
+        "{\"id\":\"#{root}\",\"children\":[#{create_json_max_depth(data, d[1], depth+1, max_depth)},{\"id\":\"#{-d[0]}\"}]}"
       else
-        "{\"id\":\"#{node}\",\"children\":[{\"id\":\"cl #{d[1]}\",\"simulations\":\"#{get_simulations_by_cluster(hash, d[1])}\"},{\"id\":\"#{-d[0]}\"}]}"
+        "{\"id\":\"#{root}\",\"children\":[{\"id\":\"cl #{d[1]}\",\"simulations\":\"#{get_simulations_by_cluster(data, d[1])}\"},{\"id\":\"#{-d[0]}\"}]}"
       end
     elsif d[0] > 0 && d[1] < 0
-      if depth < max_depth
-        "{\"id\":\"#{node}\",\"children\":[#{create_json_max_depth(hash, d[0], depth+1, max_depth)},{\"id\":\"#{-d[1]}\"}]}"
+      if depth < max_depth-1
+        "{\"id\":\"#{root}\",\"children\":[#{create_json_max_depth(data, d[0], depth+1, max_depth)},{\"id\":\"#{-d[1]}\"}]}"
       else
-        "{\"id\":\"#{node}\",\"children\":[{\"id\":\"cl #{d[0]}\",\"simulations\":\"#{get_simulations_by_cluster(hash, d[0])}\"},{\"id\":\"#{-d[1]}\"}]}"
+        "{\"id\":\"#{root}\",\"children\":[{\"id\":\"cl #{d[0]}\",\"simulations\":\"#{get_simulations_by_cluster(data, d[0])}\"},{\"id\":\"#{-d[1]}\"}]}"
       end
     elsif d[0] > 0 && d[1] > 0
-      if depth < max_depth
-        "{\"id\":\"#{node}\",\"children\":[#{create_json_max_depth(hash, d[0], depth+1, max_depth)},#{create_json_max_depth(hash, d[1], depth+1, max_depth)}]}"
+      if depth < max_depth-1
+        "{\"id\":\"#{root}\",\"children\":[#{create_json_max_depth(data, d[0], depth+1, max_depth)},#{create_json_max_depth(data, d[1], depth+1, max_depth)}]}"
       else
-        "{\"id\":\"#{node}\",\"children\":[{\"id\":\"cl #{d[0]}\",\"simulations\":\"#{get_simulations_by_cluster(hash, d[0])}\"},{\"id\":\"cl #{d[1]}\",\"simulations\":\"#{get_simulations_by_cluster(hash, d[1])}\"}]}"
+        "{\"id\":\"#{root}\",\"children\":[{\"id\":\"cl #{d[0]}\",\"simulations\":\"#{get_simulations_by_cluster(data, d[0])}\"},{\"id\":\"cl #{d[1]}\",\"simulations\":\"#{get_simulations_by_cluster(data, d[1])}\"}]}"
       end
     end if d!=nil
   end
 
+  ##
+  # return simulations which are in subtree when cluster with id = cluster_id is the root
   def get_simulations_by_cluster(hash, cluster_id)
     d = hash[cluster_id.to_s]
     if d[0] < 0 && d[1] < 0
@@ -198,20 +208,6 @@ EOF
       [get_simulations_by_cluster(hash, d[0]), get_simulations_by_cluster(hash,d[1])].join(', ')
     end if d!=nil
   end
-
-  def get_max_depth(hash, node, depth)
-    d = hash[node.to_s]
-    if d[0] < 0 && d[1] < 0
-      depth
-    elsif d[0] < 0 && d[1] > 0
-      [get_max_depth(hash, d[1], depth+1), depth].max
-    elsif d[0] > 0 && d[1] < 0
-      [get_max_depth(hash, d[0], depth+1), depth]
-    elsif d[0] > 0 && d[1] > 0
-      [get_max_depth(hash, d[0], depth+1), get_max_depth(hash, d[1], depth+1)].max
-    end if d!=nil
-  end
-
 
   def create_result_csv(with_index=true, with_params=true, with_moes=true)
     moes = Array(parameters["array"])
