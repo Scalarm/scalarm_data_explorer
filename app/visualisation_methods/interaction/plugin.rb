@@ -17,7 +17,7 @@ class Interaction
   def handler
     if parameters["id"] && parameters["chart_id"] && parameters["param_x"].to_s && parameters["param_y"].to_s && parameters["output"].to_s
 
-      data = getInteraction(parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["output"].to_s)
+      data = get_interaction(parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["output"].to_s)
       object = prepare_interaction_chart_content(data)
       object
     else
@@ -37,66 +37,88 @@ class Interaction
   # high_low (values of outputParam(moes) for max param_x and min param_y)
   # high_high (values of outputParam(moes) for max param_x and max param_y)
   # Funtion return hash with first values in array
-  def getInteraction(param_x, param_y, outputParam)
-
+  # for simulation where input parameters ids are x, y:
+  # return {'x'=>{:domain=>[min_x, max_x]}, 'y'=>{:domain=>[min_y, max_y]}, :effects=>[low_low, low_high, high_low, high_high]}
+  def get_interaction(experiment, param_x, param_y, outputParam)
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
-      raise("No such experiment or no runs done")
+      raise('No such experiment or no runs done')
     end
 
     argument_ids = simulation_runs.first.arguments.split(',')
     params = {}
-    simulation_runs = simulation_runs.map do |data|
-      obj ={}
-      values = data.values.split(',')
-      new_args = {}
-
-      argument_ids.each_with_index do |arg_name, index|
-        params[arg_name] = params[arg_name].kind_of?(Array)? params[arg_name]<<values[index].to_f : [values[index].to_f]
-        new_args[arg_name] = values[index].to_f
-      end
-
-      obj[:arguments] = new_args
-      obj[:result] = {}
-      unless data.result.nil?
-        data.result.each do |key, value|
-          obj[:result][key] = value.to_f rescue 0.0
-        end
-      end
-      obj
+    simulation_runs = simulation_runs.map do |simulation_run|
+      get_parameters(simulation_run, argument_ids, params)
     end
+
     mins = {}
     maxes = {}
-
     argument_ids.each do |arg_name|
       mins[arg_name] = params[arg_name].min
       maxes[arg_name] = params[arg_name].max
     end
-    # simulation_runs[:arguments]
+
     low_low = {:result => {}}
     low_high = {:result => {}}
     high_low = {:result => {}}
     high_high = {:result => {}}
+
     simulation_runs.map do |data|
-      if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == mins[param_y]
-        # low_low[:result] = data[:result]
-        low_low[:result].empty? ? low_low[:result] = [data[:result]] : low_low[:result].push(data[:result])
-      end
+      add_to_proper_hash(data, low_low, low_high, high_low, high_high, param_x, param_y, mins, maxes)
+    end
 
-      if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == maxes[param_y]
-        low_high[:result].empty? ? low_high[:result] = [data[:result]] : low_high[:result].push(data[:result])
+    create_result_hash(low_low, low_high, high_low, high_high, mins, maxes, param_x, param_y, outputParam)
 
-      end
-      if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == mins[param_y]
-        high_low[:result].empty? ? high_low[:result] = [data[:result]] : high_low[:result].push(data[:result])
-        # high_low[:result] =  data[:result]
+  end
 
-      end
-      if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == maxes[param_y]
-        high_high[:result].empty? ? high_high[:result] = [data[:result]] : high_high[:result].push(data[:result])
-        # high_high[:result] = data[:result]
+  ##
+  # get input and output parameters for simulation run, return hash: {:arguments=>{"parameter1"=>1.0, "parameter2"=>2.0}, :result=>{"product"=>3.0}}
+  # in params on return is: {"parameter1"=>[array of value], "parameter2"=>[array of value]}
+  def get_parameters(simulation_run, argument_ids, params)
+    parameters ={}
+    values = simulation_run.values.split(',')
+    new_args = {}
+
+    argument_ids.each_with_index do |arg_name, index|
+      params[arg_name] = params[arg_name].kind_of?(Array)? params[arg_name]<<values[index].to_f : [values[index].to_f]
+      new_args[arg_name] = values[index].to_f
+    end
+
+    parameters[:arguments] = new_args
+    parameters[:result] = {}
+    unless simulation_run.result.nil?
+      simulation_run.result.each do |key, value|
+        parameters[:result][key] = value.to_f rescue 0.0
       end
     end
+    parameters
+  end
+
+
+  def add_to_proper_hash(data, low_low, low_high, high_low, high_high, param_x, param_y, mins, maxes)
+    if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == mins[param_y]
+      # low_low[:result] = data[:result]
+      low_low[:result].empty? ? low_low[:result] = [data[:result]] : low_low[:result].push(data[:result])
+    end
+
+    if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == maxes[param_y]
+      low_high[:result].empty? ? low_high[:result] = [data[:result]] : low_high[:result].push(data[:result])
+
+    end
+    if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == mins[param_y]
+      high_low[:result].empty? ? high_low[:result] = [data[:result]] : high_low[:result].push(data[:result])
+      # high_low[:result] =  data[:result]
+
+    end
+    if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == maxes[param_y]
+      high_high[:result].empty? ? high_high[:result] = [data[:result]] : high_high[:result].push(data[:result])
+      # high_high[:result] = data[:result]
+    end
+  end
+
+
+
+  def create_result_hash(low_low, low_high, high_low, high_high, mins, maxes, param_x, param_y, outputParam)
     data = {}
     if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
       raise ('Not enough data in database!')
@@ -111,12 +133,17 @@ class Interaction
 
       data[param_x] = {domain: [mins[param_x], maxes[param_x]]}
       data[param_y] = {domain: [mins[param_y], maxes[param_y]]}
-
     end
-
     data[:effects] = result
     data
   end
+
+
+
+
+
+
+
 
 end
 
