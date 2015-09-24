@@ -1,0 +1,87 @@
+=define_helper_functions
+
+- se_results = @experiment.results
+- text_inline = "Select output parameter"
+- if se_results.blank?
+  - text_inline = "No results from supervised experiment"
+
+
+%section#morris_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="Morris design"
+
+  - if !se_results.blank?
+    .row
+      .small-5.columns
+        %label.inline=text_inline
+      .small-7.columns
+        %select(class="moe_info_list" id ="outputParam")
+    .row
+      %ul.inline-list
+        %li
+          %button.refresh Refresh moes
+        %li
+          %button.radius Load chart
+        %li
+          %img(src="#{image_url("loading.gif")}" id='busy_morris' class='loading_chart_gif' size='16x16' style='display: none' )
+  -else
+    .row
+      .small-5.columns
+        %label.inline=text_inline
+
+.charts
+  .scripts
+
+:javascript
+
+  $(function(){
+
+    window.reload_morris_params = function(){
+      $("#busy_morris").show();
+      reload_selectbox_parameters();
+      $('#busy_morris').hide();
+    };
+    reload_morris_params();
+
+    var morris_chart_counter = 0;
+    var load_chart = function() {
+      var morris_chart_div = $("<div id=\"morris_chart_"+morris_chart_counter+"\">")[0];
+      $("#morrisModal .charts").prepend(morris_chart_div);
+
+      var outputParam = $("#morrisModal select#outputParam option:selected").val();
+      var index_of_moe = window.moes_info.moes_names.indexOf(outputParam)
+      var type_of_moe = window.moes_info.moes_types[index_of_moe]
+      outputParam = escapeHtml(outputParam);
+
+      if (type_of_moe == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + outputParam);
+        $("#busy_morris").hide()
+        return;
+      }
+
+      var outputParam = $("#morrisModal select#outputParam option:selected").val();
+      var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&output="+outputParam;
+      query_params += "&chart_id="+morris_chart_counter;
+
+      var url = "#{@prefix}/chart_instances/morris?"+query_params;
+
+      var handler = function(data) {
+        $("#busy_morris").hide();
+        var targetOffset = $(morris_chart_div).offset().top;
+        $('html,body').animate({ scrollTop: targetOffset }, 1000);
+        $(morris_chart_div).html(data);
+      };
+      getWithSession(url, {}, handler, onErrorHandler);
+      morris_chart_counter++;
+
+    };
+
+    $("#morrisModal").find("button.refresh").bind("click", reload_morris_params);
+
+    $("#morrisModal").find("button.radius").bind("click", function() {
+      $('#busy_morris').show();
+      load_chart();
+      });
+  });
+

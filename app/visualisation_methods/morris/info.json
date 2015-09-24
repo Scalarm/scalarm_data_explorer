@@ -1,0 +1,7 @@
+{
+  "name": "Morris design",
+  "id": "morris",
+  "group": "params",
+  "image": "morris_desing_icon.png",
+  "description":  "Shows results of sensitivity analysis with Morris method (automatic experiment type)."
+}
