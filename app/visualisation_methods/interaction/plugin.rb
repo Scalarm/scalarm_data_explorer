@@ -3,6 +3,21 @@ class Interaction
   attr_accessor :parameters
 
 
+  ##
+  # create data for chart and <script> which is rendered in ChartInstancesController
+  def handler
+    if parameters["id"] && parameters["chart_id"] && parameters["param_x"].to_s && parameters["param_y"].to_s && parameters["output"].to_s
+
+      data = get_interaction(experiment, parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["output"].to_s)
+      object = prepare_interaction_chart_content(data)
+      object
+    else
+      raise('Request parameters missing');
+    end
+  end
+
+  ##
+  # create <script>> which is load on page
   def prepare_interaction_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";";
     output += "\nvar data = " + data.to_json + ";" if data != nil
@@ -10,19 +25,6 @@ class Interaction
     output += "\n})();</script>"
     output
 
-  end
-
-
-  # create dataset for chart
-  def handler
-    if parameters["id"] && parameters["chart_id"] && parameters["param_x"].to_s && parameters["param_y"].to_s && parameters["output"].to_s
-
-      data = get_interaction(parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["output"].to_s)
-      object = prepare_interaction_chart_content(data)
-      object
-    else
-      raise('Request parameters missing');
-    end
   end
 
   ##
@@ -94,7 +96,8 @@ class Interaction
     parameters
   end
 
-
+  #
+  # Compare if data is equal to min or max values, when is add result(moes) data for these parameters to proper hash
   def add_to_proper_hash(data, low_low, low_high, high_low, high_high, param_x, param_y, mins, maxes)
     if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == mins[param_y]
       # low_low[:result] = data[:result]
@@ -116,8 +119,8 @@ class Interaction
     end
   end
 
-
-
+  # create finally hash with results of analysis
+  # return {'x'=>{:domain=>[min_x, max_x]}, 'y'=>{:domain=>[min_y, max_y]}, :effects=>[low_low, low_high, high_low, high_high]
   def create_result_hash(low_low, low_high, high_low, high_high, mins, maxes, param_x, param_y, outputParam)
     data = {}
     if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
@@ -137,14 +140,6 @@ class Interaction
     data[:effects] = result
     data
   end
-
-
-
-
-
-
-
-
 end
 
 

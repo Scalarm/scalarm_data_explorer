@@ -4,6 +4,8 @@ class Dendrogram
   attr_accessor :experiment
   attr_accessor :parameters
 
+  ##
+  # create data for chart and <script> which is rendered in ChartInstancesController
   def handler
     if parameters["id"] && parameters["array"]
       object = {}
@@ -22,18 +24,20 @@ class Dendrogram
 
   end
 
+  ##
+  # create <script> which is load on page
   def prepare_dendrogram_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
-    output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
+    output += "\nvar experiment_id = \"" + experiment.id.to_s + "\";"
     output += "\ndendrogram_main(i, \"" + Array(parameters["array"]).to_sentence + "\", data, experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end
 
-
-  # TODO: documentation - what this method does? change name
+  ##
+  # prepare data for draw function
   def get_data_for_dendrogram
 
     # simulation_runs = experiment.simulation_runs.to_a
@@ -209,10 +213,14 @@ EOF
     end if d!=nil
   end
 
+  ##
+  # create data for done simulation in csv format, header: simulation_index,parameter1,parameter2,moe
   def create_result_csv(with_index=true, with_params=true, with_moes=true)
     moes = Array(parameters["array"])
     if with_params
-      all_parameters = @experiment.get_parameter_ids.uniq.flatten
+      Rails.logger.debug ("exp.get param:")
+      Rails.logger.debug(experiment.get_parameter_ids)
+      all_parameters = experiment.get_parameter_ids.uniq.flatten
     end
     CSV.generate do |csv|
       header = []
@@ -226,18 +234,23 @@ EOF
       query_fields[:values] = 1 if with_params
       query_fields[:result] = 1 if with_moes
 
-      @experiment.simulation_runs.where(
+      experiment.simulation_runs.where(
           {is_done: true, is_error: {'$exists' => false}},
           {fields: query_fields}
       ).each do |simulation_run|
-        line = []
-        line += [simulation_run.index] if with_index
-        line += simulation_run.values.split(',') if with_params
-        # getting values of results in a specific order
-        line += moes.map { |moe_name| simulation_run.result[moe_name] || '' } if with_moes
-
-        csv << line
+        csv << create_line_csv(simulation_run, moes)
       end
     end
+  end
+
+  ##
+  # create data for simulation run in csv format, columns: simulation_index,parameter1,parameter2,moe
+  def create_line_csv(simulation_run, moes)
+    line = []
+    line += [simulation_run.index]
+    line += simulation_run.values.split(',')
+    # getting values of results in a specific order
+    line += moes.map { |moe_name| simulation_run.result[moe_name] || '' }
+    line
   end
 end

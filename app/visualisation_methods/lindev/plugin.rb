@@ -17,12 +17,15 @@ class Lindev
         raise("Request parameters missing: 'chart_id'");
       end
       script_tag_for_chart
+    else
+      raise("Request parameters missing.")
     end
+
   end
 
 
   ##
-  # create content which is load on page
+  # create <script>> which is load on page
   def prepare_lindev_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters['chart_id'] + ';'
     output += "\nvar data = " + data.to_json + ';' if data != nil
