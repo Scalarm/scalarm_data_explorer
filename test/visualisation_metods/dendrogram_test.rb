@@ -7,6 +7,41 @@ class DendrogramTest < MiniTest::Test
   def setup
     Utils.require_plugin('dendrogram')
     @dendrogram = Dendrogram.new
+    @dendrogram.stubs(:parameters).returns({'array' =>['moe']})
+
+    @simulation_run = mock do
+      stubs(:values).returns('0,1')
+      stubs(:index).returns(55)
+      stubs(:result).returns({'moe' =>2})
+      stubs(:each).returns(@simulation_run)
+    end
+
+    @simulation_run2 = mock do
+      stubs(:values).returns('3,4')
+      stubs(:index).returns(56)
+      stubs(:result).returns({'moe' =>6})
+      stubs(:each).returns(@empty_simulation_run)
+    end
+
+    @simulation_runs = mock
+    @simulation_runs.stubs(:where).returns([@simulation_run, @simulation_run2])
+
+    @experiment = mock 'experiment'
+    @experiment.stubs(:get_parameter_ids).returns(['parameter1', 'parameter2'])
+    @experiment.stubs(:simulation_runs).returns(@simulation_runs)
+    @experiment.stubs(:id).returns(BSON::ObjectId.new)
+
+    @dendrogram.stubs(:experiment).returns(@experiment)
+  end
+
+  def test_handler
+    @dendrogram.stubs(:parameters).returns({'array' =>['moe'], 'chart_id' => '0', 'id' => 'dendrogram'})
+    @dendrogram.stubs(:experiment).returns(@experiment)
+    assert @dendrogram.handler.include?('<script>')
+  end
+
+  def test_get_data_for_dendrogram
+    assert_equal "{\"id\":\"1\",\"children\":[{\"id\":\"1\"},{\"id\":\"2\"}]}", @dendrogram.get_data_for_dendrogram
   end
 
   def test_get_simulations_by_cluster
@@ -54,14 +89,18 @@ class DendrogramTest < MiniTest::Test
     data = {'1'=>[-2,3], '3'=>[-4,-5]}
     assert_equal "{\"id\":\"1\",\"children\":[{\"id\":\"3\",\"children\":[{\"id\":\"4\"},{\"id\":\"5\"}]},{\"id\":\"2\"}]}", @dendrogram.create_json_max_depth(data, 1, 0, 2)
     assert_equal "{\"id\":\"1\",\"children\":[{\"id\":\"cl 3\",\"simulations\":\"4, 5\"},{\"id\":\"2\"}]}", @dendrogram.create_json_max_depth(data, 1, 0, 0)
-
-    # assert_equal "{\"id\":\"cl 1\",\"simulations\":\"2, 4, 5\"}", @dendrogram.create_json_max_depth(data, 1, 0, 1)
   end
 
-  # def test_create_result_csv
-  #   attr_accessor :parameters
-  #   assert_equal [], @dendrogram.create_result_csv
-  # end
+  def test_create_result_csv
+    en = @dendrogram.create_result_csv[42]
+    assert_equal 'simulation_index,parameter1,parameter2,moe', @dendrogram.create_result_csv.split(en)[0]
+    assert_equal 3, @dendrogram.create_result_csv.split(en).length
+  end
+
+  def test_create_line_csv
+    moes = Array(@dendrogram.parameters["array"])
+    assert_equal [55, "0", "1", 2], @dendrogram.create_line_csv(@simulation_run, moes)
+  end
 
 
 end

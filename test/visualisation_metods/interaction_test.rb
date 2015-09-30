@@ -7,11 +7,6 @@ class InteractionTest < MiniTest::Test
   def setup
     Utils.require_plugin('interaction')
     @interaction = Interaction.new
-  end
-
-  def setup
-    Utils.require_plugin('interaction')
-    @interaction = Interaction.new
 
     @arguments = 'parameter1,parameter2'
     @arguments_ids = @arguments.split(',')
@@ -57,7 +52,6 @@ class InteractionTest < MiniTest::Test
        simulation_run.stubs(:arguments).returns(@arguments)
     end
 
-    # inside the bloc mock do can not use instance variable
     @simulation_runs = mock
     @simulation_runs.stubs(:to_a).returns(@simulation_runs_array)
 
@@ -66,20 +60,26 @@ class InteractionTest < MiniTest::Test
   end
 
   def test_get_interaction
-    assert_equal ({"parameter1"=>{:domain=>[0.0, 4.0]}, "parameter2"=>{:domain=>[7.0, 8.0]}, :effects=>[0.0, 0.0, 28.0, 32.0]}), @interaction.get_interaction(@experiment, 'parameter1', 'parameter2', 'product')
+    assert_equal ({'parameter1' =>{:domain=>[0.0, 4.0]}, 'parameter2' =>{:domain=>[7.0, 8.0]}, :effects=>[0.0, 0.0, 28.0, 32.0]}), @interaction.get_interaction(@experiment, 'parameter1', 'parameter2', 'product')
   end
 
   def test_get_parameters
-    assert_equal ({:arguments=>{"parameter1"=>0.0, "parameter2"=>7.0}, :result=>{"product"=>0.0}}), @interaction.get_parameters(@simulation_run, @arguments_ids, {})
+    assert_equal ({:arguments=>{'parameter1' =>0.0, 'parameter2' =>7.0}, :result=>{'product' =>0.0}}), @interaction.get_parameters(@simulation_run, @arguments_ids, {})
     assert_equal ({}), @interaction.get_parameters(@simulation_run, [], {})[:arguments]
     assert_equal ({}), @interaction.get_parameters(@simulation_run_empty, @arguments_ids, {})[:result]
   end
 
-  def test_add_to_proper_hash
-
+  def test_prepare_interaction_chart_content
+    @interaction.stubs(:parameters).returns({'param_x' => 'parameter1', 'param_y' => 'parameter2', 'chart_id' => '0'})
+    parameter1 = @interaction.parameters['param_x']
+    parameter2 = @interaction.parameters['param_y']
+    assert_includes "<script>(function() { \nvar i=0;\nvar data = [];\ninteraction_main(i, \"#{parameter1}\", \"#{parameter2}\", data);\n})();</script>", @interaction.prepare_interaction_chart_content([])
   end
 
-
-
-
+  def test_handler
+    @interaction.stubs(:parameters).returns({'param_x' => 'parameter1', 'param_y' => 'parameter2', 'chart_id' => '0', 'id' => 'interaction'})
+    @interaction.stubs(:experiment).returns(@experiment)
+    assert @interaction.handler.include?('<script>')
+  end
 end
+

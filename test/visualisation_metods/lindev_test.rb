@@ -2,11 +2,12 @@ require 'minitest/autorun'
 require 'test_helper'
 require 'mocha'
 
-class InteractionTest < MiniTest::Test
+class LindevTest < MiniTest::Test
 
   def setup
     Utils.require_plugin('lindev')
     @lindev = Lindev.new
+
 
     @arguments = 'parameter1,parameter2'
     @arguments_ids = @arguments.split(',')
@@ -63,9 +64,16 @@ class InteractionTest < MiniTest::Test
     assert_equal [] , @lindev.get_values_and_std_dev({})[0]
   end
 
+  def test_prepare_lindev_chart_content
+    @lindev.stubs(:parameters).returns({"param_x"=>"parameter1", "param_y"=>"parameter2", "chart_id"=>"0"})
+    parameter1 = @lindev.parameters['param_x']
+    parameter2 = @lindev.parameters['param_y']
+    assert_includes "<script>(function() { \nvar i=0;\nvar data = [];\nlindev_main(i, \"#{parameter1}\", \"#{parameter2}\", data);\n})();</script>", @lindev.prepare_lindev_chart_content([])
+  end
 
-  # def test_prepare_lindev_chart_content
-  # attr_accessor :parameters
-  #   assert_includes '<script>', @lindev.prepare_lindev_chart_content([[[0.0, 1.5], [2.0, 3.0], [4.0, 5.0]], [[0.0, 1.0, 2.0], [2.0, 3.0, 3.0], [4.0, 5.0, 5.0]]])
-  # end
+  def test_handler
+    @lindev.stubs(:parameters).returns({"param_x"=>"parameter1", "param_y"=>"parameter2", "chart_id"=>"0", "id"=>"lindev"})
+    @lindev.stubs(:experiment).returns(@experiment)
+    assert @lindev.handler.include?('<script>')
+  end
 end
