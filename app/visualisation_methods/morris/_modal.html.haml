@@ -4,13 +4,14 @@
 - text_inline = "Select output parameter"
 - if se_results.blank?
   - text_inline = "No results from supervised experiment"
-
+-elsif se_results['sensitivity_analysis_method'] != "morris"
+  - text_inline = "Cannot plot results for non sensitivity method"
 
 %section#morris_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Morris design"
 
-  - if !se_results.blank?
+  - if !se_results.blank? && se_results["sensitivity_analysis_method"] == 'morris'
     .row
       .small-5.columns
         %label.inline=text_inline

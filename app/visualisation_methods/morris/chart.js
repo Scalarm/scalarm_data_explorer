@@ -14,9 +14,9 @@ window.morris_main = function (i, series_to_plot, sorted_parameters_names) {
 			}
 		},
 		yAxis: {
-			min: 0.0,
 			title: {
-				text: ''
+				text: 'Normalized sensitivity',
+				align: 'high'
 			},
 			labels: {
 				overflow: 'justify'
