@@ -44,16 +44,19 @@ class Morris
   #         "st.deviation ":2
   #        }
   #     }
-  #   },
-  #   "error":"null"
+  #   }
   #  }'
   def handler()
     if parameters["id"] && parameters["chart_id"] && parameters["output"]
       @name_of_output = parameters["output"]
       output_hash = @experiment.results
 
-      if output_hash["sensitivity_analysis_method"] != 'morris' || (output_hash.has_key?("error") && output_hash["error"] != "NULL")
+      if output_hash["sensitivity_analysis_method"] != 'morris'
           raise("Error in plugin appeared")
+      end
+
+      if @experiment.error_reason != nil
+        raise ("Error appeared #{@experiment.error_reason}")
       end
 
       output_hash_results = output_hash['moes'][@name_of_output]
@@ -66,7 +69,6 @@ class Morris
       extract_categories_series(output_hash_results)
       sort_parameters_names(output_hash_results)
       extract_series(output_hash_results)
-      map_negative_numbers
       do_normalization
       object = prepare_morris_chart_content
       object
@@ -114,39 +116,12 @@ class Morris
     @series_names = output_hash_results[output_hash_results.keys[0]].keys
   end
 
-  def map_negative_numbers
-    series_to_plot = []
-    negative_boundaries = {}
-    @series_to_plot.each {|single_of_series_name|
-      tmp_array = single_of_series_name[:data]
-
-     single_of_series_name[:data].each { |item|
-       if item < 0
-         if !negative_boundaries.has_key?(single_of_series_name[:name]) || negative_boundaries[single_of_series_name[:name]] > item
-           negative_boundaries[single_of_series_name[:name]] = item
-         end
-       end
-     }
-
-      series_to_plot.push({name: single_of_series_name[:name], data: tmp_array, legendIndex: single_of_series_name[:legendIndex]})
-    }
-
-    negative_boundaries.each_key{ |name_of_parameter|
-      series_to_plot.each{|single_of_series_name|
-        if single_of_series_name[:name] == name_of_parameter
-          single_of_series_name[:data] = single_of_series_name[:data].map{|value| value + 2 * negative_boundaries[name_of_parameter].abs}
-        end
-      }
-    }
-
-    @series_to_plot = series_to_plot
-  end
-
   def do_normalization
     series_to_plot = []
     @series_to_plot.each {|single_of_series_name|
-      total_sum = single_of_series_name[:data].inject(:+)
-      series_to_plot.push({name: single_of_series_name[:name], data: single_of_series_name[:data].map{|single_data_value| ((single_data_value / total_sum)).round(2) }, legendIndex: single_of_series_name[:legendIndex]})
+      total_sum = single_of_series_name[:data].inject(0) {|sum, i|  sum + i.abs }
+      proper_name = I18n.t ("sensitivity_analysis.morris." + single_of_series_name[:name])
+      series_to_plot.push({name: proper_name, data: single_of_series_name[:data].map{|single_data_value| ((single_data_value / total_sum)).round(2) }, legendIndex: single_of_series_name[:legendIndex]})
     }
 
     @series_to_plot = series_to_plot
