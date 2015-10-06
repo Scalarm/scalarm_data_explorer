@@ -52,11 +52,11 @@ class Morris
       output_hash = @experiment.results
 
       if output_hash["sensitivity_analysis_method"] != 'morris'
-          raise("Error in plugin appeared")
+        raise("No visualization for #{output_hash["sensitivity_analysis_method"]} method")
       end
 
       if @experiment.error_reason != nil
-        raise ("Error appeared #{@experiment.error_reason}")
+        raise ("Error appeared - #{@experiment.error_reason}")
       end
 
       output_hash_results = output_hash['moes'][@name_of_output]
@@ -65,7 +65,7 @@ class Morris
         raise("No #{@name_of_output} in moes results from supervised experiment")
       end
 
-      extract_categories_xAxis(output_hash_results)
+      extract_categories_x_axis(output_hash_results)
       extract_categories_series(output_hash_results)
       sort_parameters_names(output_hash_results)
       extract_series(output_hash_results)
@@ -81,13 +81,13 @@ class Morris
   def sort_parameters_names(output_hash_results)
     sorted_parameters_names = {}
 
-    @parameters_names.each{|name_of_parameter|
+    @parameters_names.each do |name_of_parameter|
       parameter_total_sum = 0.0
-      output_hash_results[name_of_parameter].each_key{ |key|
+      output_hash_results[name_of_parameter].each_key do |key|
         parameter_total_sum += output_hash_results[name_of_parameter][key]
-      }
+      end
       sorted_parameters_names[name_of_parameter] = parameter_total_sum
-    }
+    end
 
     @sorted_parameters_names = sorted_parameters_names.sort_by{ |k, v| v }.to_h.keys
   end
@@ -96,19 +96,19 @@ class Morris
     series_to_plot = []
     index_in_legend = @sorted_parameters_names.size;
 
-    @series_names.each {|single_of_series_name|
+    @series_names.each do |single_of_series_name|
       data_for_single = []
-      @sorted_parameters_names.each{|sorted_parameter_name|
+      @sorted_parameters_names.each do |sorted_parameter_name|
         data_for_single.push(output_hash_results[sorted_parameter_name][single_of_series_name].to_f)
-      }
+      end
       series_to_plot.push({ name: single_of_series_name, data: data_for_single, legendIndex: index_in_legend})
       index_in_legend -= 1
-    }
+    end
 
     @series_to_plot = series_to_plot
   end
 
-  def extract_categories_xAxis(output_hash_output_results)
+  def extract_categories_x_axis(output_hash_output_results)
     @parameters_names = output_hash_output_results.keys
   end
 
@@ -118,11 +118,11 @@ class Morris
 
   def do_normalization
     series_to_plot = []
-    @series_to_plot.each {|single_of_series_name|
+    @series_to_plot.each do |single_of_series_name|
       total_sum = single_of_series_name[:data].inject(0) {|sum, i|  sum + i.abs }
       proper_name = I18n.t ("sensitivity_analysis.morris." + single_of_series_name[:name])
       series_to_plot.push({name: proper_name, data: single_of_series_name[:data].map{|single_data_value| ((single_data_value / total_sum)).round(2) }, legendIndex: single_of_series_name[:legendIndex]})
-    }
+    end
 
     @series_to_plot = series_to_plot
   end
