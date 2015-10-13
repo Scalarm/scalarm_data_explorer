@@ -230,7 +230,7 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
         if (!d.parent) {
             return "root";
         }
-        else if (!d.children && !(/^cl \d+$/.test(d.id))) {
+        else if (!d.children && (/^cl \d+$/.test(d.id))) {
             return "cluster";
         }
         else if (!d.children) {

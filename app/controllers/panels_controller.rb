@@ -16,7 +16,7 @@ class PanelsController < ApplicationController
 
   def handle_panel_for_experiment
 
-    panels = Panels.new
+    panels = Panels.new(params[:using_em])
     @methods = panels.methods
     @groups = panels.groups
 

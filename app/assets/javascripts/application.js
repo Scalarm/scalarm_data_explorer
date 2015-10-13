@@ -15,12 +15,13 @@
 //= require jquery
 //= require jquery_ujs
 //= require foundation
-//= require toastr.min
-//= require d3
+//= require custom.modernizr
 //= require highcharts/highcharts
 //= require highcharts/highcharts-more
 //= require highcharts/highcharts-3d
 //= require highcharts/modules/exporting
+//= require toastr.min
+//= require d3
 //= require_tree .
 
 $(function() {
