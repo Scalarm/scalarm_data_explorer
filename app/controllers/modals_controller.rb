@@ -21,7 +21,7 @@ class ModalsController < ApplicationController
     chart_id = params[:id].to_s
 
     # set layout
-    if params[:using_em] == 'true' || params[:using_em].nil?
+    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
       layout_value = false
     else
       layout_value = true

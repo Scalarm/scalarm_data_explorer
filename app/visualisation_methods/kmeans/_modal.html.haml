@@ -72,7 +72,7 @@
       $('#busy_kmeans').show();
 
       // TO:DO get moes_info_json available without EM
-      if (("#{params[:using_em]}" == "false") || ("#{params[:using_em]}" == "true" && "#{params[:moes_info_exist]}" == "false")) {
+      if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
         moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
         moes_info = getMoeInfo(#{result.result.keys});
       }
@@ -119,7 +119,7 @@
       query_params += "&chart_id="+chart_counter;
       query_params += "&clusters="+numb_cluster;
       query_params += "&subclusters="+numb_subcluster;
-      query_params += "&using_em=true";
+      query_params += "&stand_alone=false";
 
       var url = "#{@prefix}/chart_instances/kmeans?"+query_params;
       var handler = function(data) {

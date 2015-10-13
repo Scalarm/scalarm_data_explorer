@@ -57,7 +57,7 @@
       var new_checkbox ="";
 
       // TO:DO get moes_info_json available without EM
-      if (("#{params[:using_em]}" == "false") || ("#{params[:using_em]}" == "true" && "#{params[:moes_info_exist]}" == "false")) {
+      if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
         moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
         moes_info = getMoeInfo(#{result.result.keys});
       }
@@ -102,7 +102,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}", using_em: "true"}, handler, onErrorHandler);
+      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}", stand_alone: "false"}, handler, onErrorHandler);
       chart_counter++;
     };
     $("#dendrogramModal").find("button.refresh").bind("click", reload_dendrogram_params);

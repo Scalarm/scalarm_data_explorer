@@ -35,7 +35,7 @@ class ChartInstancesController < ApplicationController
 
 
     # set layout
-    if params[:using_em] == 'true' || params[:using_em].nil?
+    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
       layout_value = false
     else
       layout_value = true

@@ -14,7 +14,7 @@ class ClusterInfosController < ApplicationController
         v.map!{|array_value| ERB::Util.h(array_value)} : v.kind_of?(Hash)?
             v.update(v){ |k_s,v_s| ERB::Util.h(v_s)} : ERB::Util.h(v)}
 
-    if params[:using_em] == 'true' || params[:using_em].nil?
+    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
       layout_value = false
     else
       layout_value = true
