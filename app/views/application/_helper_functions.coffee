@@ -32,9 +32,19 @@ window.getMoesInfoJson = (input_params, output_params) =>
 
 
 # always return integer as type
-window.getMoeInfo = (output_params) =>
+window.getMoeInfo = (output_params, values) =>
   moes_info_tmp = {"moes": "", "moes_and_params": "", "params": "", "moes_types": [], "moes_names": [], "inputs_types": "", "inputs_names": ""}
   for i in [0..output_params.length-1]
     moes_info_tmp["moes_names"].push(output_params[i])
-    moes_info_tmp["moes_types"].push("integer")
+    if typeof values[i] == 'string'
+      type = 'string'
+    else
+      if !!(values[i] % 1)
+        type = 'float'
+      else
+        type = 'integer'
+    moes_info_tmp["moes_types"].push(type)
+
   moes_info_tmp
+
+

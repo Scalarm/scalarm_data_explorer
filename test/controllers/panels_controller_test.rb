@@ -15,7 +15,6 @@ class PanelsControllerTest < ActionController::TestCase
     # super
   end
 
-
   test "should get show" do
     # require 'scalarm/database'
     #
