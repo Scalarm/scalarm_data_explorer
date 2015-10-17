@@ -64,6 +64,8 @@ class ApplicationController < ActionController::Base
 
 
   def security_exception_handler (exception)
+    Rails.logger.warn("Exception caught in security_exception_handler: #{exception.message}")
+    Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
     add_cors_header
     respond_to do |format|
       format.html do
