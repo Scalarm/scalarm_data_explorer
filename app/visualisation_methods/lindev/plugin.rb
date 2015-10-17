@@ -1,7 +1,7 @@
 class Lindev
   attr_accessor :experiment
   attr_accessor :parameters
-
+  include Scalarm::ServiceCore::ParameterValidation
 
   def handler
     if parameters["id"] && parameters["param_x"].to_s && parameters["param_y"].to_s
@@ -13,7 +13,7 @@ class Lindev
       elsif parameters["chart_id"]
         object = prepare_lindev_chart_content(data)
       else
-        raise("Request parameters missing: 'chart_id'");
+        raise MissingParametersError.new(["chart_id"]);
       end
       object
     end
@@ -43,7 +43,7 @@ class Lindev
     simulation_runs = experiment.simulation_runs.to_a
 
     if simulation_runs.length == 0
-      raise("No such experiment or no runs done")
+      raise SecurityError.new("No such experiment or no simulation runs done")
     end
 
     # get input parameter names
@@ -79,10 +79,10 @@ class Lindev
     grouped_by_param_x.each do |key, value|
       if value.kind_of?(Array)
         values.push([key.to_f, value.mean])
-        with_stddev.push([key.to_f, (value.mean-value.standard_deviation).to_f,(value.mean+value.standard_deviation).to_f])
+        with_stddev.push([key.to_f, (value.mean-value.standard_deviation).to_f, (value.mean+value.standard_deviation).to_f])
       else
         values.push([key.to_f, value.to_f])
-        with_stddev.push([key.to_f,value.to_f, value.to_f])
+        with_stddev.push([key.to_f, value.to_f, value.to_f])
 
       end
     end
@@ -91,11 +91,11 @@ class Lindev
 
     # using descriptive statistics gem for this
     #creating result table -> mean values
-  #  values = calculate_mean_values(grouped_by_param_x, values)
+    #  values = calculate_mean_values(grouped_by_param_x, values)
 
-  #  with_stddev = []
+    #  with_stddev = []
     #creating result table -> standard deviation values
-  #  with_stddev = calculate_standard_deviation(grouped_by_param_x, with_stddev)
+    #  with_stddev = calculate_standard_deviation(grouped_by_param_x, with_stddev)
 
     [values, with_stddev]
 

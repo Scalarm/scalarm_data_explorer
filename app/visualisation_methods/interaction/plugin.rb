@@ -1,7 +1,7 @@
 class Interaction
   attr_accessor :experiment
   attr_accessor :parameters
-
+  include Scalarm::ServiceCore::ParameterValidation
 
   def prepare_interaction_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";";
@@ -21,7 +21,7 @@ class Interaction
       object = prepare_interaction_chart_content(data)
       object
     else
-      raise('Request parameters missing');
+      raise SecurityError.new('Request parameters missing');
     end
   end
 
@@ -41,7 +41,7 @@ class Interaction
 
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
-      raise("No such experiment or no runs done")
+      raise SecurityError.new('No such experiment or no simulation runs done')
     end
 
     argument_ids = simulation_runs.first.arguments.split(',')
@@ -52,7 +52,7 @@ class Interaction
       new_args = {}
 
       argument_ids.each_with_index do |arg_name, index|
-        params[arg_name] = params[arg_name].kind_of?(Array)? params[arg_name]<<values[index].to_f : [values[index].to_f]
+        params[arg_name] = params[arg_name].kind_of?(Array) ? params[arg_name]<<values[index].to_f : [values[index].to_f]
         new_args[arg_name] = values[index].to_f
       end
 
@@ -99,7 +99,7 @@ class Interaction
     end
     data = {}
     if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
-      raise ('Not enough data in database!')
+      raise SecurityError.new('Not enough data in database!')
 
     else
       result = []

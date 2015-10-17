@@ -10,6 +10,8 @@ class Morris
   attr_reader :name_of_output
   attr_reader :series_names
 
+  include Scalarm::ServiceCore::ParameterValidation
+
   def prepare_morris_chart_content
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar sorted_parameters_names = " + @sorted_parameters_names.to_json + ";"
@@ -52,17 +54,17 @@ class Morris
       output_hash = @experiment.results
 
       if output_hash["sensitivity_analysis_method"] != 'morris'
-        raise("No visualization for #{output_hash["sensitivity_analysis_method"]} method")
+        raise SecurityError.new("No visualization for #{output_hash["sensitivity_analysis_method"]} method")
       end
 
       if @experiment.error_reason != nil
-        raise ("Error appeared - #{@experiment.error_reason}")
+        raise SecurityError.new("Error appeared - #{@experiment.error_reason}")
       end
 
       output_hash_results = output_hash['moes'][@name_of_output]
 
       if !output_hash_results
-        raise("No #{@name_of_output} in moes results from supervised experiment")
+        raise SecurityError.new("No #{@name_of_output} in moes results from supervised experiment")
       end
 
       extract_categories_x_axis(output_hash_results)
@@ -73,7 +75,7 @@ class Morris
       object = prepare_morris_chart_content
       object
     else
-      raise("Request parameters missing")
+      raise SecurityError.new("Request parameters missing")
     end
 
   end
