@@ -70,24 +70,24 @@ class ClusterInfosControllerTest < ActionController::TestCase
 
   test "Should be error when wrong simulation ids are given" do
     get :show, id: @experiment.id.to_s, simulations: "Ala,1,2,3", using_em: 'false'
-    assert_response 500, "Response should be error, but it is: #{response.body}"
+    assert_response 412, "Response should be error, but it is: #{response.body}"
   end
 
 
   test "Should be error with no experiment id" do
     get :show, id: "No experiment ", simulations: "1,2,3", using_em: 'false'
-    assert_response 500, "Response should be error, but it is: #{response.body}"
+    assert_response 412, "Response should be error, but it is: #{response.body}"
   end
 
 
   test "Should be error with no experiment id (JSON)" do
     get :show, format: :json, id: "No experiment ", using_em: 'false'
-    assert_response 500, "Response should be error, but it is: #{response.body}"
+    assert_response 412, "Response should be error, but it is: #{response.body}"
   end
 
 
   test "Should return error when no simulation ids" do
     get :show, id: @experiment.id.to_s,  using_em: 'false'
-    assert_response 500, "Response should be error, but it is: #{response.body}"
+    assert_response 412, "Response should be error, but it is: #{response.body}"
   end
 end

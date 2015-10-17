@@ -14,7 +14,9 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate, except: :status
   rescue_from Scalarm::ServiceCore::AuthenticationError, with: :authentication_failed
   rescue_from StandardError, with: :generic_exception_handler
-  rescue_from SecurityError, with: :generic_exception_handler
+  rescue_from SecurityError, with: :security_exception_handler
+  rescue_from MissingParametersError, with: :security_exception_handler
+
   PREFIX = '/'
   before_filter :get_prefix
 
@@ -60,6 +62,23 @@ class ApplicationController < ActionController::Base
     @prefix = ERB::Util.h(text)
   end
 
+
+  def security_exception_handler (exception)
+    add_cors_header
+    respond_to do |format|
+      format.html do
+        render html: exception.to_s, status: 412
+      end
+
+      format.json do
+        render json: {
+                   status: 'error',
+                   reason: exception.to_s
+               },
+               status: 412
+      end
+    end
+  end
 
   def generic_exception_handler(exception)
     Rails.logger.warn("Exception caught in generic_exception_handler: #{exception.message}")
