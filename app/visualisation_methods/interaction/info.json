@@ -1,7 +1,7 @@
 {
-  "name": "Interaction",
+  "name": "Interaction chart",
   "id": "interaction",
   "group": "params",
   "image": "interaction_icon.png",
-  "description": "Shows interaction between 2 input parameters"
+  "description": "Shows interaction between 2 input parameters and its affect on an output attribute."
 }
