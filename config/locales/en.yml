@@ -26,3 +26,6 @@ en:
       standard_deviation: "Standard deviation"
       mean: "Mean"
       absolute_mean: "Absolute mean"
+    fast:
+      first_order: "Main effect"
+      total_order: "Interactions"
