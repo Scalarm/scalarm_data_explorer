@@ -77,10 +77,9 @@
     window.reload_three_d_params = function(){
       $("#busy_3d").show();
 
-      // TO:DO get moes_info_json available without EM
       if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
         moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
-        moes_info = getMoeInfo(#{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
       }
 
       //moes_info_json is global array of json with info (label id type of) parameters (EM global variable)

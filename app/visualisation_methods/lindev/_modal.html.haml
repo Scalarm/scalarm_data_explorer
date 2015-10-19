@@ -71,10 +71,9 @@
     window.reload_lindev_params = function(){
       $("#busy_lindev").show();
 
-      // TO:DO get moes_info_json available without EM
       if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
         moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
-        moes_info = getMoeInfo(#{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
       }
 
       var new_select ="<optgroup label='Parameters'>";

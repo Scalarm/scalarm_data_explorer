@@ -31,7 +31,6 @@ window.getMoesInfoJson = (input_params, output_params) =>
   moes_info_json_tmp
 
 
-# always return integer as type
 window.getMoeInfo = (output_params, values) =>
   moes_info_tmp = {"moes": "", "moes_and_params": "", "params": "", "moes_types": [], "moes_names": [], "inputs_types": "", "inputs_names": ""}
   for i in [0..output_params.length-1]
