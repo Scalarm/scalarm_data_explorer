@@ -1,7 +1,7 @@
 {
-  "name": "Pareto",
+  "name": "Pareto charts of effects",
   "id": "pareto",
   "group": "params",
   "image": "pareto_icon.png",
-  "description": "Chart showing significance of parameters (or interaction)"
+  "description": "Shows contributions to variability of output attributes for every input parameter"
 }
