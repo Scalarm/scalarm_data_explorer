@@ -1,0 +1,15 @@
+=define_helper_functions
+
+%section#boxplot_chart_form.panel.radius.plot
+  %h3.subheader Boxplot
+  .row
+  %span.button.hide{id: "boxplot_hide_#{params['chart_id']}"} Hide chart
+  %br
+    .chart
+
+  :javascript
+    $(function() {
+      $("#boxplot_hide_#{params['chart_id']}").on('click', function() {
+        $("div#boxplot_chart_#{params["chart_id"]}").remove();
+      });
+    });

@@ -1,0 +1,7 @@
+{
+  "name": "Box-plot",
+  "id": "boxplot",
+  "group": "params",
+  "image": "boxplot_icon.png",
+  "description": "Boxplot"
+}
