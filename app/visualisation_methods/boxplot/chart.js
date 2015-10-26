@@ -1,7 +1,5 @@
 window.boxplot_main = function(i, param_x, param_y, data, categories, outliers) {
     var chart = new Highcharts.Chart({
-
-
         chart: {
             type: 'boxplot',
             renderTo: $('#boxplot_chart_'+ i + " .chart")[0]
@@ -40,6 +38,22 @@ window.boxplot_main = function(i, param_x, param_y, data, categories, outliers) 
             }]
         },
 
+        plotOptions: {
+            boxplot: {
+                fillColor: '#6CD',
+                lineWidth: 3,
+                stroke: "red",
+                medianColor: '#0C5DA5',
+                medianWidth: 4,
+                stemColor: '#A63400',
+                stemDashStyle: 'dot',
+                stemWidth: 2,
+                whiskerColor: '#0C5DA5',
+                whiskerLength: '20%',
+                whiskerWidth: 4,
+            }
+        },
+
         series: [{
             name: "Statistics for <em>" + param_y + "</em>:",
             data: data,
@@ -48,7 +62,7 @@ window.boxplot_main = function(i, param_x, param_y, data, categories, outliers) 
             }
         }, {
             name: 'Outlier',
-            color: Highcharts.getOptions().colors[0],
+            color: Highcharts.getOptions().colors[5],
             type: 'scatter',
             data: outliers,
             marker: {
@@ -57,7 +71,7 @@ window.boxplot_main = function(i, param_x, param_y, data, categories, outliers) 
                 lineColor: Highcharts.getOptions().colors[0]
             },
             tooltip: {
-                pointFormat: 'Observation: {point.y}'
+                pointFormat: "<em>" + param_y + "</em> = {point.y}"
             }
         }]
 
