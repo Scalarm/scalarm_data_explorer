@@ -45,16 +45,16 @@ class Boxplot
     end
 
     #filling grouped_by_param_x with correct data
-    # grouped_by_param_x = grouping_by_parameter(argument_ids, {}, param_x, param_y, simulation_runs)
-    grouped_by_param_x =  {1.0=>[1.0, 7.0, 5.0, 20.0], 2.0=>[10.0, 2.0, 14.0, 40.0]}
+    grouped_by_param_x = grouping_by_parameter(argument_ids, {}, param_x, param_y, simulation_runs)
+    #grouped_by_param_x =  {1.0=>[1.0, 7.0, 5.0, 20.0], 2.0=>[10.0, 2.0, 14.0, 40.0]}
 
 
     data = []
     outliers = []
-    grouped_by_param_x.each do |key, value|
+    grouped_by_param_x.each_with_index do |(key, value), index|
       stats = get_statictics(value)
       data.push(stats.values)
-      outliers = outliers + find_outliners(value, key, stats['q1'], stats['q3'])
+      outliers = outliers + find_outliners(value, index, stats['q1'], stats['q3'])
     end
 
 
@@ -62,7 +62,7 @@ class Boxplot
     Rails.logger.debug(data)
     Rails.logger.debug(outliers)
 
-    {:data => data, :categories => grouped_by_param_x.keys, :outliners => outliers}
+    {:data => data, :categories => grouped_by_param_x.keys, :outliers => outliers}
   end
 
 
@@ -110,13 +110,14 @@ class Boxplot
   # get array of values and raturn array: [min, lower_quartile, median, upper_quartile, max]
   def get_statictics(values_in_category)
     stats = {}
-    stats['min'] = values_in_category.min
-    stats['q1'] = values_in_category.percentile(25)
+    q1 = values_in_category.percentile(25)
+    q3 = values_in_category.percentile(75)
+    iqr = q3 - q1
+    stats['min'] = q1 - 1.5 * iqr
+    stats['q1'] = q1
     stats['med'] = values_in_category.median
-    stats['q3'] = values_in_category.percentile(75)
-    stats['max'] = values_in_category.max
-    # iqr = stats[:q3] - stats[:q1]
-    # stats[:interval] = [stats[:q1] - 1.5 * iqr, stats[:q3] - 1.5 * iqr]
+    stats['q3'] = q3
+    stats['max'] = q3 + 1.5 * iqr
     Rails.logger.debug(stats)
     stats
   end
@@ -126,7 +127,7 @@ class Boxplot
     iqr = q3 - q1
     values.each do |value|
       if value < q1 - 1.5 * iqr || value > q3 + 1.5 * iqr
-        outliers.push([key, value])
+        outliers.push([key.to_i, value])
       end
     end
     outliers
