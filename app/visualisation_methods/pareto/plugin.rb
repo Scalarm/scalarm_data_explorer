@@ -71,7 +71,6 @@ class Pareto
         maxes[arg_name] = params[arg_name].max
       end
 
-
       #preparing Chart content
       data =[]
       argument_ids.each do |arg_name|

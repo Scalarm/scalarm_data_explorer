@@ -54,6 +54,8 @@ class Kmeans
 
     result_data = result_data.sort_by { |x, y| x }
 
+    result_data = result_data.sort_by { |x, y| x }
+    Rails.logger.debug("Sim run: #{result_data}")
     result_hash = {}
     result_data.map { |row| result_hash[row[0]]=row[1] }
     groped_by_moes = {}
@@ -62,9 +64,11 @@ class Kmeans
         groped_by_moes[moes[ind]].kind_of?(Array) ? groped_by_moes[moes[ind]].push(moe) : groped_by_moes[moes[ind]] = [moe]
       end
     end
-
     # for 2 and more moes join arrays of result into one and pass as data.frame
     groped_by_moes.each do |k, v|
+      if v.uniq.count < parameters[:clusters].to_i
+        raise SecurityError.new('Cannot devide data into clusters. Too small amount of various result values')
+      end
       R.assign(k, v)
     end
 
@@ -106,9 +110,7 @@ EOF
   # for now is only table with moes names
   def create_header
     header = []
-    # moes= moe_names#[parameters["array"]]
     moes = Array(parameters["array"])
-    #  header+=['simulation_index']
     header += moes
     header
 
@@ -183,7 +185,7 @@ EOF
 
   def create_data_result(with_index=true, with_params=false, with_moes=true)
     moes = Array(parameters["array"])
-    data_array=[]
+    data_array = []
     simulation_ind = []
 
     query_fields = {_id: 0}
@@ -197,7 +199,7 @@ EOF
       line = []
       line.push(simulation_run.index) if with_index
       simulation_ind << simulation_run.index
-      moes_list =[]
+      moes_list = []
       moes.map { |moe_name|
         moes_list.push(simulation_run.result[moe_name] || '') } if with_moes
       line << moes_list
