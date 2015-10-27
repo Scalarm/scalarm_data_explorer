@@ -1,4 +1,4 @@
-window.boxplot_main = function(i, param_x, param_y, data, categories, outliers) {
+window.boxplot_main = function(i, param_x, param_y, data, categories, outliers, mean) {
     var chart = new Highcharts.Chart({
         chart: {
             type: 'boxplot',
@@ -25,14 +25,16 @@ window.boxplot_main = function(i, param_x, param_y, data, categories, outliers) 
                 text: param_y
             },
             plotLines: [{
-                value: 932,
+                value: mean,
                 color: 'red',
                 width: 1,
                 label: {
-                    text: 'Theoretical mean: 932',
-                    align: 'center',
+                    text: "Mean: " + (Math.round(mean * 100)/100).toFixed(2),
+                    align: 'right',
                     style: {
-                        color: 'gray'
+                        color: 'red',
+                        y: 12,
+                        x: 0
                     }
                 }
             }]
@@ -42,13 +44,12 @@ window.boxplot_main = function(i, param_x, param_y, data, categories, outliers) 
             boxplot: {
                 fillColor: '#6CD',
                 lineWidth: 3,
-                stroke: "red",
                 medianColor: '#0C5DA5',
                 medianWidth: 4,
-                stemColor: '#A63400',
-                stemDashStyle: 'dot',
+                stemColor: '#0B478B',
+                stemDashStyle: 'dash',
                 stemWidth: 2,
-                whiskerColor: '#0C5DA5',
+                whiskerColor: '#0B478B',
                 whiskerLength: '20%',
                 whiskerWidth: 4,
             }

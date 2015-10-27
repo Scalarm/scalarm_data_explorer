@@ -36,14 +36,17 @@ window.reload_checkbox = ->
 
 #reload and join parameters and moes which have max 10 values
 window.reload_selectbox_allowed_params_and_moes = (allowed_params) =>
-  new_select = '<optgroup label=\'Parameters\'>'
-  for iter of moes_info_json
-    param = moes_info_json[iter]
-    if param.id == 'delimiter'
-      new_select = new_select + '</optgroup> <optgroup label=\'Moes\'>'
-    else if param.id in allowed_params
-      new_select = new_select + '<option value=\'' + escapeHtml(param.id) + '\'>' + escapeHtml(param.label) + '</option> '
-  new_select = new_select + '</optgroup>'
+  if allowed_params.length == 0
+    new_select = '<option value=\'\'>' + escapeHtml('There are no parameters satisfying the conditions') + '</option> '
+  else
+    new_select = '<optgroup label=\'Parameters\'>'
+    for iter of moes_info_json
+      param = moes_info_json[iter]
+      if param.id == 'delimiter'
+        new_select = new_select + '</optgroup> <optgroup label=\'Moes\'>'
+      else if param.id in allowed_params
+        new_select = new_select + '<option value=\'' + escapeHtml(param.id) + '\'>' + escapeHtml(param.label) + '</option> '
+    new_select = new_select + '</optgroup>'
 
   ### replace old values with new ones (input parameters and moes) ###
   $('.allowed_moes_params_list').each ->
@@ -53,7 +56,7 @@ window.reload_selectbox_allowed_params_and_moes = (allowed_params) =>
       $(this).val() == selected_option
     ).attr 'selected', true
     return
-  toastr.success 'Parameters refreshed'
+  reload_selectbox_parameters();
 
 #reload and join parameters and moes
 window.reload_selectbox_params_and_moes = ->

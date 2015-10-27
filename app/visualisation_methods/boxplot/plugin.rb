@@ -25,13 +25,15 @@ class Boxplot
     output += "\nvar data = " + data[:data].to_json + ";" if data != nil
     output += "\nvar categories = " + data[:categories].to_json + ";" if data != nil
     output += "\nvar outliers = " + data[:outliers].to_json + ";" if data != nil
-    output += "\nboxplot_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", data, categories, outliers);"
+    output += "\nvar mean = " + data[:mean].to_json + ";" if data != nil
+    output += "\nboxplot_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", data, categories, outliers, mean);"
     output += "\n})();</script>"
     output
   end
 
   def get_boxplot_data (experiment, param_x, param_y)
-    simulation_runs = experiment.simulation_runs.to_a
+    filter = {is_done: true, is_error: {'$exists'=> false}}
+    simulation_runs = @experiment.simulation_runs.where(filter).to_a
 
     if simulation_runs.length == 0
       raise('No such experiment or no runs done')
@@ -48,21 +50,16 @@ class Boxplot
     grouped_by_param_x = grouping_by_parameter(argument_ids, {}, param_x, param_y, simulation_runs)
     #grouped_by_param_x =  {1.0=>[1.0, 7.0, 5.0, 20.0], 2.0=>[10.0, 2.0, 14.0, 40.0]}
 
-
     data = []
     outliers = []
+    moes = []
     grouped_by_param_x.each_with_index do |(key, value), index|
+      moes += value
       stats = get_statictics(value)
       data.push(stats.values)
       outliers = outliers + find_outliners(value, index, stats['q1'], stats['q3'])
     end
-
-
-    Rails.logger.debug(grouped_by_param_x)
-    Rails.logger.debug(data)
-    Rails.logger.debug(outliers)
-
-    {:data => data, :categories => grouped_by_param_x.keys, :outliers => outliers}
+    {:data => data, :categories => grouped_by_param_x.keys, :outliers => outliers, :mean => moes.mean}
   end
 
 
@@ -118,7 +115,6 @@ class Boxplot
     stats['med'] = values_in_category.median
     stats['q3'] = q3
     stats['max'] = q3 + 1.5 * iqr
-    Rails.logger.debug(stats)
     stats
   end
 
@@ -131,7 +127,6 @@ class Boxplot
       end
     end
     outliers
-    # jeśli to nie jest puste to trzeba znowu policzyć statystyki??
   end
 
 end
