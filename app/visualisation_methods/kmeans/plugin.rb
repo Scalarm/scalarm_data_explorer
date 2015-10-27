@@ -52,7 +52,7 @@ class Kmeans
     simulation_ind, result_data = create_data_result
 
     result_data = result_data.sort_by{|x,y|x}
-
+    Rails.logger.debug("Sim run: #{result_data}")
     result_hash = {}
     result_data.map{|row| result_hash[row[0]]=row[1]}
     groped_by_moes = {}
@@ -61,12 +61,16 @@ class Kmeans
         groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) :  groped_by_moes[moes[ind]] = [moe]
       end
     end
-
+    Rails.logger.debug("after grouping: #{groped_by_moes}")
     # for 2 and more moes join arrays of result into one and pass as data.frame
     groped_by_moes.each do |k,v|
+      if v.uniq.count < parameters[:clusters].to_i
+        raise SecurityError.new("Cannot devide data into clusters. Too small amount of various result values")
+      end
+      Rails.logger.debug("Key: #{k}")
+      Rails.logger.debug("Values: #{v}")
       R.assign(k , v)
     end
-
     R.eval <<EOF
     hdata <- kmeans(data.frame(#{moes.join(",")}),#{parameters[:clusters]})
     clusters <- hdata$cluster
@@ -148,6 +152,7 @@ EOF
 
         end
         #assign data in R
+
         groped_by_moes.each do |k,v|
           R.assign(k , v)
         end
