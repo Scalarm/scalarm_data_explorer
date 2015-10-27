@@ -69,6 +69,8 @@ class ApplicationController < ActionController::Base
     Rails.logger.warn("Exception caught in generic_exception_handler: #{exception.message}")
     Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
 
+    add_cors_header
+
     respond_to do |format|
       format.html do
         #flash[:error] = exception.to_s
