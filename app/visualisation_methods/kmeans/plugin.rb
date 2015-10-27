@@ -51,22 +51,22 @@ class Kmeans
     moes = Array(parameters["array"])
     simulation_ind, result_data = create_data_result
 
-    result_data = result_data.sort_by{|x,y|x}
-
+    result_data = result_data.sort_by{|x, y| x }
     result_hash = {}
-    result_data.map{|row| result_hash[row[0]]=row[1]}
+    result_data.map{|row| result_hash[row[0]] = row[1]}
     groped_by_moes = {}
     result_data.map do |row|
-      row[1].each_with_index do |moe,ind|
-        groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) :  groped_by_moes[moes[ind]] = [moe]
+      row[1].each_with_index do |moe, ind|
+        groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) : groped_by_moes[moes[ind]] = [moe]
       end
     end
-
     # for 2 and more moes join arrays of result into one and pass as data.frame
     groped_by_moes.each do |k,v|
-      R.assign(k , v)
+      if v.uniq.count < parameters[:clusters].to_i
+        raise SecurityError.new("Cannot divide data into clusters. Too small amount of various result values")
+      end
+      R.assign(k, v)
     end
-
     R.eval <<EOF
     hdata <- kmeans(data.frame(#{moes.join(",")}),#{parameters[:clusters]})
     clusters <- hdata$cluster
@@ -94,7 +94,7 @@ EOF
 
     # parsing subcluster data into {cluster_id => { subcluster_id => simulation_ids}} form
     subclusters_data = {}
-    result_subcluster.each do |k,v|
+    result_subcluster.each do |k, v|
       subclusters_data[k] = grouping_hash(v, parameters[:subclusters])
     end
     return clusters, subclusters_data
@@ -142,14 +142,15 @@ EOF
 
         # create hash {moe_name => [array of values]} it have only for those simulations which are in this cluster
         subcluster[subclust_indx].map do |row|
-          row.each_with_index do |moe,ind|
+          row.each_with_index do |moe, ind|
             groped_by_moes[moes[ind]].kind_of?(Array)? groped_by_moes[moes[ind]].push(moe) :  groped_by_moes[moes[ind]] = [moe]
           end
 
         end
         #assign data in R
-        groped_by_moes.each do |k,v|
-          R.assign(k , v)
+
+        groped_by_moes.each do |k, v|
+          R.assign(k, v)
         end
 
         R.eval <<EOF
@@ -182,10 +183,10 @@ EOF
 
   def create_data_result(with_index=true, with_params=false, with_moes=true)
     moes = Array(parameters["array"])
-    data_array=[]
+    data_array = []
     simulation_ind = []
 
-    query_fields = {_id: 0}
+    query_fields = {_id: 0 }
     query_fields[:index] = 1 if with_index
     query_fields[:result] = 1 if with_moes
 
@@ -196,7 +197,7 @@ EOF
       line = []
       line.push(simulation_run.index) if with_index
       simulation_ind << simulation_run.index
-      moes_list =[]
+      moes_list = []
       moes.map { |moe_name|
         moes_list.push(simulation_run.result[moe_name] || '') } if with_moes
       line << moes_list

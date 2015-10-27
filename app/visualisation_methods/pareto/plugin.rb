@@ -82,12 +82,14 @@ class Pareto
       sum_min =0
       sum_max =0
       simulation_runs.map do |datas|
-        if datas[:arguments][arg_name] ==local_max
-          sum_max+=datas[:result]
-        end
+        unless datas[:result].blank?
+          if datas[:arguments][arg_name] ==local_max
+            sum_max+=datas[:result]
+          end
 
-        if datas[:arguments][arg_name] ==local_min
-          sum_min+=datas[:result]
+          if datas[:arguments][arg_name] ==local_min
+            sum_min+=datas[:result]
+          end
         end
       end
       data.push({ name: arg_name, value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
