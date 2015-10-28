@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   rescue_from StandardError, with: :generic_exception_handler
   rescue_from SecurityError, with: :generic_exception_handler
   PREFIX = '/'
-  before_filter :get_prefix
+  before_filter :load_prefix
 
   before_filter :check_request_origin
   before_filter :cors_preflight_check
@@ -54,16 +54,26 @@ class ApplicationController < ActionController::Base
   end
 
   ##
-  # Base url adding escaping html
-  def get_prefix
-    text =(params[:base_url].to_s) || PREFIX
-    @prefix = ERB::Util.h(text)
+  # Evaluate prefix (base_url) in order:
+  # 1. base_url key from local configuration (currently secrets)
+  # 2. from Information Service (cached) with https:// appended
+  # 3. or use PREFIX const
+  def find_prefix
+    url_from_config = Rails.application.secrets.base_url
+    url_from_config || Utils.random_service_public_url('data_explorers') || PREFIX
   end
 
+  ##
+  # Set @prefix (html escaped)
+  def load_prefix
+    @prefix = ERB::Util.h(find_prefix)
+  end
 
   def generic_exception_handler(exception)
     Rails.logger.warn("Exception caught in generic_exception_handler: #{exception.message}")
     Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
+
+    add_cors_header
 
     respond_to do |format|
       format.html do
