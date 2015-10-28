@@ -2,6 +2,6 @@
   "name": "Box-plot",
   "id": "boxplot",
   "group": "params",
-  "image": "boxplot_icon.png",
-  "description": "Boxplot"
+  "image": "box-plot_icon.png",
+  "description": "For each class of parameter splits the data into quartilles."
 }
