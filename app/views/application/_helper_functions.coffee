@@ -58,6 +58,7 @@ window.reload_selectbox_allowed_params_and_moes = (allowed_params) =>
     return
   reload_selectbox_parameters();
 
+
 #reload and join parameters and moes
 window.reload_selectbox_params_and_moes = ->
   #moes_info_json is global array of json with info (label id type of) parameters (EM global variable)

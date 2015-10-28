@@ -1,27 +1,5 @@
 =define_helper_functions
 
-- filter = {is_done: true, is_error: {'$exists'=> false}}
-- simulation_runs = @experiment.simulation_runs.where(filter).to_a
-- allowed_params = []
-- if simulation_runs != []
-  - params_ids = simulation_runs.first.arguments.split(",")
-  - out_params_ids = simulation_runs.first.result.keys
-  - parameters = {}
-  - params_ids.each do |param_id|
-    - parameters[param_id] = []
-  - out_params_ids.each do |param_id|
-    - parameters[param_id] = []
-  - simulation_runs.each do |simulation_run|
-    - values = simulation_run.values.split(",")
-    - params_ids.each_with_index do |param_id, index|
-      - parameters[param_id] |= [values[index]]
-    - simulation_run.result.each do |key, value|
-      - parameters[key] |= [value]
-
-  - parameters.each do |key, value|
-    - if value.length <= 10
-      - allowed_params.push(key)
-
 %section#boxplot_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   .row
@@ -33,7 +11,6 @@
     .small-5.columns
       %label.inline='Select parameter on Y'
     .small-7.columns
-      -#%select(id="secondParam" class ="moes_params_list")
       %select(class="moe_info_list" id ="secondParam")
 
   .row
@@ -55,7 +32,7 @@
     /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
     window.reload_boxplot_params = function(){
       $("#busy_boxplot").show();
-      reload_selectbox_allowed_params_and_moes(#{allowed_params});
+      reload_selectbox_allowed_params_and_moes(#{Utils::get_allowed_params(@experiment)});
       $('#busy_boxplot').hide();
     };
     reload_boxplot_params();

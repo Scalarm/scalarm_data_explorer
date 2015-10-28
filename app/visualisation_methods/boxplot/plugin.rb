@@ -4,13 +4,12 @@ class Boxplot
 
 
   def handler
-    if parameters["id"] && parameters["param_x"].to_s && parameters["param_y"].to_s
-
+    if parameters['id'] && parameters['param_x'].to_s && parameters['param_y'].to_s
       object = {}
-      data = get_boxplot_data(experiment, parameters["param_x"].to_s, parameters["param_y"].to_s)
-      if parameters["type"] == "data"
+      data = get_boxplot_data(experiment, parameters['param_x'].to_s, parameters['param_y'].to_s)
+      if parameters['type'] == 'data'
         object = content[JSON.stringify(data)]
-      elsif parameters["chart_id"]
+      elsif parameters['chart_id']
         object = prepare_boxplot_chart_content(data)
       else
         raise("Request parameters missing: 'chart_id'");
@@ -20,20 +19,29 @@ class Boxplot
   end
 
 
+  ##
+  # return script tag with function draws box-plot
   def prepare_boxplot_chart_content(data)
-    output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
-    output += "\nvar data = " + data[:data].to_json + ";" if data != nil
-    output += "\nvar categories = " + data[:categories].to_json + ";" if data != nil
-    output += "\nvar outliers = " + data[:outliers].to_json + ";" if data != nil
-    output += "\nvar mean = " + data[:mean].to_json + ";" if data != nil
-    output += "\nboxplot_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", data, categories, outliers, mean);"
+    output = "<script>(function() { \nvar i=" + parameters['chart_id'] + ';'
+    output += "\nvar data = " + data[:data].to_json + ';' if data[:data] != nil
+    output += "\nvar categories = " + data[:categories].to_json + ';' if data[:categories] != nil
+    output += "\nvar outliers = " + data[:outliers].to_json + ';' if data[:outliers] != nil
+    output += "\nvar mean = " + data[:mean].to_json + ';' if data[:mean] != nil
+    output += "\nboxplot_main(i, \"" + parameters['param_x'] + "\", \"" + parameters['param_y'] + "\", data, categories, outliers, mean);"
     output += "\n})();</script>"
     output
   end
 
+
+  ##
+  # create data needed to drow plot, return hash {:data => data, :categories => [], :outliers => [], :mean => x}
+  # data - array of [whisker_bottom, lower_quartile, median, upper_quartile, whisker_up]
+  # categories - values of param_x (max 10)
+  # outliers - array with outliners (points outside whiskers), for (x,y): x is box number, y is outliner value
+  # mean - mean of param_y
   def get_boxplot_data (experiment, param_x, param_y)
     filter = {is_done: true, is_error: {'$exists'=> false}}
-    simulation_runs = @experiment.simulation_runs.where(filter).to_a
+    simulation_runs = experiment.simulation_runs.where(filter).to_a
 
     if simulation_runs.length == 0
       raise('No such experiment or no runs done')
@@ -48,7 +56,6 @@ class Boxplot
 
     #filling grouped_by_param_x with correct data
     grouped_by_param_x = grouping_by_parameter(argument_ids, {}, param_x, param_y, simulation_runs)
-    #grouped_by_param_x =  {1.0=>[1.0, 7.0, 5.0, 20.0], 2.0=>[10.0, 2.0, 14.0, 40.0]}
 
     data = []
     outliers = []
@@ -75,7 +82,7 @@ class Boxplot
 
     parameters[:arguments] = new_args
     parameters[:result] = {}
-    #remove_instance_variable(data.values)
+
     unless simulation_run.result.nil?
       simulation_run.result.each do |key, value|
         parameters[:result][key] = value.to_f rescue 0.0
@@ -103,30 +110,33 @@ class Boxplot
     grouped_by_param_x
   end
 
+
   ##
-  # get array of values and raturn array: [min, lower_quartile, median, upper_quartile, max]
+  # get array of values and raturn array: [whisker_bottom, lower_quartile, median, upper_quartile, whisker_up]
   def get_statictics(values_in_category)
     stats = {}
     q1 = values_in_category.percentile(25)
     q3 = values_in_category.percentile(75)
     iqr = q3 - q1
-    stats['min'] = q1 - 1.5 * iqr
+    stats['whisker_bottom'] = q1 - 1.5 * iqr
     stats['q1'] = q1
     stats['med'] = values_in_category.median
     stats['q3'] = q3
-    stats['max'] = q3 + 1.5 * iqr
+    stats['whisker_upper'] = q3 + 1.5 * iqr
     stats
   end
 
-  def find_outliners(values, key, q1, q3)
+
+  ##
+  # return array with outliners (points outside whiskers), x is box number
+  def find_outliners(values, index, q1, q3)
     outliers = []
     iqr = q3 - q1
     values.each do |value|
       if value < q1 - 1.5 * iqr || value > q3 + 1.5 * iqr
-        outliers.push([key.to_i, value])
+        outliers.push([index.to_i, value])
       end
     end
     outliers
   end
-
 end
