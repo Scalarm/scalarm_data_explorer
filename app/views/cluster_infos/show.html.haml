@@ -1,3 +1,4 @@
+- em_address = Utils.random_service_public_url('experiment_managers')
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
 - result = @experiment.simulation_runs.where(filter, fields).first
@@ -68,7 +69,7 @@
     $('#clusterInfo').foundation('reveal', 'close');
 
     $("a.simulation_number").click(function(event) {
-      var url = "#{@prefix}/experiments/#{@experiment.id}/simulations/"+event.target.id;
+      var url = "#{em_address}/experiments/#{@experiment.id}/simulations/"+event.target.id;
       var handler = function(data) {
         $('#extension-dialog').html(data);
         $('#extension-dialog').foundation('reveal', 'open');

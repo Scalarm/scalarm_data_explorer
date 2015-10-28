@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
   # 3. or use PREFIX const
   def find_prefix
     url_from_config = Rails.application.secrets.base_url
-    url_from_config || Utils.random_data_explorer_public_url || PREFIX
+    url_from_config || Utils.random_service_public_url('data_explorers') || PREFIX
   end
 
   ##

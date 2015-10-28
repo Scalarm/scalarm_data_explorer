@@ -37,7 +37,7 @@ class GetPrefixTest < ActionDispatch::IntegrationTest
 
   test 'base_url given in request parameters should be ignored' do
     prefix = 'bar'
-    Utils.stubs(:random_data_explorer_public_url)
+    Utils.stubs(:random_service_public_url).with('data_explorers')
         .returns(nil)
 
     get '/foo', base_url: prefix, format: :json
@@ -73,7 +73,7 @@ class GetPrefixTest < ActionDispatch::IntegrationTest
   end
 
   test '@prefix controller variable should be set to PREFIX const if there is no other prefix cantidates' do
-    Utils.stubs(:random_data_explorer_public_url)
+    Utils.stubs(:random_service_public_url).with('data_explorers')
         .returns(nil)
 
     get '/foo', format: :json

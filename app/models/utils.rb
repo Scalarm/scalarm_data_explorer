@@ -8,14 +8,18 @@ module Utils
     end
   end
 
+  # TODO: A good candidate to generic function in Scalarm::ServiceCore
   # Returns random public address from IS with https:// prefix
   # If there is no adresses registered - returns nil
-  def self.random_data_explorer_public_url
-    data_explorer_adresses = Rails.cache.fetch('data_explorer_adresses', expires_in: 30.minutes) do
-      InformationService.instance.get_list_of('data_explorers')
+  # Arguments:
+  # * service - plurar name of service - e.g. data_explorers
+  def self.random_service_public_url(service)
+    addresses = Rails.cache.fetch("#{service}_adresses", expires_in: 30.minutes) do
+      InformationService.instance.get_list_of(service)
     end
-    random_address = data_explorer_adresses.try(:sample)
 
+    random_address = addresses.try(:sample)
     random_address.nil? ? nil : "https://#{random_address}"
   end
+
 end
