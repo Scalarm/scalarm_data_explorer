@@ -20,8 +20,11 @@ class ThreeD
     output += "\nvar categories_for_x = " + @categories_for_x.to_json + ";"
     output += "\nvar categories_for_y = " + @categories_for_y.to_json + ";"
     output += "\nvar categories_for_z = " + @categories_for_z.to_json + ";"
-    output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\nthreeD_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", \"" + parameters["param_z"] + "\", data, \"" + @type_of_x + "\", \"" + @type_of_y + "\", \"" + @type_of_z + "\", categories_for_x, categories_for_y, categories_for_z);"
+    output += "\nvar data = " + data[:values].to_json + ";" if data[:values] != nil
+    output += "\nvar values_with_index = " + data[:values_with_index].to_json + ";" if data[:values_with_index] != nil
+    output += "\nvar prefix = \"" + @prefix.to_s + "\";"
+    output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
+    output += "\nthreeD_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", \"" + parameters["param_z"] + "\", data, values_with_index, \"" + @type_of_x + "\", \"" + @type_of_y + "\", \"" + @type_of_z + "\", categories_for_x, categories_for_y, categories_for_z, prefix, experiment_id);"
     output += "\n})();</script>"
     output
 
@@ -63,6 +66,9 @@ class ThreeD
 
   def types_of_all_parameters(simulation_runs, argument_ids)
     arguments_values = simulation_runs.first.values.split(',')
+
+    Rails.logger.debug('----------------')
+    Rails.logger.debug(simulation_runs.first)
 
     argument_ids.each_with_index do |data, index|
       item = arguments_values[index]
@@ -164,8 +170,10 @@ class ThreeD
   end
 
   def get3d(param_x, param_y, param_z, simulation_runs, argument_ids)
+    values_and_index = []
     simulation_runs = simulation_runs.map do |data|
       obj ={}
+      params_and_index = {}
       values = data.values.split(',')
       new_args = {}
 
@@ -184,7 +192,6 @@ class ThreeD
           new_args[arg_name] = values[index].to_f
         end
       end
-
       obj[:arguments] = new_args
       obj[:result] = {}
       unless data.result.nil?
@@ -203,8 +210,11 @@ class ThreeD
             obj[:result][key] = value.to_f rescue 0.0
           end
         end
+        params_and_index[:index] = data.index
+        params_and_index.merge!(obj[:arguments])
+        params_and_index.merge!(obj[:result])
       end
-
+      values_and_index.push(params_and_index)
       obj
     end
 
@@ -260,7 +270,7 @@ class ThreeD
       end
     end
 
-    data
+    {:values => data, :values_with_index => values_and_index}
   end
 
 

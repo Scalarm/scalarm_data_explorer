@@ -210,8 +210,10 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
             var id = $("#extension-dialog.reveal-modal.open").find('h2').text().replace( /\D+/g, '');
             if (id == simulation_id)
                 $('#dendrogramModal').foundation('reveal', 'open');
-            else
+            else if (id == '')
                 $('#clusterInfo').foundation('reveal', 'open');
+            else
+                $('#three_dModal').foundation('reveal', 'open');
         })
     }
 

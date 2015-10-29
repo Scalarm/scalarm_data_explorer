@@ -1,4 +1,11 @@
-window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, type_of_y, type_of_z, categories_for_x, categories_for_y, categories_for_z) {
+window.threeD_main = function(i, param_x, param_y, param_z, data, values_with_index, type_of_x, type_of_y, type_of_z, categories_for_x, categories_for_y, categories_for_z, prefix, experiment_id) {
+    function get_simulation_index(point, values_with_index, param_x) {
+        for (i in values_with_index) {
+            if (values_with_index[i][param_x] == point.x && values_with_index[i][param_y] == point.y && values_with_index[i][param_z] == point.z)
+              return values_with_index[i].index;
+        }
+    }
+
     var min_z
     var max_z
 
@@ -63,6 +70,27 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, typ
         plotOptions: {
             series: {
                 turboThreshold: tab.length, //enable to plot more than 1000 points (default), with 0 it check every point format, with specific value only the first point is tested and the rest are assumed to be the same format
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function(e) {
+                            var simulation_id = get_simulation_index(this, values_with_index, param_x);
+                            var url = prefix + "/experiments/" + experiment_id + "/simulations/" + simulation_id;
+
+                            var handler = function(data) {
+                                $('#extension-dialog').html(data);
+                                $('#extension-dialog').foundation('reveal', 'open');
+                            }
+                            $('#extension-dialog').html(window.loaderHTML);
+                            getWithSession(url, {}, handler);
+                            $('#extension-dialog').on("close", function() {
+//                                var id = $("#extension-dialog.reveal-modal.open").find('h2').text().replace( /\D+/g, '');
+//                                if (id == simulation_id)
+//                                    $('#three_dModal').foundation('reveal', 'open');
+                            })
+                        }
+                    }
+                }
             },
         },
         title: {
