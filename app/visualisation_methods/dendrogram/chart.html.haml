@@ -1,7 +1,7 @@
 =define_helper_functions
 
 %section#dendrogram_chart_form.panel.radius.plot
-  %h3.subheader Dendrogram for hierarchical clustering by #{(Array(params[:array])).to_sentence}
+  %h3.subheader Dendrogram for hierarchical clustering by #{(Array(params[:array_text])).to_sentence}
   .row
   %span.button.hide{id: "dendrogram_hide_#{params['chart_id']}"} Hide chart
   %br

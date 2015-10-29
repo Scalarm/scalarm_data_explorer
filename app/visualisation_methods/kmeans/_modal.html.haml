@@ -60,12 +60,19 @@
         $('#kmeansModal').find('input:checked').map(function () {
             return $(this).attr('id')
         });
+      var selectedFilesText =
+        $('#kmeansModal').find('input:checked').map(function () {
+          return $(this).closest('label').text();
+      });
+
       var selected_parameters = selectedFiles.toArray();
+      var selected_parameters_names = selectedFilesText.toArray();
 
       for (i = 1; i <= selected_parameters.length; i++) {
         selected_parameters[i-1] = escapeHtml(selected_parameters[i-1].trim());
+        selected_parameters_names[i-1] = escapeHtml(selected_parameters_names[i-1].trim());
         if (type_of_parameter(selected_parameters[i-1].trim()) == 'string') {
-          toastr.error('Cannot plot for string type parameter - ' + selected_parameters[i-1].trim());
+          toastr.error('Cannot plot for string type parameter - ' + selected_parameters_names[i-1].trim());
           $("#busy_kmeans").hide();
           return;
         }
@@ -86,7 +93,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler, onErrorHandler);
+      getWithSession(url, {array_text: selected_parameters_names, array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler, onErrorHandler);
       chart_counter++;
     };
 

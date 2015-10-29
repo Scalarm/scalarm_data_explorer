@@ -1,4 +1,4 @@
-window.interaction_main = function(i, param_x, param_y, data) {
+window.interaction_main = function(i, param_x, param_y, param_x_label, param_y_label, data) {
 	var chart = new Highcharts.Chart({
 		chart: {
 			renderTo: $('#interaction_chart_'+ i + " .chart")[0]
@@ -8,7 +8,7 @@ window.interaction_main = function(i, param_x, param_y, data) {
 		},
 		xAxis: {
 			title: {
-				text: param_x
+				text: param_x_label
 			}
 		},
 		yAxis: {
@@ -23,7 +23,7 @@ window.interaction_main = function(i, param_x, param_y, data) {
 			layout: 'vertical'
 		},
 		series: [{
-			name: "Low " + param_y,
+			name: "Low " + param_y_label,
 			data: [{
 				name: "Point 1",
 				x: data[param_x].domain[0],
@@ -34,7 +34,7 @@ window.interaction_main = function(i, param_x, param_y, data) {
 				y: data.effects[1]
 			}]
 		}, {
-			name: "High " + param_y,
+			name: "High " + param_y_label,
 			data: [{
 				name: "Point 3",
 				x: data[param_x].domain[0],

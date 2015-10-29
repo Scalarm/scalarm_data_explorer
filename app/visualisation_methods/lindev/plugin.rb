@@ -23,7 +23,7 @@ class Lindev
   def prepare_lindev_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\nlindev_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", data);"
+    output += "\nlindev_main(i, \"" + parameters["param_x_label"] + "\", \"" + parameters["param_y_label"] + "\", data);"
     output += "\n})();</script>"
 
     output

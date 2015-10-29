@@ -90,7 +90,11 @@ class Pareto
           sum_min+=datas[:result]
         end
       end
-      data.push({ name: arg_name, value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
+
+      parameters_names = parameters["parameters_names"].split(',')
+      parameters_ids = parameters["parameters_ids"].split(',')
+
+      data.push({ name: parameters_names[parameters_ids.index(arg_name)], value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
     end
 
     data

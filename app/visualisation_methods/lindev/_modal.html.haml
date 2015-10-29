@@ -47,15 +47,20 @@
 
       var chart_div = $("<div id=\"lindev_chart_"+chart_counter+"\">")[0];
       $("#lindevModal .charts").prepend(chart_div);
+      var x_axis_label = $("#lindevModal select#firstParam option:selected").text();
+      var y_axis_label = $("#lindevModal select#secondParam option:selected").text();
       var x_axis = $("#lindevModal select#firstParam option:selected").val();
       var y_axis = $("#lindevModal select#secondParam option:selected").val();
+      x_axis_label = escapeHtml(x_axis_label);
+      y_axis_label = escapeHtml(y_axis_label);
       x_axis = escapeHtml(x_axis);
       y_axis = escapeHtml(y_axis);
 
-      if (check_if_string_parameter(x_axis) == true || check_if_string_parameter(y_axis) == true) return;
+      if (check_if_string_parameter(x_axis, x_axis_label) == true || check_if_string_parameter(y_axis, y_axis_label) == true) return;
 
       var query_params = "experiment_id=#{@experiment.id}";
-
+      query_params += "&param_x_label="+x_axis_label;
+      query_params += "&param_y_label="+y_axis_label;
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
       query_params += "&chart_id="+chart_counter;
@@ -90,9 +95,9 @@
       }
     }
 
-    function check_if_string_parameter(name_of_parameter) {
+    function check_if_string_parameter(name_of_parameter, name_of_parameter_label) {
       if (type_of_parameter(name_of_parameter) == 'string') {
-        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
+        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter_label);
         $("#busy_lindev").hide();
         return true;
       }
