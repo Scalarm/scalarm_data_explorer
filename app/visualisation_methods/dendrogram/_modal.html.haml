@@ -71,7 +71,7 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {array_text: selected_parameters_names, array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler, onErrorHandler);
+      getWithSession(url, {array_text: selected_parameters_names, array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}"}, handler, onErrorHandler);
       chart_counter++;
     };
     $("#dendrogramModal").find("button.refresh").bind("click", reload_dendrogram_params);
