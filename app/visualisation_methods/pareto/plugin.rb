@@ -40,10 +40,6 @@ class Pareto
 
 
       argument_ids = simulation_runs.first.arguments.split(',')
-      File.open("yourfile.txt", 'w') { |file| file.write(parameters["parameters_ids"]) }
-      File.open("yourfile.txt", 'a') { |file| file.write("\n") }
-      File.open("yourfile.txt", 'a') { |file| file.write(parameters["parameters_names"]) }
-      File.open("yourfile.txt", 'a') { |file| file.write("\n") }
       params = {}
       simulation_runs = simulation_runs.map do |data|
         obj ={}
