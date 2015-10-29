@@ -40,6 +40,10 @@ class Pareto
 
 
       argument_ids = simulation_runs.first.arguments.split(',')
+      File.open("yourfile.txt", 'w') { |file| file.write(parameters["parameters_ids"]) }
+      File.open("yourfile.txt", 'a') { |file| file.write("\n") }
+      File.open("yourfile.txt", 'a') { |file| file.write(parameters["parameters_names"]) }
+      File.open("yourfile.txt", 'a') { |file| file.write("\n") }
       params = {}
       simulation_runs = simulation_runs.map do |data|
         obj ={}
@@ -90,7 +94,11 @@ class Pareto
           sum_min+=datas[:result]
         end
       end
-      data.push({ name: arg_name, value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
+
+      parameters_names = parameters["parameters_names"].split(',')
+      parameters_ids = parameters["parameters_ids"].split(',')
+
+      data.push({ name: parameters_names[parameters_ids.index(arg_name)], value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
     end
 
     data

@@ -55,11 +55,19 @@
       var x_axis = $("#three_dModal select#firstParam option:selected").val();
       var y_axis = $("#three_dModal select#secondParam option:selected").val();
       var z_axis = $("#three_dModal select#thirdParam option:selected").val();
+      var x_axis_label = $("#three_dModal select#firstParam option:selected").text();
+      var y_axis_label = $("#three_dModal select#secondParam option:selected").text();
+      var z_axis_label = $("#three_dModal select#thirdParam option:selected").text();
+      x_axis_label = escapeHtml(x_axis_label);
+      y_axis_label = escapeHtml(y_axis_label);
+      z_axis_label = escapeHtml(z_axis_label);
       x_axis = escapeHtml(x_axis);
       y_axis = escapeHtml(y_axis);
       z_axis = escapeHtml(z_axis);
-
       var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&param_x_label="+x_axis_label;
+      query_params += "&param_y_label="+y_axis_label;
+      query_params += "&param_z_label="+z_axis_label;
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
       query_params += "&param_z="+z_axis;

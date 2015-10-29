@@ -54,18 +54,31 @@
       var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
       $("#interactionModal .charts").prepend(interaction_chart_div);
         //TODO - if there's nothing to select -> do nothing
+      var x_axis_label = $("#interactionModal select#firstParam option:selected").text();
+      var y_axis_label = $("#interactionModal select#secondParam option:selected").text();
+      var outputParam_label = $("#interactionModal select#outputParam option:selected").text();
+
       var x_axis = $("#interactionModal select#firstParam option:selected").val();
       var y_axis = $("#interactionModal select#secondParam option:selected").val();
       var outputParam = $("#interactionModal select#outputParam option:selected").val();
+
+      x_axis_label = escapeHtml(x_axis_label);
+      y_axis_label = escapeHtml(y_axis_label);
+      outputParam_label = escapeHtml(outputParam_label);
+
       x_axis = escapeHtml(x_axis);
       y_axis = escapeHtml(y_axis);
       outputParam = escapeHtml(outputParam);
 
-      if (check_if_string_parameter(x_axis, 'input') == true
-        || check_if_string_parameter(y_axis, 'input') == true
-        || check_if_string_parameter(outputParam, 'moe') == true) return;
+      if (check_if_string_parameter(x_axis, 'input', x_axis_label) == true
+        || check_if_string_parameter(y_axis, 'input', y_axis_label) == true
+        || check_if_string_parameter(outputParam, 'moe', outputParam_label) == true) return;
 
       var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&param_x_label="+x_axis_label;
+      query_params += "&param_y_label="+y_axis_label;
+      query_params += "&output_label="+outputParam_label;
+
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
       query_params += "&output="+outputParam;
@@ -103,9 +116,9 @@
       }
     }
 
-    function check_if_string_parameter(name_of_parameter, character_of_parameter) {
+    function check_if_string_parameter(name_of_parameter, character_of_parameter, name_of_parameter_label) {
       if (type_of_parameter(name_of_parameter, character_of_parameter) == 'string') {
-        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
+        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter_label);
         $("#busy_interaction").hide();
         return true;
       }

@@ -27,7 +27,7 @@ class Kmeans
     output += "\nvar subclusters = " + subclusters.to_json + ";" if subclusters != nil
     output += "\nvar prefix = \"" + @prefix.to_s + "\";"
     output += "\nvar experiment_id = \"" + @experiment.id.to_s + "\";"
-    output += "\nkmeans_main(i, \"" + Array(parameters[:array]).to_sentence + "\", data, subclusters, "+ parameters[:clusters].to_s + ", " + parameters[:subclusters].to_s + ", experiment_id, prefix);"
+    output += "\nkmeans_main(i, \"" + Array(parameters[:array_text]).to_sentence + "\", data, subclusters, "+ parameters[:clusters].to_s + ", " + parameters[:subclusters].to_s + ", experiment_id, prefix);"
     output += "\n})();</script>"
     output
   end

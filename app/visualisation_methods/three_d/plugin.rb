@@ -21,7 +21,7 @@ class ThreeD
     output += "\nvar categories_for_y = " + @categories_for_y.to_json + ";"
     output += "\nvar categories_for_z = " + @categories_for_z.to_json + ";"
     output += "\nvar data = " + data.to_json + ";" if data != nil
-    output += "\nthreeD_main(i, \"" + parameters["param_x"] + "\", \"" + parameters["param_y"] + "\", \"" + parameters["param_z"] + "\", data, \"" + @type_of_x + "\", \"" + @type_of_y + "\", \"" + @type_of_z + "\", categories_for_x, categories_for_y, categories_for_z);"
+    output += "\nthreeD_main(i, \"" + parameters["param_x_label"] + "\", \"" + parameters["param_y_label"] + "\", \"" + parameters["param_z_label"] + "\", data, \"" + @type_of_x + "\", \"" + @type_of_y + "\", \"" + @type_of_z + "\", categories_for_x, categories_for_y, categories_for_z);"
     output += "\n})();</script>"
     output
 

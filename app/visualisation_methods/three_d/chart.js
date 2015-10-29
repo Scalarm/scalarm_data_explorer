@@ -1,4 +1,4 @@
-window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, type_of_y, type_of_z, categories_for_x, categories_for_y, categories_for_z) {
+window.threeD_main = function(i, param_x_label, param_y_label, param_z_label, data, type_of_x, type_of_y, type_of_z, categories_for_x, categories_for_y, categories_for_z) {
     var min_z
     var max_z
 
@@ -69,23 +69,23 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, typ
             text: '3d scatter plot'
         },
         subtitle: {
-            text: param_x + " - " + param_y + " - " + param_z
+            text: param_x_label + " - " + param_y_label + " - " + param_z_label
         },
         yAxis: {
             title: {
-                text: param_y
+                text: param_y_label
             }
         },
         xAxis: {
             title: {
-                text: param_x
+                text: param_x_label
             }
         },
         zAxis: {
             min: min_z,
             max: max_z,
             title: {
-                text: param_z
+                text: param_z_label
             }
         },
         credits: {
@@ -109,7 +109,7 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, typ
                 else {
                     z = this.point.z;
                 }
-                return param_x + ": " + this.x + "<br/>" + param_y + ": " + y + "<br>" + param_z + ": " + z;
+                return param_x_label + ": " + this.x + "<br/>" + param_y_label + ": " + y + "<br>" + param_z_label + ": " + z;
             }
         }
     });
