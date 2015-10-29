@@ -12,7 +12,10 @@ window.getWithSession = (url, params, onSuccess, onError) =>
 
 window.onErrorHandler = (jqXHR, textStatus, errorThrown) =>
   $(".loading_chart_gif").hide()
-  toastr.error("An error has occured: #{escapeHtml(jqXHR.responseText)} #{escapeHtml(errorThrown)}")
+  if jqXHR.responseText is ""
+    toastr.error("Unknown error occured")
+  else
+    toastr.error("An error has occured: #{escapeHtml(jqXHR.responseText)}")
 
 
 window.escapeHtml = (str) =>

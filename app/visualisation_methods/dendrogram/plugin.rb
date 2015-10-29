@@ -3,6 +3,7 @@ require 'csv'
 class Dendrogram
   attr_accessor :experiment
   attr_accessor :parameters
+  include Scalarm::ServiceCore::ParameterValidation
 
   def handler
     if parameters["id"] && parameters["array"]
@@ -14,7 +15,7 @@ class Dendrogram
       elsif parameters["chart_id"]
         object = prepare_dendrogram_chart_content(data)
       else
-        raise("Request parameters missing: 'chart_id'");
+        raise MissingParametersError.new(['chart_id']);
 
       end
       object
@@ -35,9 +36,9 @@ class Dendrogram
 
   # TODO: documentation - what this method does? change name
   def get_data_for_dendrogram
-
-    # simulation_runs = experiment.simulation_runs.to_a
-    rinruby = Rails.configuration.r_interpreter
+    if @experiment.simulation_runs.to_a.length ==0
+      raise SecurityError.new("No simulation runs done")
+    end
 
     #getting data
     result_file = Tempfile.new('dendrogram')
@@ -51,9 +52,6 @@ class Dendrogram
 
 EOF
 
-    #parameters - lst  NOTE!!!! THIS STRUCTURE IS VERY BIG
-
-    #structure of the tree (matrix)
     merge = R.pull "merge"
 
     #parsing matrix into hash: value -> left child, right child

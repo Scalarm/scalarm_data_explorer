@@ -2,7 +2,7 @@ require 'rinruby'
 class Kmeans
   attr_accessor :experiment
   attr_accessor :parameters
-
+  include Scalarm::ServiceCore::ParameterValidation
 
   def handler
 
@@ -14,7 +14,7 @@ class Kmeans
       elsif parameters["chart_id"]
         object = prepare_kmeans_chart_content(data, subclusters)
       else
-        raise("Request parameters missing: 'chart_id'");
+        raise MissingParametersError.new(["chart_id"]);
 
       end
       object
@@ -44,10 +44,11 @@ class Kmeans
   # Similarly it works for subclusters
   def get_data_for_kmeans
 
-    # simulation_runs = experiment.simulation_runs.to_a
-  
+    if @experiment.simulation_runs.to_a.length ==0
+      raise SecurityError.new("No simulation runs done")
+    end
 
-    #getting data
+      #getting data
     moes = Array(parameters["array"])
     simulation_ind, result_data = create_data_result
 
@@ -201,7 +202,6 @@ EOF
         moes_list.push(simulation_run.result[moe_name] || '') } if with_moes
       line << moes_list
       data_array << line
-
     end
 
     return simulation_ind, data_array

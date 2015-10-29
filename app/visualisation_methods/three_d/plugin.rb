@@ -14,6 +14,8 @@ class ThreeD
   attr_reader :type_of_x
   attr_reader :type_of_y
   attr_reader :type_of_z
+  include Scalarm::ServiceCore::ParameterValidation
+
 
   def prepare_3d_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
@@ -32,7 +34,7 @@ class ThreeD
       simulation_runs = experiment.simulation_runs.to_a
 
       if simulation_runs.length == 0
-        raise("No such experiment or no runs done")
+        raise SecurityError.new("No such experiment or no simulation runs done")
       end
 
       @types_of_parameters_for_all = {}
@@ -57,7 +59,7 @@ class ThreeD
       object = prepare_3d_chart_content(data)
       object
     else
-      raise("Request parameters missing")
+      raise SecurityError.new("Request parameters missing")
     end
   end
 

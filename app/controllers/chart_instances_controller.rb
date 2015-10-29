@@ -2,7 +2,7 @@ require 'erb'
 class ChartInstancesController < ApplicationController
   before_filter :load_experiment, only: :show
   include ERB::Util
-
+  include Scalarm::ServiceCore::ParameterValidation
   def show
 
 
@@ -12,7 +12,7 @@ class ChartInstancesController < ApplicationController
     validate(
         id: Proc.new do |param_name, value|
           unless methods.include? value
-            raise "Wrong chart name"
+            raise SecurityError.new("Wrong chart name")
           end
         end
     )

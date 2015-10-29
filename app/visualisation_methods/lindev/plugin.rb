@@ -1,7 +1,7 @@
 class Lindev
   attr_accessor :experiment
   attr_accessor :parameters
-
+  include Scalarm::ServiceCore::ParameterValidation
 
   def handler
     if parameters["id"] && parameters["param_x"].to_s && parameters["param_y"].to_s
@@ -13,7 +13,7 @@ class Lindev
       elsif parameters["chart_id"]
         object = prepare_lindev_chart_content(data)
       else
-        raise("Request parameters missing: 'chart_id'");
+        raise MissingParametersError.new(["chart_id"]);
       end
       object
     end
@@ -43,7 +43,7 @@ class Lindev
     simulation_runs = experiment.simulation_runs.to_a
 
     if simulation_runs.length == 0
-      raise("No such experiment or no runs done")
+      raise SecurityError.new("No such experiment or no simulation runs done")
     end
 
     # get input parameter names
