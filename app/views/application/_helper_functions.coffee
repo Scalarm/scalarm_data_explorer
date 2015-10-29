@@ -34,7 +34,7 @@ window.reload_checkbox = ->
     return
   toastr.success("Moes refreshed")
 
-#reload and join parameters and moes which have max 10 values
+# Reload and join given parameters and moes
 window.reload_selectbox_allowed_params_and_moes = (allowed_params) =>
   if allowed_params.length == 0
     new_select = '<option value=\'\'>' + escapeHtml('There are no parameters satisfying the conditions') + '</option> '

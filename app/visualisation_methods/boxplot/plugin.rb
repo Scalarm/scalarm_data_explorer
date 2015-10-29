@@ -64,7 +64,7 @@ class Boxplot
       moes += value
       stats = get_statictics(value)
       data.push(stats.values)
-      outliers = outliers + find_outliners(value, index, stats['q1'], stats['q3'])
+      outliers = outliers + find_outliers(value, index, stats['q1'], stats['q3'])
     end
     {:data => data, :categories => grouped_by_param_x.keys, :outliers => outliers, :mean => moes.mean}
   end
@@ -129,7 +129,7 @@ class Boxplot
 
   ##
   # return array with outliners (points outside whiskers), x is box number
-  def find_outliners(values, index, q1, q3)
+  def find_outliers(values, index, q1, q3)
     outliers = []
     iqr = q3 - q1
     values.each do |value|

@@ -32,7 +32,7 @@
     /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
     window.reload_boxplot_params = function(){
       $("#busy_boxplot").show();
-      reload_selectbox_allowed_params_and_moes(#{Utils::get_allowed_params(@experiment)});
+      reload_selectbox_allowed_params_and_moes(#{Utils::param_ids_with_less_than_n_values(@experiment, 10)});
       $('#busy_boxplot').hide();
     };
     reload_boxplot_params();
