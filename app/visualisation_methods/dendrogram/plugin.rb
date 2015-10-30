@@ -36,8 +36,8 @@ class Dendrogram
 
   # TODO: documentation - what this method does? change name
   def get_data_for_dendrogram
-    if @experiment.simulation_runs.to_a.length ==0
-      raise SecurityError.new("No simulation runs done")
+    if @experiment.simulation_runs.to_a.length == 0
+      raise SecurityError.new('No simulation runs done')
     end
 
     #getting data

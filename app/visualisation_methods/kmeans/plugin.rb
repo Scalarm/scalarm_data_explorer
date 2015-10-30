@@ -45,20 +45,17 @@ class Kmeans
   def get_data_for_kmeans
 
     if @experiment.simulation_runs.to_a.length ==0
-      raise SecurityError.new("No simulation runs done")
+      raise SecurityError.new('No simulation runs done')
     end
 
     #getting data
     moes = Array(parameters["array"])
     simulation_ind, result_data = create_data_result
-
     result_data = result_data.sort_by { |x, y| x }
-
-    result_data = result_data.sort_by { |x, y| x }
-    Rails.logger.debug("Sim run: #{result_data}")
     result_hash = {}
     result_data.map { |row| result_hash[row[0]]=row[1] }
     groped_by_moes = {}
+
     result_data.map do |row|
       row[1].each_with_index do |moe, ind|
         groped_by_moes[moes[ind]].kind_of?(Array) ? groped_by_moes[moes[ind]].push(moe) : groped_by_moes[moes[ind]] = [moe]

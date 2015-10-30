@@ -34,7 +34,7 @@ class ThreeD
       simulation_runs = experiment.simulation_runs.to_a
 
       if simulation_runs.length == 0
-        raise SecurityError.new("No such experiment or no simulation runs done")
+        raise SecurityError.new('No such experiment or no simulation runs done')
       end
 
       @types_of_parameters_for_all = {}
@@ -167,7 +167,7 @@ class ThreeD
 
   def get3d(param_x, param_y, param_z, simulation_runs, argument_ids)
     simulation_runs = simulation_runs.map do |data|
-      obj ={}
+      obj = {}
       values = data.values.split(',')
       new_args = {}
 
@@ -219,13 +219,13 @@ class ThreeD
       simulation_runs.map do |data_sim|
 
         data[counter] = [data_sim[:arguments][param_x]]
-        counter+=1
+        counter += 1
       end
     else
       simulation_runs.map do |data_sim|
 
         data[counter] = [data_sim[:result][param_x]]
-        counter+=1
+        counter += 1
 
       end
     end
@@ -235,13 +235,13 @@ class ThreeD
       simulation_runs.map do |data_sim|
 
         data[counter].push(data_sim[:arguments][param_y])
-        counter+=1
+        counter += 1
       end
     else
       simulation_runs.map do |data_sim|
 
         data[counter].push(data_sim[:result][param_y])
-        counter+=1
+        counter += 1
 
       end
     end
@@ -251,13 +251,13 @@ class ThreeD
       simulation_runs.map do |data_sim|
 
         data[counter].push(data_sim[:arguments][param_z])
-        counter+=1
+        counter += 1
       end
     else
       simulation_runs.map do |data_sim|
 
         data[counter].push(data_sim[:result][param_z])
-        counter+=1
+        counter += 1
 
       end
     end

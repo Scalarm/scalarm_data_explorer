@@ -86,8 +86,8 @@ class Lindev
 
       end
     end
-    values= values.sort_by { |e| e }
-    with_stddev= with_stddev.sort_by { |e| e }
+    values = values.sort_by { |e| e }
+    with_stddev = with_stddev.sort_by { |e| e }
 
     # using descriptive statistics gem for this
     #creating result table -> mean values
