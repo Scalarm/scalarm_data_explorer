@@ -3,5 +3,5 @@
   "id": "sensitivity",
   "group": "params",
   "image": "sensitivity_desing_icon.png",
-  "description":  "Shows results of sensitivity analysis with conducted specific method (automatic experiment type)."
+  "description":  "Shows results of sensitivity analysis if it was applied to this experiment using automatic experiment option."
 }

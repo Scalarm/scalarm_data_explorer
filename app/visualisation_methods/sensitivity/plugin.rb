@@ -4,18 +4,18 @@ class Sensitivity
   attr_accessor :experiment
   attr_accessor :parameters
 
-  attr_reader :series_to_plot
+  attr_reader :plot_series
   attr_reader :parameters_names
   attr_reader :sorted_parameters_names
-  attr_reader :name_of_output
+  attr_reader :output_name
   attr_reader :series_names
-  attr_reader :list_of_methods
+  attr_reader :methods_list
   attr_reader :method_name
 
   def prepare_sensitivity_chart_content
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
     output += "\nvar sorted_parameters_names = " + @sorted_parameters_names.to_json + ";"
-    output += "\nvar series_to_plot = " +  @series_to_plot.to_json + ";"
+    output += "\nvar series_to_plot = " +  @plot_series.to_json + ";"
     output += "\nvar method_name = " +  @method_name.to_json + ";"
     output += "\nsensitivity_main(i, series_to_plot, sorted_parameters_names, method_name);"
     output += "\n})();</script>"
@@ -78,24 +78,24 @@ class Sensitivity
   #     }
   #   }
 
-  def handler()
+  def handler
     if parameters["id"] && parameters["chart_id"] && parameters["output"]
-      @name_of_output = parameters["output"]
-      @list_of_methods = ["morris", "fast"]
+      @output_name = parameters["output"]
+      @methods_list = ["morris", "fast"]
       output_hash = @experiment.results
 
-      if !@list_of_methods.include? output_hash["sensitivity_analysis_method"]
+      if !@methods_list.include? output_hash["sensitivity_analysis_method"]
         raise("No visualization for #{output_hash["sensitivity_analysis_method"]} method")
       end
 
       if @experiment.error_reason != nil
-        raise ("Error appeared - #{@experiment.error_reason}")
+        raise ("The experiment ended with error: - #{@experiment.error_reason}")
       end
 
-      output_hash_results = output_hash['moes'][@name_of_output]
+      output_hash_results = output_hash['moes'][@output_name]
 
       if !output_hash_results
-        raise("No #{@name_of_output} in moes results from supervised experiment")
+        raise("No #{@output_name} in moes results from supervised experiment")
       end
 
       extract_categories_x_axis(output_hash_results)
@@ -104,22 +104,30 @@ class Sensitivity
 
       case output_hash["sensitivity_analysis_method"]
         when "morris"
-         @method_name = "morris"
-         extract_morris_series(output_hash_results)
-         do_normalization
+          morris_visualization(output_hash_results)
         when "fast"
-         @method_name = "fast"
-         extract_fast_series(output_hash_results)
+          fast_visualization(output_hash_results)
         else
-         raise("No visualization for #{output_hash["sensitivity_analysis_method"]} method")
+          raise("No visualization for #{output_hash["sensitivity_analysis_method"]} method")
         end
 
       object = prepare_sensitivity_chart_content
       object
     else
-      raise("Request parameters missing")
+      raise("Request parameters missing (required: id, chart_id i output)")
     end
 
+  end
+
+  def morris_visualization(output_hash_results)
+    @method_name = "morris"
+    extract_morris_series(output_hash_results)
+    do_normalization
+  end
+
+  def fast_visualization(output_hash_results)
+    @method_name = "fast"
+    extract_fast_series(output_hash_results)
   end
 
   def sort_parameters_names(output_hash_results)
@@ -149,7 +157,7 @@ class Sensitivity
       index_in_legend -= 1
     end
 
-    @series_to_plot = series_to_plot
+    @plot_series = series_to_plot
   end
 
   def extract_fast_series(output_hash_results)
@@ -171,7 +179,7 @@ class Sensitivity
       index_in_legend -= 1
     end
 
-    @series_to_plot = series_to_plot
+    @plot_series = series_to_plot
   end
 
   def extract_morris_series(output_hash_results)
@@ -187,7 +195,7 @@ class Sensitivity
       index_in_legend -= 1
     end
 
-    @series_to_plot = series_to_plot
+    @plot_series = series_to_plot
   end
 
   def extract_categories_x_axis(output_hash_output_results)
@@ -200,13 +208,13 @@ class Sensitivity
 
   def do_normalization
     series_to_plot = []
-    @series_to_plot.each do |single_of_series_name|
+    @plot_series.each do |single_of_series_name|
       total_sum = single_of_series_name[:data].inject(0) {|sum, i|  sum + i.abs }
       proper_name = I18n.t ("sensitivity_analysis.morris." + single_of_series_name[:name])
       series_to_plot.push({name: proper_name, data: single_of_series_name[:data].map{|single_data_value| ((single_data_value / total_sum)).round(2) }, legendIndex: single_of_series_name[:legendIndex]})
     end
 
-    @series_to_plot = series_to_plot
+    @plot_series = series_to_plot
   end
 
 end
