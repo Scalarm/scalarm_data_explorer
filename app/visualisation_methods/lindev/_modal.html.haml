@@ -40,7 +40,10 @@
       $('#busy_lindev').hide();
     };
     reload_lindev_params();
-
+    var reload_modal_params = function(){
+      reload_lindev_params();
+      toastr.success('Parameters refreshed');
+    };
     var chart_counter = 0;
     var load_chart = function() {
 
@@ -71,7 +74,7 @@
       chart_counter++;
 
     };
-    $("#lindevModal").find("button.refresh").bind("click", reload_lindev_params);
+    $("#lindevModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#lindevModal").find("button.radius").bind("click", function() {
       $("#busy_lindev").show();
