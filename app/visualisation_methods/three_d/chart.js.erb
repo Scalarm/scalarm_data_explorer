@@ -84,6 +84,7 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, values_with_in
                             $('#extension-dialog').html(window.loaderHTML);
                             getWithSession(url, {}, handler);
                             $('#extension-dialog').on("close", function() {
+                                $('#three_dModal').foundation('reveal', 'open');
 //                                var id = $("#extension-dialog.reveal-modal.open").find('h2').text().replace( /\D+/g, '');
 //                                if (id == simulation_id)
 //                                    $('#three_dModal').foundation('reveal', 'open');
