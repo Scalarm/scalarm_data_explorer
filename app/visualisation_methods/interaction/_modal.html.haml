@@ -8,18 +8,18 @@
     .small-5.columns
       %label.inline="Select first parameter"
     .small-7.columns
-      %select(id ="firstParam" class="param_info_list")
+      %select(id ="first_param" class="param_info_list")
   .row
     .small-5.columns
       %label.inline="Select second parameter"
     .small-7.columns
-      %select(id ="secondParam" class="param_info_list")
+      %select(id ="second_param" class="param_info_list")
 
   .row
     .small-5.columns
       %label.inline="Select output parameter"
     .small-7.columns
-      %select(id ="outputParam" class="moe_info_list")
+      %select(id ="output_param" class="moe_info_list")
 
   .row
     %ul.inline-list
@@ -54,34 +54,38 @@
       var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
       $("#interactionModal .charts").prepend(interaction_chart_div);
         //TODO - if there's nothing to select -> do nothing
-      var x_axis_label = $("#interactionModal select#firstParam option:selected").text();
-      var y_axis_label = $("#interactionModal select#secondParam option:selected").text();
-      var outputParam_label = $("#interactionModal select#outputParam option:selected").text();
+      var x_selector = $("#interactionModal select#first_param option:selected");
+      var y_selector = $("#interactionModal select#second_param option:selected");
+      var output_param_selector = $("#interactionModal select#output_param option:selected");
 
-      var x_axis = $("#interactionModal select#firstParam option:selected").val();
-      var y_axis = $("#interactionModal select#secondParam option:selected").val();
-      var outputParam = $("#interactionModal select#outputParam option:selected").val();
+      var x_axis_label = x_selector.text();
+      var y_axis_label = y_selector.text();
+      var output_param_label = output_param_selector.text();
+
+      var x_axis = x_selector.val();
+      var y_axis = y_selector.val();
+      var output_param = output_param_selector.val();
 
       x_axis_label = escapeHtml(x_axis_label);
       y_axis_label = escapeHtml(y_axis_label);
-      outputParam_label = escapeHtml(outputParam_label);
+      output_param_label = escapeHtml(output_param_label);
 
       x_axis = escapeHtml(x_axis);
       y_axis = escapeHtml(y_axis);
-      outputParam = escapeHtml(outputParam);
+      output_param = escapeHtml(output_param);
 
-      if (check_if_string_parameter(x_axis, 'input', x_axis_label) == true
-        || check_if_string_parameter(y_axis, 'input', y_axis_label) == true
-        || check_if_string_parameter(outputParam, 'moe', outputParam_label) == true) return;
+      if (check_if_string_parameter(x_axis, 'input', x_axis_label)
+        || check_if_string_parameter(y_axis, 'input', y_axis_label)
+        || check_if_string_parameter(output_param, 'moe', output_param_label)) return;
 
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x_label="+x_axis_label;
       query_params += "&param_y_label="+y_axis_label;
-      query_params += "&output_label="+outputParam_label;
+      query_params += "&output_label="+output_param_label;
 
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
-      query_params += "&output="+outputParam;
+      query_params += "&output="+output_param;
       query_params += "&chart_id="+interaction_chart_counter;
 
 

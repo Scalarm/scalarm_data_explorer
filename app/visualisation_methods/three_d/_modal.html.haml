@@ -8,17 +8,17 @@
     .small-5.columns
       %label.inline="Select first parameter"
     .small-7.columns
-      %select(id="firstParam" class ="moes_params_list")
+      %select(id="first_param" class ="moes_params_list")
   .row
     .small-5.columns
       %label.inline="Select second parameter"
     .small-7.columns
-      %select(id="secondParam" class ="moes_params_list")
+      %select(id="second_param" class ="moes_params_list")
   .row
     .small-5.columns
       %label.inline="Select third parameter"
     .small-7.columns
-      %select(id="thirdParam" class ="moes_params_list")
+      %select(id="third_param" class ="moes_params_list")
 
   .row
     %ul.inline-list
@@ -52,12 +52,15 @@
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
       $("#three_dModal .charts").prepend(three_d_chart_div);
       //TODO - if there's nothing to select -> do nothing
-      var x_axis = $("#three_dModal select#firstParam option:selected").val();
-      var y_axis = $("#three_dModal select#secondParam option:selected").val();
-      var z_axis = $("#three_dModal select#thirdParam option:selected").val();
-      var x_axis_label = $("#three_dModal select#firstParam option:selected").text();
-      var y_axis_label = $("#three_dModal select#secondParam option:selected").text();
-      var z_axis_label = $("#three_dModal select#thirdParam option:selected").text();
+      var x_selector = $("#three_dModal select#first_param option:selected");
+      var y_selector = $("#three_dModal select#second_param option:selected");
+      var z_selector = $("#three_dModal select#third_param option:selected");
+      var x_axis = x_selector.val();
+      var y_axis = y_selector.val();
+      var z_axis = z_selector.val();
+      var x_axis_label = x_selector.text();
+      var y_axis_label = y_selector.text();
+      var z_axis_label = z_selector.text();
       x_axis_label = escapeHtml(x_axis_label);
       y_axis_label = escapeHtml(y_axis_label);
       z_axis_label = escapeHtml(z_axis_label);

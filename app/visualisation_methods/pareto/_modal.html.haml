@@ -8,7 +8,7 @@
     .small-5.columns
       %label.inline="Select output parameter"
     .small-7.columns
-      %select(class="moe_info_list" id ="outputParam")
+      %select(class="moe_info_list" id ="output_param")
 
   .row
     %ul.inline-list
@@ -56,15 +56,15 @@
       parameters_names = escapeHtml(parameters_names)
 
 
-      var outputParam = $("#paretoModal select#outputParam option:selected").val();
-      var outputParam_label = $("#paretoModal select#outputParam option:selected").text();
-      var index_of_moe = window.moes_info.moes_names.indexOf(outputParam)
+      var output_param = $("#paretoModal select#output_param option:selected").val();
+      var output_param_label = $("#paretoModal select#output_param option:selected").text();
+      var index_of_moe = window.moes_info.moes_names.indexOf(output_param)
       var type_of_moe = window.moes_info.moes_types[index_of_moe]
-      outputParam = escapeHtml(outputParam);
-      outputParam_label = escapeHtml(outputParam_label);
+      output_param = escapeHtml(output_param);
+      output_param_label = escapeHtml(output_param_label);
 
       if (type_of_moe == 'string') {
-        toastr.error('Cannot plot for string type parameter - ' + outputParam_label);
+        toastr.error('Cannot plot for string type parameter - ' + output_param_label);
         $("#busy_pareto").hide()
         return;
       }
@@ -72,8 +72,8 @@
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&parameters_ids="+parameters_ids;
       query_params += "&parameters_names="+parameters_names;
-      query_params += "&output_label="+outputParam_label;
-      query_params += "&output="+outputParam;
+      query_params += "&output_label="+output_param_label;
+      query_params += "&output="+output_param;
       query_params += "&chart_id="+pareto_chart_counter;
 
       var url = "#{@prefix}/chart_instances/pareto?"+query_params;

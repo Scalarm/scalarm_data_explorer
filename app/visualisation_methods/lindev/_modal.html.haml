@@ -8,12 +8,12 @@
     .small-5.columns
       %label.inline="Select parameter on X"
     .small-7.columns
-      %select(id="firstParam" class ="moes_params_list")
+      %select(id="first_param" class ="moes_params_list")
   .row
     .small-5.columns
       %label.inline="Select parameter on Y"
     .small-7.columns
-      %select(id="secondParam" class ="moes_params_list")
+      %select(id="second_param" class ="moes_params_list")
 
   .row
     %ul.inline-list
@@ -47,16 +47,18 @@
 
       var chart_div = $("<div id=\"lindev_chart_"+chart_counter+"\">")[0];
       $("#lindevModal .charts").prepend(chart_div);
-      var x_axis_label = $("#lindevModal select#firstParam option:selected").text();
-      var y_axis_label = $("#lindevModal select#secondParam option:selected").text();
-      var x_axis = $("#lindevModal select#firstParam option:selected").val();
-      var y_axis = $("#lindevModal select#secondParam option:selected").val();
+      var x_selector = $("#lindevModal select#first_param option:selected");
+      var y_selector = $("#lindevModal select#second_param option:selected");
+      var x_axis_label = x_selector.text();
+      var y_axis_label = y_selector.text();
+      var x_axis = x_selector.val();
+      var y_axis = y_selector.val();
       x_axis_label = escapeHtml(x_axis_label);
       y_axis_label = escapeHtml(y_axis_label);
       x_axis = escapeHtml(x_axis);
       y_axis = escapeHtml(y_axis);
 
-      if (check_if_string_parameter(x_axis, x_axis_label) == true || check_if_string_parameter(y_axis, y_axis_label) == true) return;
+      if (check_if_string_parameter(x_axis, x_axis_label) || check_if_string_parameter(y_axis, y_axis_label)) return;
 
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x_label="+x_axis_label;
