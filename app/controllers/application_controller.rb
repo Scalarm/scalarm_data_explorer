@@ -14,9 +14,11 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate, except: :status
   rescue_from Scalarm::ServiceCore::AuthenticationError, with: :authentication_failed
   rescue_from StandardError, with: :generic_exception_handler
-  rescue_from SecurityError, with: :generic_exception_handler
+  rescue_from SecurityError, with: :security_exception_handler
+  rescue_from MissingParametersError, with: :security_exception_handler
+
   PREFIX = '/'
-  before_filter :get_prefix
+  before_filter :load_prefix
 
   before_filter :check_request_origin
   before_filter :cors_preflight_check
@@ -44,8 +46,8 @@ class ApplicationController < ActionController::Base
   # TODO: create special error classes to raise
   def load_experiment
     validate(
-      experiment_id: [:security_default, :optional],
-      id: [:security_default, :optional]
+        experiment_id: [:security_default, :optional],
+        id: [:security_default, :optional]
     )
     experiment_id = (params[:experiment_id] || params[:id])
     raise 'No experiment ID specified, cannot load experiment' unless experiment_id
@@ -54,21 +56,48 @@ class ApplicationController < ActionController::Base
   end
 
   ##
-  # Base url adding escaping html
-  def get_prefix
-    text =(params[:base_url].to_s) || PREFIX
-    @prefix = ERB::Util.h(text)
+  # Evaluate prefix (base_url) in order:
+  # 1. base_url key from local configuration (currently secrets)
+  # 2. from Information Service (cached) with https:// appended
+  # 3. or use PREFIX const
+  def find_prefix
+    url_from_config = Rails.application.secrets.base_url
+    url_from_config || Utils.random_service_public_url('data_explorers') || PREFIX
   end
 
+  ##
+  # Set @prefix (html escaped)
+  def load_prefix
+    @prefix = ERB::Util.h(find_prefix)
+  end
+
+  def security_exception_handler (exception)
+    Rails.logger.warn("Exception caught in security_exception_handler: #{exception.message}")
+    Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
+    add_cors_header
+    respond_to do |format|
+      format.html do
+        render html: exception.to_s, status: 412
+      end
+
+      format.json do
+        render json: {
+                   status: 'error',
+                   reason: exception.to_s
+               },
+               status: 412
+      end
+    end
+  end
 
   def generic_exception_handler(exception)
     Rails.logger.warn("Exception caught in generic_exception_handler: #{exception.message}")
     Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
-
+    add_cors_header
     respond_to do |format|
       format.html do
         #flash[:error] = exception.to_s
-        render html: "An error occurred: #{exception.to_s}", status: 500
+        render html: exception.to_s, status: 500
       end
 
       format.json do

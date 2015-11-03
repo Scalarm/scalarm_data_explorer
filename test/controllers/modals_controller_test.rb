@@ -45,7 +45,7 @@ class ModalsControllerTest < ActionController::TestCase
 
   test "Should report error with message: Wrong Chart name" do
     get :show, id: 'Ala', experiment_id: @experiment.id.to_s, using_em: 'false'
-    assert_response 500, "Response should be error, but it is: #{response.body}"
+    assert_response 412, "Response should be error, but it is: #{response.body}"
   end
 
 

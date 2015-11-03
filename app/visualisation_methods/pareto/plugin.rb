@@ -2,6 +2,7 @@ class Pareto
 
   attr_accessor :experiment
   attr_accessor :parameters
+  include Scalarm::ServiceCore::ParameterValidation
 
   def prepare_pareto_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
@@ -17,7 +18,7 @@ class Pareto
       object = prepare_pareto_chart_content(data)
       object
     else
-      raise("Request parameters missing")
+      raise SecurityError.new('Request parameters missing')
     end
 
   end
@@ -35,19 +36,19 @@ class Pareto
 
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
-      raise("No such experiment or no simulation runs done")
+      raise SecurityError.new('No such experiment or no simulation runs done')
     else
 
 
       argument_ids = simulation_runs.first.arguments.split(',')
       params = {}
       simulation_runs = simulation_runs.map do |data|
-        obj ={}
+        obj = {}
         values = data.values.split(',')
         new_args = {}
 
         argument_ids.each_with_index do |arg_name, index|
-          params[arg_name] = params[arg_name].kind_of?(Array)? params[arg_name]<<values[index].to_f : [values[index].to_f]
+          params[arg_name] = params[arg_name].kind_of?(Array) ? params[arg_name] << values[index].to_f : [values[index].to_f]
           new_args[arg_name] = values[index].to_f
         end
 
@@ -70,30 +71,30 @@ class Pareto
         maxes[arg_name] = params[arg_name].max
       end
 
+      #preparing Chart content
+      data =[]
+      argument_ids.each do |arg_name|
+        local_max = maxes[arg_name]
+        local_min = mins[arg_name]
+        count_min = params[arg_name].count(local_min)
+        count_max = params[arg_name].count(local_max)
+        sum_min = 0
+        sum_max = 0
+        simulation_runs.map do |datas|
+          unless datas[:result].blank?
+            if datas[:arguments][arg_name] == local_max
+              sum_max += datas[:result]
+            end
 
-
-    #preparing Chart content
-    data =[]
-    argument_ids.each do |arg_name|
-      local_max =  maxes[arg_name]
-      local_min = mins[arg_name]
-      count_min = params[arg_name].count(local_min)
-      count_max = params[arg_name].count(local_max)
-      sum_min =0
-      sum_max =0
-      simulation_runs.map do |datas|
-        if datas[:arguments][arg_name] ==local_max
-          sum_max+=datas[:result]
+            if datas[:arguments][arg_name] == local_min
+              sum_min += datas[:result]
+            end
+          end
         end
-
-        if datas[:arguments][arg_name] ==local_min
-          sum_min+=datas[:result]
-        end
+        data.push({name: arg_name, value: ((sum_max/count_max) - (sum_min/count_min)).to_f.abs})
       end
-      data.push({ name: arg_name, value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
-    end
 
-    data
+      data
     end
   end
 end
