@@ -64,7 +64,7 @@ class Kmeans
     # for 2 and more moes join arrays of result into one and pass as data.frame
     groped_by_moes.each do |k, v|
       if v.uniq.count < parameters[:clusters].to_i
-        raise SecurityError.new('Cannot devide data into clusters. Too small amount of various result values')
+        raise SecurityError.new('Cannot divide data into clusters. Too small amount of various result values')
       end
       R.assign(k, v)
     end
