@@ -36,9 +36,33 @@ window.reload_checkbox = ->
     $(this).html new_checkbox
     return
 
+# Reload and join given parameters and moes
+window.reload_selectbox_allowed_params_and_moes = (allowed_params) =>
+  if allowed_params.length == 0
+    new_select = '<option value=\'\'>' + escapeHtml('There are no parameters satisfying the conditions') + '</option> '
+  else
+    new_select = '<optgroup label=\'Parameters\'>'
+    for iter of moes_info_json
+      param = moes_info_json[iter]
+      if param.id == 'delimiter'
+        new_select = new_select + '</optgroup> <optgroup label=\'Moes\'>'
+      else if param.id in allowed_params
+        new_select = new_select + '<option value=\'' + escapeHtml(param.id) + '\'>' + escapeHtml(param.label) + '</option> '
+    new_select = new_select + '</optgroup>'
+
+  ### replace old values with new ones (input parameters and moes) ###
+  $('.allowed_moes_params_list').each ->
+    selected_option = $(this).find(':selected').val()
+    $(this).html new_select
+    $(this).find('option').filter(->
+      $(this).val() == selected_option
+    ).attr 'selected', true
+    return
+  reload_selectbox_parameters();
+
+
 #reload and join parameters and moes
 window.reload_selectbox_params_and_moes = ->
-
   #moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
   new_select = '<optgroup label=\'Parameters\'>'
   for iter of moes_info_json
@@ -57,6 +81,7 @@ window.reload_selectbox_params_and_moes = ->
       $(this).val() == selected_option
     ).attr 'selected', true
     return
+
 
 
 #reload separately parameters and moes
