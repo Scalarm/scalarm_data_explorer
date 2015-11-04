@@ -14,6 +14,8 @@ class ThreeD
   attr_reader :type_of_x
   attr_reader :type_of_y
   attr_reader :type_of_z
+  include Scalarm::ServiceCore::ParameterValidation
+
 
   def prepare_3d_chart_content(data)
     output = "<script>(function() { \nvar i=" + parameters["chart_id"] + ";"
@@ -32,7 +34,7 @@ class ThreeD
       simulation_runs = experiment.simulation_runs.to_a
 
       if simulation_runs.length == 0
-        raise("No such experiment or no runs done")
+        raise SecurityError.new('No such experiment or no simulation runs done')
       end
 
       @types_of_parameters_for_all = {}
@@ -48,7 +50,7 @@ class ThreeD
       @type_of_z = ""
 
       argument_ids = simulation_runs.first.arguments.split(',')
-      array_of_parameters_in_case = [parameters["param_x"],  parameters["param_y"], parameters["param_z"]]
+      array_of_parameters_in_case = [parameters["param_x"], parameters["param_y"], parameters["param_z"]]
 
       types_of_all_parameters(simulation_runs, argument_ids)
       types_of_xyz_parameters(array_of_parameters_in_case)
@@ -57,7 +59,7 @@ class ThreeD
       object = prepare_3d_chart_content(data)
       object
     else
-      raise("Request parameters missing")
+      raise SecurityError.new("Request parameters missing")
     end
   end
 
@@ -69,9 +71,9 @@ class ThreeD
       a = item.to_i
       b = item.to_f
 
-      if item.eql?a.to_s
+      if item.eql? a.to_s
         @types_of_parameters_for_input[data] = "integer"
-      elsif item.eql?b.to_s
+      elsif item.eql? b.to_s
         @types_of_parameters_for_input[data] = "float"
       elsif item.is_a? String
         @types_of_parameters_for_input[data] = "string"
@@ -112,7 +114,7 @@ class ThreeD
   def generate_categories_for_string_parameters(simulation_runs, array_of_parameters_in_case)
 
     @types_of_parameters_for_input.each do |key, value|
-      if value == "string" &&  array_of_parameters_in_case.include?(key)
+      if value == "string" && array_of_parameters_in_case.include?(key)
         index_of_output_among_all_input = @types_of_parameters_for_input.keys.index(key)
         array_for_categories = []
 
@@ -136,7 +138,7 @@ class ThreeD
     end
 
     @types_of_parameters_for_output.each do |key, value|
-      if value == "string" &&  array_of_parameters_in_case.include?(key)
+      if value == "string" && array_of_parameters_in_case.include?(key)
         #index_of_output_among_all_outputs = @types_of_parameters_for_output.keys.index(key)
 
         array_for_categories = []
@@ -165,7 +167,7 @@ class ThreeD
 
   def get3d(param_x, param_y, param_z, simulation_runs, argument_ids)
     simulation_runs = simulation_runs.map do |data|
-      obj ={}
+      obj = {}
       values = data.values.split(',')
       new_args = {}
 
@@ -212,50 +214,50 @@ class ThreeD
 
     #counter = Array.new(simulation_runs.size, &:next)
     #simulation_runs.size
-    counter  = 0
+    counter = 0
     if argument_ids.index(param_x)
       simulation_runs.map do |data_sim|
 
         data[counter] = [data_sim[:arguments][param_x]]
-        counter+=1
+        counter += 1
       end
     else
       simulation_runs.map do |data_sim|
 
         data[counter] = [data_sim[:result][param_x]]
-        counter+=1
+        counter += 1
 
       end
     end
 
-    counter  = 0
+    counter = 0
     if argument_ids.index(param_y)
       simulation_runs.map do |data_sim|
 
         data[counter].push(data_sim[:arguments][param_y])
-        counter+=1
+        counter += 1
       end
     else
       simulation_runs.map do |data_sim|
 
         data[counter].push(data_sim[:result][param_y])
-        counter+=1
+        counter += 1
 
       end
     end
 
-    counter  = 0
+    counter = 0
     if argument_ids.index(param_z)
       simulation_runs.map do |data_sim|
 
         data[counter].push(data_sim[:arguments][param_z])
-        counter+=1
+        counter += 1
       end
     else
       simulation_runs.map do |data_sim|
 
         data[counter].push(data_sim[:result][param_z])
-        counter+=1
+        counter += 1
 
       end
     end

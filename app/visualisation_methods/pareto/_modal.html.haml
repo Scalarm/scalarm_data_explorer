@@ -36,20 +36,23 @@
       $('#busy_pareto').hide();
     };
     reload_pareto_params();
-
+    var reload_modal_params = function(){
+      reload_pareto_params();
+      toastr.success('Moes refreshed');
+    };
     var pareto_chart_counter = 0;
     var load_chart = function() {
       var pareto_chart_div = $("<div id=\"pareto_chart_"+pareto_chart_counter+"\">")[0];
       $("#paretoModal .charts").prepend(pareto_chart_div);
 
       var outputParam = $("#paretoModal select#outputParam option:selected").val();
-      var index_of_moe = window.moes_info.moes_names.indexOf(outputParam)
-      var type_of_moe = window.moes_info.moes_types[index_of_moe]
+      var index_of_moe = window.moes_info.moes_names.indexOf(outputParam);
+      var type_of_moe = window.moes_info.moes_types[index_of_moe];
       outputParam = escapeHtml(outputParam);
 
       if (type_of_moe == 'string') {
         toastr.error('Cannot plot for string type parameter - ' + outputParam);
-        $("#busy_pareto").hide()
+        $("#busy_pareto").hide();
         return;
       }
 
@@ -70,7 +73,7 @@
 
     };
 
-    $("#paretoModal").find("button.refresh").bind("click", reload_pareto_params);
+    $("#paretoModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#paretoModal").find("button.radius").bind("click", function() {
       $('#busy_pareto').show();

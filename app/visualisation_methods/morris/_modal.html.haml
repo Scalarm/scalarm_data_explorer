@@ -43,7 +43,10 @@
       $('#busy_morris').hide();
     };
     reload_morris_params();
-
+    var reload_modal_params = function(){
+      reload_morris_params();
+      toastr.success('Moes refreshed');
+    };
     var morris_chart_counter = 0;
     var load_chart = function() {
       var morris_chart_div = $("<div id=\"morris_chart_"+morris_chart_counter+"\">")[0];
@@ -78,7 +81,7 @@
 
     };
 
-    $("#morrisModal").find("button.refresh").bind("click", reload_morris_params);
+    $("#morrisModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#morrisModal").find("button.radius").bind("click", function() {
       $('#busy_morris').show();

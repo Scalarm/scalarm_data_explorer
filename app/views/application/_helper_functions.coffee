@@ -12,7 +12,10 @@ window.getWithSession = (url, params, onSuccess, onError) =>
 
 window.onErrorHandler = (jqXHR, textStatus, errorThrown) =>
   $(".loading_chart_gif").hide()
-  toastr.error("An error has occured: #{escapeHtml(jqXHR.responseText)} #{escapeHtml(errorThrown)}")
+  if jqXHR.responseText is ""
+    toastr.error("Unknown error occured")
+  else
+    toastr.error("An error has occured: #{escapeHtml(jqXHR.responseText)}")
 
 
 window.escapeHtml = (str) =>
@@ -32,7 +35,6 @@ window.reload_checkbox = ->
   $(' .moes_infos').each ->
     $(this).html new_checkbox
     return
-  toastr.success("Moes refreshed")
 
 # Reload and join given parameters and moes
 window.reload_selectbox_allowed_params_and_moes = (allowed_params) =>
@@ -79,7 +81,7 @@ window.reload_selectbox_params_and_moes = ->
       $(this).val() == selected_option
     ).attr 'selected', true
     return
-  toastr.success 'Parameters refreshed'
+
 
 
 #reload separately parameters and moes
@@ -94,7 +96,6 @@ window.reload_selectbox_parameters = ->
       new_moe_select = new_moe_select + '<option value=\'' + escapeHtml(param.id) + '\'>' + escapeHtml(param.label) + '</option> '
 
   ### replace old values with new ones (moes) ###
-
   $('.moe_info_list').each ->
     selected_option = $(this).find(':selected').val()
     $(this).html new_moe_select
@@ -104,7 +105,6 @@ window.reload_selectbox_parameters = ->
     return
 
   ### replace old values with new ones (input parameters) ###
-
   $('.param_info_list').each ->
     selected_option = $(this).find(':selected').val()
     $(this).html new_param_select
@@ -112,5 +112,5 @@ window.reload_selectbox_parameters = ->
       $(this).val() == selected_option
     ).attr 'selected', true
     return
-  toastr.success 'Parameters refreshed'
+
 

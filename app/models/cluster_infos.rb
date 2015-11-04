@@ -19,19 +19,19 @@ class ClusterInfos
   # function to get all data about simulations
   def evaluate
     header, result_data = create_data_result
-    datas =  statistics(header,result_data)
+    datas = statistics(header, result_data)
     datas
   end
 
   ##
   # main function which collect all data and return it as hash
-  def statistics(header,result_data)
+  def statistics(header, result_data)
     datas = {}
 
     for counter in 0..(header.count()-1)
       #assign table once before executing
-      R.assign(header[counter],result_data.map{|row| row[counter]})
-      datas[header[counter]] = result_data.map{|row| row[counter]}
+      R.assign(header[counter], result_data.map { |row| row[counter] })
+      datas[header[counter]] = result_data.map { |row| row[counter] }
 
     end
     hash = {}
@@ -41,20 +41,20 @@ class ClusterInfos
 
 
     # in Ruby gem these methods are faster
-    hash[:means] = calculate_function(header, datas,"mean")
+    hash[:means] = calculate_function(header, datas, "mean")
     # evaluate_r_function(header, "mean")
-    hash[:medians] = calculate_function(header, datas,"median")
+    hash[:medians] = calculate_function(header, datas, "median")
     # evaluate_r_quantile(header,3)
 
     # differences with variance and standard_deviation results between R and Ruby method for now stay Ruby function
-    hash[:variances] = calculate_function(header, datas,"variance")
+    hash[:variances] = calculate_function(header, datas, "variance")
     # evaluate_r_function(header, "var")
-    hash[:standard_deviation] = calculate_function(header, datas,"standard_deviation")
+    hash[:standard_deviation] = calculate_function(header, datas, "standard_deviation")
     # evaluate_r_function(header, "sd")
 
-    hash[:lower_quartiles] = calculate_function(header, datas,"q1")
+    hash[:lower_quartiles] = calculate_function(header, datas, "q1")
     # evaluate_r_quantile(header,2)
-    hash[:upper_quartiles] = calculate_function(header, datas,"q3")
+    hash[:upper_quartiles] = calculate_function(header, datas, "q3")
     # evaluate_r_quantile(header,4)
     iqr = {}
     header.each do |name|
@@ -141,7 +141,7 @@ class ClusterInfos
     hash = {}
     header.each do |arg|
       param_data = result_data[arg]
-      param_data = param_data.map{|param| param.to_f}
+      param_data = param_data.map { |param| param.to_f }
       hash[arg] = [param_data.min, param_data.max, param_data.max - param_data.min]
     end
     hash
@@ -152,7 +152,7 @@ class ClusterInfos
   def moe_names
     moe_name_set = []
     limit = @experiment.size > 1000 ? @experiment.size / 2 : @experiment.size
-    @experiment.simulation_runs.where({ is_done: true }, { fields: %w(result), limit: limit }).each do |simulation_run|
+    @experiment.simulation_runs.where({is_done: true}, {fields: %w(result), limit: limit}).each do |simulation_run|
       moe_name_set += simulation_run.result.keys.to_a
     end
 
@@ -183,12 +183,12 @@ class ClusterInfos
     query_fields[:result] = 1 if with_moes
 
     @experiment.simulation_runs.where(
-        {is_done: true, is_error: {'$exists' => false}, 'index' => {'$in' => @simulations_index }},
+        {is_done: true, is_error: {'$exists' => false}, 'index' => {'$in' => @simulations_index}},
         {fields: query_fields}
     ).each do |simulation_run|
       line = []
       line.push(simulation_run.index) if with_index
-      values = simulation_run.values.split(',')if with_params
+      values = simulation_run.values.split(',') if with_params
 
       values.each do |value|
         line.push(value.to_f)

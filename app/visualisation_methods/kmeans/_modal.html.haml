@@ -52,6 +52,11 @@
     };
     reload_kmeans_params();
 
+    var reload_modal_params = function(){
+      reload_kmeans_params();
+      toastr.success('Moes refreshed');
+    };
+
     var chart_counter = 0;
     var load_chart = function() {
       var chart_div = $("<div id=\"kmeans_chart_"+chart_counter+"\">")[0];
@@ -90,7 +95,7 @@
       chart_counter++;
     };
 
-   $("#kmeansModal").find("button.refresh").bind("click", reload_kmeans_params);
+   $("#kmeansModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#kmeansModal").find("button.radius.load").bind("click", function() {
       if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
