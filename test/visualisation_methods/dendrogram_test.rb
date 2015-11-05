@@ -23,8 +23,9 @@ class DendrogramTest < MiniTest::Test
       stubs(:each).returns(@empty_simulation_run)
     end
 
-    @simulation_runs = mock
+    @simulation_runs = mock 'simulation runs'
     @simulation_runs.stubs(:where).returns([@simulation_run, @simulation_run2])
+    @simulation_runs.stubs(:to_a).returns([@simulation_run, @simulation_run2])
 
     @experiment = mock 'experiment'
     @experiment.stubs(:get_parameter_ids).returns(['parameter1', 'parameter2'])

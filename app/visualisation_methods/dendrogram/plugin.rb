@@ -40,7 +40,7 @@ class Dendrogram
   ##
   # prepare data for draw function
   def get_data_for_dendrogram
-    if @experiment.simulation_runs.to_a.length == 0
+    if experiment.simulation_runs.to_a.length == 0
       raise SecurityError.new('No simulation runs done')
     end
 
