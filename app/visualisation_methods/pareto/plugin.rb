@@ -2,6 +2,7 @@ class Pareto
 
   attr_accessor :experiment
   attr_accessor :parameters
+  include Scalarm::ServiceCore::ParameterValidation
 
   ##
   # create data for chart and <script> which is rendered in ChartInstancesController
@@ -11,10 +12,9 @@ class Pareto
       object = prepare_pareto_chart_content(data)
       object
     else
-      raise('Request parameters missing')
+      raise SecurityError.new('Request parameters missing')
     end
   end
-
 
   ##
   # create <script>> which is load on page
@@ -36,7 +36,7 @@ class Pareto
   def get_pareto_data(moes)
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
-      raise('No such experiment or no simulation runs done')
+      raise SecurityError.new('No such experiment or no simulation runs done')
     else
       argument_ids = simulation_runs.first.arguments.split(',')
       params = {}
@@ -107,3 +107,5 @@ class Pareto
     data.push({ name: arg_name, value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
   end
 end
+
+  

@@ -2,6 +2,7 @@ require 'erb'
 class ChartInstancesController < ApplicationController
   before_filter :load_experiment, only: :show
   include ERB::Util
+  include Scalarm::ServiceCore::ParameterValidation
 
   def show
     analysisMethodsConfig = AnalysisMethodsConfig.new
@@ -10,19 +11,19 @@ class ChartInstancesController < ApplicationController
     validate(
         id: Proc.new do |param_name, value|
           unless methods.include? value
-            raise "Wrong chart name"
+            raise SecurityError.new("Wrong chart name")
           end
         end
     )
 
     chart_id = params[:id].to_s #nazwa metody
 
-    filter = {is_done: true, is_error: {'$exists'=> false}}
+    filter = {is_done: true, is_error: {'$exists' => false}}
     fields = {fields: {result: 1}}
-    first_simulation_run = @experiment.simulation_runs.where(filter, fields).first
+    moes = @experiment.simulation_runs.where(filter, fields).first
 
     params[:input_parameters] = @experiment.get_parameter_ids
-    params[:moes] = first_simulation_run.blank? ? [] : first_simulation_run.result
+    params[:moes] = moes.blank? ? [] : moes.result
     # class ogolna klasa z utilsami
     Utils::require_plugin(chart_id)
 

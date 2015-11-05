@@ -54,24 +54,4 @@
         window["reload_"+modalIdName+"_params"]();
         }
     });
-
-    $("#searchList").find("#basic").bind("click", function() {
-        if (!$("#content_basic").is(":visible"))
-          $("#content_basic").show();
-        else
-          $("#content_basic").hide();
-      });
-
-    $("#searchList").find("#params").bind("click", function() {
-        $('#params').foundation('tooltips', 'generate', '<img src="http://..../.jpg" />');
-        if (!$("#content_params").is(":visible"))
-          $("#content_params").show();
-        else
-          $("#content_params").hide();
-      });
-
-
-
-
-
   });

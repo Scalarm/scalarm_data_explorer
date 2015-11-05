@@ -1,18 +1,18 @@
 class Interaction
   attr_accessor :experiment
   attr_accessor :parameters
+  include Scalarm::ServiceCore::ParameterValidation
 
 
   ##
   # create data for chart and <script> which is rendered in ChartInstancesController
   def handler
     if parameters["id"] && parameters["chart_id"] && parameters["param_x"].to_s && parameters["param_y"].to_s && parameters["output"].to_s
-
       data = get_interaction(experiment, parameters["param_x"].to_s, parameters["param_y"].to_s, parameters["output"].to_s)
       object = prepare_interaction_chart_content(data)
       object
     else
-      raise('Request parameters missing');
+      raise SecurityError.new('Request parameters missing');
     end
   end
 
@@ -44,7 +44,7 @@ class Interaction
   def get_interaction(experiment, param_x, param_y, outputParam)
     simulation_runs = experiment.simulation_runs.to_a
     if simulation_runs.length == 0
-      raise('No such experiment or no runs done')
+      raise SecurityError.new('No such experiment or no simulation runs done')
     end
 
     argument_ids = simulation_runs.first.arguments.split(',')
@@ -123,7 +123,7 @@ class Interaction
   def create_result_hash(low_low, low_high, high_low, high_high, mins, maxes, param_x, param_y, outputParam)
     data = {}
     if (low_low[:result].blank? && low_high[:result].blank? && high_low[:result].blank? && high_high[:result].blank?)
-      raise ('Not enough data in database!')
+      raise SecurityError.new('Not enough data in database!')
 
     else
       result = []

@@ -3,6 +3,7 @@ require 'csv'
 class Dendrogram
   attr_accessor :experiment
   attr_accessor :parameters
+  include Scalarm::ServiceCore::ParameterValidation
 
   ##
   # create data for chart and <script> which is rendered in ChartInstancesController
@@ -16,7 +17,7 @@ class Dendrogram
       elsif parameters["chart_id"]
         object = prepare_dendrogram_chart_content(data)
       else
-        raise("Request parameters missing: 'chart_id'");
+        raise MissingParametersError.new(['chart_id']);
 
       end
       object
@@ -39,9 +40,9 @@ class Dendrogram
   ##
   # prepare data for draw function
   def get_data_for_dendrogram
-
-    # simulation_runs = experiment.simulation_runs.to_a
-    rinruby = Rails.configuration.r_interpreter
+    if @experiment.simulation_runs.to_a.length == 0
+      raise SecurityError.new('No simulation runs done')
+    end
 
     #getting data
     result_file = Tempfile.new('dendrogram')
@@ -55,15 +56,12 @@ class Dendrogram
 
 EOF
 
-    #parameters - lst  NOTE!!!! THIS STRUCTURE IS VERY BIG
-
-    #structure of the tree (matrix)
     merge = R.pull "merge"
 
     #parsing matrix into hash: value -> left child, right child
     hash = {}
     for counter in 1..merge.row_size()
-      hash[counter.to_s] = [merge[(counter-1),0].to_i, merge[(counter-1),1].to_i]
+      hash[counter.to_s] = [merge[(counter-1), 0].to_i, merge[(counter-1), 1].to_i]
     end
     creating_dendrogram_structure(hash)
   end
@@ -199,7 +197,7 @@ EOF
     elsif d[0] > 0 && d[1] < 0
       [get_simulations_by_cluster(hash, d[0]), -d[1]].join(', ')
     elsif d[0] > 0 && d[1] > 0
-      [get_simulations_by_cluster(hash, d[0]), get_simulations_by_cluster(hash,d[1])].join(', ')
+      [get_simulations_by_cluster(hash, d[0]), get_simulations_by_cluster(hash, d[1])].join(', ')
     end if d!=nil
   end
 

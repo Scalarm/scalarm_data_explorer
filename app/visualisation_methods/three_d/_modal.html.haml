@@ -46,7 +46,10 @@
       $('#busy_3d').hide();
     };
     reload_three_d_params();
-
+    var reload_modal_params = function(){
+      reload_three_d_params();
+      toastr.success('Parameters refreshed');
+    };
     var three_d_chart_counter = 0;
     var load_chart = function() {
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
@@ -78,10 +81,7 @@
 
     };
 
-    $("#three_dModal").find("button.refresh").bind("click", reload_three_d_params);
-
-
-
+    $("#three_dModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#three_dModal").find("button.radius").bind("click", function() {
       $("#busy_3d").show();

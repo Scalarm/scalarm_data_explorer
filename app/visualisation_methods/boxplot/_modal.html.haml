@@ -1,19 +1,17 @@
 =define_helper_functions
 
-%section#lindev_charts_form.panel.radius.analysis-chart
+%section#boxplot_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
-  %h3.subheader="Line charts with standard deviation"
-
   .row
     .small-5.columns
-      %label.inline="Select parameter on X"
+      %label.inline='Select parameter on X, this parameter is a class and can have max 10 values'
     .small-7.columns
-      %select(id="firstParam" class ="moes_params_list")
+      %select(id="firstParam" class ="allowed_moes_params_list")
   .row
     .small-5.columns
-      %label.inline="Select parameter on Y"
+      %label.inline='Select parameter on Y'
     .small-7.columns
-      %select(id="secondParam" class ="moes_params_list")
+      %select(class="moe_info_list" id ="secondParam")
 
   .row
     %ul.inline-list
@@ -23,61 +21,55 @@
         %button.radius Load chart
       %li
         %a
-          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_lindev' size='16x16' style='display: none' )
+          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_boxplot' size='16x16' style='display: none' )
 
 .charts
   .scripts
 
 :javascript
-
-
   $(function(){
 
     /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
-    window.reload_lindev_params = function(){
-      $("#busy_lindev").show();
-      reload_selectbox_params_and_moes();
-      $('#busy_lindev').hide();
+    window.reload_boxplot_params = function(){
+      $("#busy_boxplot").show();
+      reload_selectbox_allowed_params_and_moes(#{Utils::param_ids_with_less_than_n_values(@experiment, 10)});
+      $('#busy_boxplot').hide();
     };
-    reload_lindev_params();
-    var reload_modal_params = function(){
-      reload_lindev_params();
-      toastr.success('Parameters refreshed');
-    };
+    reload_boxplot_params();
+
     var chart_counter = 0;
     var load_chart = function() {
 
-      var chart_div = $("<div id=\"lindev_chart_"+chart_counter+"\">")[0];
-      $("#lindevModal .charts").prepend(chart_div);
-      var x_axis = $("#lindevModal select#firstParam option:selected").val();
-      var y_axis = $("#lindevModal select#secondParam option:selected").val();
+      var chart_div = $("<div id=\"boxplot_chart_"+chart_counter+"\">")[0];
+      $("#boxplotModal .charts").prepend(chart_div);
+      var x_axis = $("#boxplotModal select#firstParam option:selected").val();
+      var y_axis = $("#boxplotModal select#secondParam option:selected").val();
       x_axis = escapeHtml(x_axis);
       y_axis = escapeHtml(y_axis);
 
-      if (check_if_string_parameter(x_axis) == true || check_if_string_parameter(y_axis) == true) return;
+      //if (check_if_string_parameter(y_axis) == true) return;
 
       var query_params = "experiment_id=#{@experiment.id}";
-
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
       query_params += "&chart_id="+chart_counter;
 
-      var url = "#{@prefix}/chart_instances/lindev?"+query_params;
+      var url = "#{@prefix}/chart_instances/boxplot?"+query_params;
 
       var handler = function(data) {
-        $("#busy_lindev").hide();
+        $("#busy_boxplot").hide();
         var targetOffset = $(chart_div).offset().top;
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
       getWithSession(url, {}, handler, onErrorHandler);
       chart_counter++;
-
     };
-    $("#lindevModal").find("button.refresh").bind("click", reload_modal_params);
 
-    $("#lindevModal").find("button.radius").bind("click", function() {
-      $("#busy_lindev").show();
+    $("#boxplotModal").find("button.refresh").bind("click", reload_boxplot_params);
+
+    $("#boxplotModal").find("button.radius").bind("click", function() {
+      $("#busy_boxplot").show();
       load_chart();
     });
 
@@ -95,7 +87,7 @@
     function check_if_string_parameter(name_of_parameter) {
       if (type_of_parameter(name_of_parameter) == 'string') {
         toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
-        $("#busy_lindev").hide();
+        $("#busy_boxplot").hide();
         return true;
       }
     }

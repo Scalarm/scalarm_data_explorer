@@ -12,7 +12,10 @@ window.getWithSession = (url, params, onSuccess, onError) =>
 
 window.onErrorHandler = (jqXHR, textStatus, errorThrown) =>
   $(".loading_chart_gif").hide()
-  toastr.error("An error has occured: #{escapeHtml(jqXHR.responseText)} #{escapeHtml(errorThrown)}")
+  if jqXHR.responseText is ""
+    toastr.error("Unknown error occured")
+  else
+    toastr.error("An error has occured: #{escapeHtml(jqXHR.responseText)}")
 
 
 window.escapeHtml = (str) =>
@@ -29,15 +32,37 @@ window.reload_checkbox = ->
       new_checkbox = new_checkbox + '<span class=\'small-2 columns end\'><label><input id=\'' + escapeHtml(param.id) + '\' style=\'margin-right:5px;\' type=\'checkbox\'>' + escapeHtml(param.label) + '</label></span> '
 
   ### append new values###
-
   $(' .moes_infos').each ->
     $(this).html new_checkbox
     return
-  toastr.success("Moes refreshed")
+
+# Reload and join given parameters and moes
+window.reload_selectbox_allowed_params_and_moes = (allowed_params) =>
+  if allowed_params.length == 0
+    new_select = '<option value=\'\'>' + escapeHtml('There are no parameters satisfying the conditions') + '</option> '
+  else
+    new_select = '<optgroup label=\'Parameters\'>'
+    for iter of moes_info_json
+      param = moes_info_json[iter]
+      if param.id == 'delimiter'
+        new_select = new_select + '</optgroup> <optgroup label=\'Moes\'>'
+      else if param.id in allowed_params
+        new_select = new_select + '<option value=\'' + escapeHtml(param.id) + '\'>' + escapeHtml(param.label) + '</option> '
+    new_select = new_select + '</optgroup>'
+
+  ### replace old values with new ones (input parameters and moes) ###
+  $('.allowed_moes_params_list').each ->
+    selected_option = $(this).find(':selected').val()
+    $(this).html new_select
+    $(this).find('option').filter(->
+      $(this).val() == selected_option
+    ).attr 'selected', true
+    return
+  reload_selectbox_parameters();
+
 
 #reload and join parameters and moes
 window.reload_selectbox_params_and_moes = ->
-
   #moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
   new_select = '<optgroup label=\'Parameters\'>'
   for iter of moes_info_json
@@ -49,7 +74,6 @@ window.reload_selectbox_params_and_moes = ->
   new_select = new_select + '</optgroup>'
 
   ### replace old values with new ones (input parameters and moes) ###
-
   $('.moes_params_list').each ->
     selected_option = $(this).find(':selected').val()
     $(this).html new_select
@@ -57,7 +81,8 @@ window.reload_selectbox_params_and_moes = ->
       $(this).val() == selected_option
     ).attr 'selected', true
     return
-  toastr.success 'Parameters refreshed'
+
+
 
 #reload separately parameters and moes
 window.reload_selectbox_parameters = ->
@@ -71,7 +96,6 @@ window.reload_selectbox_parameters = ->
       new_moe_select = new_moe_select + '<option value=\'' + escapeHtml(param.id) + '\'>' + escapeHtml(param.label) + '</option> '
 
   ### replace old values with new ones (moes) ###
-
   $('.moe_info_list').each ->
     selected_option = $(this).find(':selected').val()
     $(this).html new_moe_select
@@ -81,7 +105,6 @@ window.reload_selectbox_parameters = ->
     return
 
   ### replace old values with new ones (input parameters) ###
-
   $('.param_info_list').each ->
     selected_option = $(this).find(':selected').val()
     $(this).html new_param_select
@@ -89,5 +112,5 @@ window.reload_selectbox_parameters = ->
       $(this).val() == selected_option
     ).attr 'selected', true
     return
-  toastr.success 'Parameters refreshed'
+
 

@@ -1,6 +1,7 @@
 class Lindev
   attr_accessor :experiment
   attr_accessor :parameters
+  include Scalarm::ServiceCore::ParameterValidation
 
 
   ##
@@ -14,13 +15,12 @@ class Lindev
       elsif parameters['chart_id']
         script_tag_for_chart = prepare_lindev_chart_content(data)
       else
-        raise("Request parameters missing: 'chart_id'");
+        raise MissingParametersError.new(["chart_id"])
       end
       script_tag_for_chart
     else
-      raise("Request parameters missing.")
+      raise MissingParametersError.new(["chart_id"])
     end
-
   end
 
 
@@ -45,7 +45,7 @@ class Lindev
     simulation_runs = experiment.simulation_runs.to_a
 
     if simulation_runs.length == 0
-      raise('No such experiment or no runs done')
+      raise SecurityError.new("No such experiment or no simulation runs done")
     end
 
     # get input parameter names
@@ -60,7 +60,6 @@ class Lindev
 
     get_values_and_std_dev(grouped_by_param_x)
   end
-
 
   ##
   # get input and output parameters for simulation run, return hash: {:arguments=>{"parameter1"=>1.0, "parameter2"=>2.0}, :result=>{"product"=>3.0}}
@@ -124,3 +123,5 @@ class Lindev
     [values, with_stddev]
   end
 end
+
+    
