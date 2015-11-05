@@ -136,18 +136,8 @@ EOF
   ##
   # get count of leafs (clusters and simulations) if depth of dendrogram = depth, hash = {'id'=>1, 'depth'=>0, 'children'=>[{'id'=>2}, {'id'=>3}]}
   def count_of_leafs(hash, depth, count)
-    if hash['depth'] != nil
-      if hash['depth'] < depth
-        if hash['children'].kind_of?(Array)
-          count = count + count_of_leafs(hash['children'][0], depth, count) + count_of_leafs(hash['children'][1], depth, count)
-        else
-          count = count + 1
-          count
-        end
-      else
-        count = count + 1
-        count
-      end
+    if hash['depth'] != nil and hash['depth'] < depth and hash['children'].kind_of?(Array)
+      count = count + count_of_leafs(hash['children'][0], depth, count) + count_of_leafs(hash['children'][1], depth, count)
     else
       count = count + 1
       count
@@ -218,8 +208,6 @@ EOF
   def create_result_csv(with_index=true, with_params=true, with_moes=true)
     moes = Array(parameters["array"])
     if with_params
-      Rails.logger.debug ("exp.get param:")
-      Rails.logger.debug(experiment.get_parameter_ids)
       all_parameters = experiment.get_parameter_ids.uniq.flatten
     end
     CSV.generate do |csv|

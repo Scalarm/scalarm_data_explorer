@@ -70,7 +70,6 @@ class Interaction
     end
 
     create_result_hash(low_low, low_high, high_low, high_high, mins, maxes, param_x, param_y, outputParam)
-
   end
 
   ##
@@ -106,13 +105,13 @@ class Interaction
 
     if data[:arguments][param_x] == mins[param_x] && data[:arguments][param_y] == maxes[param_y]
       low_high[:result].empty? ? low_high[:result] = [data[:result]] : low_high[:result].push(data[:result])
-
     end
+
     if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == mins[param_y]
       high_low[:result].empty? ? high_low[:result] = [data[:result]] : high_low[:result].push(data[:result])
       # high_low[:result] =  data[:result]
-
     end
+
     if data[:arguments][param_x] == maxes[param_x] && data[:arguments][param_y] == maxes[param_y]
       high_high[:result].empty? ? high_high[:result] = [data[:result]] : high_high[:result].push(data[:result])
       # high_high[:result] = data[:result]

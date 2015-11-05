@@ -52,7 +52,7 @@ class Pareto
       end
 
       #preparing Chart content
-      data =[]
+      data = []
       argument_ids.each do |arg_name|
         get_chart_content_for_argument(arg_name, data, maxes, mins, params, simulation_runs)
       end
@@ -64,7 +64,7 @@ class Pareto
   ##
   # get input and output parameters for simulation run, return hash: {:arguments=>{"parameter1"=>1.0, "parameter2"=>2.0}, :result=>{"product"=>3.0}}
   def get_parameters(data, argument_ids, params, moes)
-    obj ={}
+    obj = {}
     values = data.values.split(',')
     new_args = {}
 
@@ -89,19 +89,19 @@ class Pareto
   ##
   # return {:name=>"parameter1", :value=>3.0}
   def get_chart_content_for_argument(arg_name, data, maxes, mins, params, simulation_runs)
-    local_max =  maxes[arg_name]
+    local_max = maxes[arg_name]
     local_min = mins[arg_name]
     count_min = params[arg_name].count(local_min)
     count_max = params[arg_name].count(local_max)
-    sum_min =0
-    sum_max =0
+    sum_min = 0
+    sum_max = 0
     simulation_runs.map do |datas|
-      if datas[:arguments][arg_name] ==local_max
-        sum_max+=datas[:result]
+      if datas[:arguments][arg_name] == local_max
+        sum_max += datas[:result]
       end
 
-      if datas[:arguments][arg_name] ==local_min
-        sum_min+=datas[:result]
+      if datas[:arguments][arg_name] == local_min
+        sum_min += datas[:result]
       end
     end
     data.push({ name: arg_name, value: ((sum_max/count_max)-(sum_min/count_min)).to_f.abs})
