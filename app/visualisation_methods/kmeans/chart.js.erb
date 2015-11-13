@@ -6,9 +6,6 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
             var simulations = this.indexes.join();
 
             show_cluster_info_modal(clucter_id, simulations);
-
-
-
         }
     }
 
@@ -17,10 +14,10 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
 
         var handler = function(data) {
             $('#clusterInfo').html(data);
-            $('#clusterInfo').foundation('reveal', 'open');
         }
         $('#clusterInfo').html(window.loaderHTML);
-        getWithSession(url, {}, handler);
+        $('#clusterInfo').foundation('reveal', 'open');
+        getWithSession(url, {}, handler, onErrorHandler);
     }
 
     var empty_subcluster;
