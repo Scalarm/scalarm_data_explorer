@@ -1,0 +1,97 @@
+=define_helper_functions
+
+- se_results = @experiment.results
+- text_inline = "Select output parameter"
+- if se_results.blank?
+  - text_inline = "No results from supervised experiment"
+-elsif se_results['sensitivity_analysis_method'] != "morris" && se_results['sensitivity_analysis_method'] != "fast"
+  - text_inline = "Cannot plot results for non sensitivity method"
+
+%section#sensitivity_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  -if se_results.blank?
+    %h3.subheader="Sensitivity design"
+  -elsif se_results['sensitivity_analysis_method'] == "morris"
+    %h3.subheader="Sensitivity design - MORRIS"
+  -elsif se_results['sensitivity_analysis_method'] == "fast"
+    %h3.subheader="Sensitivity design - FAST"
+
+  - if !se_results.blank? && (se_results["sensitivity_analysis_method"] == 'morris' || se_results["sensitivity_analysis_method"] == 'fast')
+    .row
+      .small-5.columns
+        %label.inline=text_inline
+      .small-7.columns
+        %select(class="moe_info_list" id ="outputParam")
+    .row
+      %ul.inline-list
+        %li
+          %button.refresh Refresh moes
+        %li
+          %button.radius Load chart
+        %li
+          %img(src="#{image_url("loading.gif")}" id='busy_sensitivity' class='loading_chart_gif' size='16x16' style='display: none' )
+  -else
+    .row
+      .small-5.columns
+        %label.inline=text_inline
+
+
+.charts
+  .scripts
+
+:javascript
+
+  $(function(){
+
+    window.reload_sensitivity_params = function(){
+      $("#busy_sensitivity").show();
+      reload_selectbox_parameters();
+      $('#busy_sensitivity').hide();
+    };
+    reload_sensitivity_params();
+    var reload_modal_params = function(){
+      reload_sensitivity_params();
+      toastr.success('Moes refreshed');
+    };
+    var sensitivity_chart_counter = 0;
+    var load_chart = function() {
+      var sensitivity_chart_div = $("<div id=\"sensitivity_chart_"+sensitivity_chart_counter+"\">")[0];
+      $("#sensitivityModal .charts").prepend(sensitivity_chart_div);
+
+      var outputParam = $("#sensitivityModal select#outputParam option:selected").val();
+      var index_of_moe = window.moes_info.moes_names.indexOf(outputParam)
+      var type_of_moe = window.moes_info.moes_types[index_of_moe]
+      outputParam = escapeHtml(outputParam);
+
+      if (type_of_moe == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + outputParam);
+        $("#busy_sensitivity").hide()
+        return;
+      }
+
+      var outputParam = $("#sensitivityModal select#outputParam option:selected").val();
+      var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&output="+outputParam;
+      query_params += "&chart_id="+sensitivity_chart_counter;
+
+      var url = "#{@prefix}/chart_instances/sensitivity?"+query_params;
+
+      var handler = function(data) {
+        $("#busy_sensitivity").hide();
+        var targetOffset = $(sensitivity_chart_div).offset().top;
+        $('html,body').animate({ scrollTop: targetOffset }, 1000);
+        $(sensitivity_chart_div).html(data);
+      };
+      getWithSession(url, {}, handler, onErrorHandler);
+      sensitivity_chart_counter++;
+
+    };
+
+    $("#sensitivityModal").find("button.refresh").bind("click", reload_modal_params);
+
+    $("#sensitivityModal").find("button.radius").bind("click", function() {
+      $('#busy_sensitivity').show();
+      load_chart();
+      });
+  });
+
