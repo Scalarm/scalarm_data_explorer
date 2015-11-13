@@ -15,7 +15,9 @@
 %h2
   - if params[:chart_id] == 'kmeans'
     - ids = params[:cluster_id].split("_")[1].split("s")
-    - cluster_id = "#{ids[0]}, subcluster: #{ids[1]}"
+    - cluster_id = "#{ids[0]}"
+    - if ids[1]
+      - cluster_id = "#{cluster_id}, subcluster: #{ids[1]}"
   - else cluster_id = params[:cluster_id]
   Details of cluster #{cluster_id}
 %table{:width => '100%', :style => 'border: 0px'}
@@ -70,8 +72,6 @@
 #extension-dialog.reveal-modal(data-reveal="")
 :javascript
   $(function(){
-    $('#clusterInfo').foundation('reveal', 'close');
-
     $("a.simulation_number").click(function(event) {
       var url = "#{em_address}/experiments/#{@experiment.id}/simulations/"+event.target.id;
       var handler = function(data) {
@@ -79,6 +79,7 @@
         $('#extension-dialog').foundation('reveal', 'open');
       }
       $('#extension-dialog').html(window.loaderHTML);
+
       getWithSession(url, {}, handler);
       $('#extension-dialog').on("close", function() {
           $('#clusterInfo').foundation('reveal', 'open');

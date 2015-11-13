@@ -49,7 +49,7 @@ class Kmeans
 
     #getting data
     moes = Array(parameters["array"])
-    simulation_ind, result_data = create_data_result
+    simulation_ind, result_data = create_data_result(experiment = @experiment)
     result_data = result_data.sort_by { |x, y| x }
     result_hash = {}
     result_data.map { |row| result_hash[row[0]]=row[1] }
