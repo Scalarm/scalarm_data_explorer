@@ -1,0 +1,59 @@
+=define_helper_functions
+- labeled_data_source = ['yes', 'no', 'noInfo']
+%section#prediction_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="Prediction"
+  .row
+    .small-5.columns
+      %label.inline{for: 'predictions_source_data'}= 'Prediction experiment source file(csv):'
+    .small-7.columns
+      = file_field_tag 'predictions_source_data'
+  .row
+    .small-5.columns
+      %label.inline="Data source have labels?"
+    .small-7.columns
+      %select.labels
+        -labeled_data_source.each do |output|
+          %option{:value => output}=output
+  .row
+    %ul.inline-list
+      %li
+        %button.predict_chart Submit
+      %li
+        %a
+          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_prediction' size='16x16' style='display: none' )
+
+  .predictions
+
+:javascript
+  $(function(){
+    console.debug("TODO");
+    var prediction_div_counter = 0;
+    var load_prediction = function() {
+      console.debug("next2");
+      var prediction_div = $("<div id=\"prediction_"+prediction_div_counter+"\">")[0];
+      $("#predictionModal .predictions").prepend(prediction_div);
+
+      var labeled_data = $("#predictionModal .labels option:selected").val();
+      var data_to_predict = $("input[type=file]").val();
+
+      var query_params = "prediction_file="+data_to_predict;
+      query_params += "&labeled_data=" + labeled_data;
+      query_params += "&prediction_id=" + prediction_div_counter;
+
+      var url = "#{@prefix}/predictions/evaluate?" + query_params;
+
+      var handler = function(data) {
+        $("#busy_prediction").hide();
+        var targetOffset = $(prediction_div).offset().top;
+        $('html,body').animate({ scrollTop: targetOffset }, 1000);
+        $(prediction_div).html(data);
+      };
+      getWithSession(url, {}, handler, onErrorHandler);
+      prediction_div_counter++;
+
+    }
+  console.debug("next3");
+  $("#predictionModal").find("button.predict_chart").bind("click",load_prediction);
+
+  });
