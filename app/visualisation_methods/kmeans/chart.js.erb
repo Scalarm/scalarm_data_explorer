@@ -14,7 +14,7 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
 
         var handler = function(data) {
             $('#clusterInfo').html(data);
-        }
+        };
         $('#clusterInfo').html(window.loaderHTML);
         $('#clusterInfo').foundation('reveal', 'open');
         getWithSession(url, {}, handler, onErrorHandler);
