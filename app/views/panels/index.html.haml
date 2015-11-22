@@ -68,9 +68,7 @@
         var handler = function(data) {
           $('#'+ predictionModalName + 'Modal').html(data);
         };
-        console.debug("next ONE");
         getWithSession(url, {}, handler, onErrorHandler);
-        console.debug("next TWO");
       }
       else{
         $('#'+ predictionModalName + 'Modal').foundation('reveal', 'open');
