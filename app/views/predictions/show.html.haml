@@ -1,0 +1,43 @@
+#predictResults.reveal-modal(data-reveal="")
+%a.close-reveal-modal &#215
+%h2
+  %h3.details_label{:style => 'margin-top: 15px', :id => "", :href => "#"}
+    Chart prediction:
+    %ul{id: "predictList"}
+      %dl.accordion{"data-accordion" => "predictionAccordion",:id => "predictAccordion", :style=> "text-align: left;"}
+        - @prediction_results.each do |key, value|
+          %dd.accordion-navigation{:style => "background: transparent;"}
+            %a{:href => "##{key.to_s}", style: "text-align: left;"}
+              %i.fa.fa-plus-circle{style: "color: 333"}
+              #{key.to_s.gsub(/_/, ' ').capitalize}:
+            %ul.content{:id => "#{key.to_s}", :style => "background: none; text-align: left;"}
+              - @prediction_results[:"#{key.to_s}"].each do |key, index|
+                %li
+                  %span{:style => "margin-top: 8px"}
+                    #{key}: #{index}
+
+
+:javascript
+  $(function(){
+    $('#predictResults').foundation('reveal', 'close');
+
+
+    $("#predictResults").on("click", "a.close-reveal-modal", function (){
+      $("#predictionModal").foundation('reveal', 'open');
+    });
+
+    $("#predictList").find(".accordion").on("click", "dd", function (){
+      $("#predictList").find("dd.active").find(".content").slideUp("slow");
+      if(!$(this).hasClass("active")) {
+        $(this).find(".content").slideToggle("slow");
+        $("#predictList").find("dd").find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
+        $(this).find('i').addClass('fa fa-minus-circle');
+        $("#predictList").find("dd").removeClass("active");
+        $(this).addClass("active");
+      }
+      else {
+        $(this).find('i').removeClass('fa fa-minus-circle').addClass('fa fa-plus-circle');
+        $(this).removeClass("active");
+      }
+    });
+  });

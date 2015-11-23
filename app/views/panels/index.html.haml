@@ -1,4 +1,5 @@
 =define_helper_functions
+%a{ id: "prediction"} Assistant
 %ul{id: "searchList", style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
@@ -54,4 +55,24 @@
         window["reload_"+modalIdName+"_params"]();
         }
     });
+
+    $("#prediction").on("click", function(event){
+      var predictionModalName = $(event.currentTarget).attr('id');
+      if($("#"+ predictionModalName + "Modal").length==0){
+        var div = $("<div>", {id: predictionModalName + "Modal", class: "reveal-modal", "data-reveal": 'true', style:"max-width: 90rem;"});
+        $('body').append(div);
+        $('#'+ predictionModalName + 'Modal').html(window.loaderHTML);
+        $('#'+ predictionModalName + 'Modal').foundation('reveal', 'open');
+        var url = "#{@prefix}/predictions?experiment_id=#{@experiment.id}";
+
+        var handler = function(data) {
+          $('#'+ predictionModalName + 'Modal').html(data);
+        };
+        getWithSession(url, {}, handler, onErrorHandler);
+      }
+      else{
+        $('#'+ predictionModalName + 'Modal').foundation('reveal', 'open');
+      }
+    });
+
   });
