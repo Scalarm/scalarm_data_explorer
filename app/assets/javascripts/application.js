@@ -88,5 +88,24 @@ $.prototype.disable = function () {
     });
 };
 
+
+function create_chart_div(method_name, id_chart) {
+    if (method_name == 'lindev' || method_name == 'dendrogram')
+        var method_chart_div = $("<div id=\"" + "chart_" + id_chart + "\">")[0];
+    else
+        var method_chart_div = $("<div id=\"" + method_name + "_chart_" + id_chart + "\">")[0];
+    var chart_div = document.createElement('div');
+    chart_div.className = 'chart';
+    chart_div.style.marginLeft = '20%';
+    chart_div.style.marginRight = '20%';
+    chart_div.style.borderStyle = 'solid';
+    chart_div.style.borderWidth = '1px';
+    chart_div.style.borderColor = '#D8D8D8';
+    chart_div.style.padding = '1.25rem';
+
+    method_chart_div.appendChild(chart_div);
+    $('body').append(method_chart_div);
+}
+
 String.prototype.with_delimeters = string_with_delimeters;
 window.loaderHTML = '<div class="row small-1 small-centered" style="margin-bottom: 10px;"><img src="/assets/loading.gif"/></div>'

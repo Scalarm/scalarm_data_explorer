@@ -1,4 +1,7 @@
 window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, secondLevel, experiment_id, prefix) {
+    if($("#kmeansModal").length == 0) {
+        create_chart_div('kmeans', i);
+    }
 
     function openViewer() {
         return function(){
@@ -6,9 +9,6 @@ window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, se
             var simulations = this.indexes.join();
 
             show_cluster_info_modal(clucter_id, simulations);
-
-
-
         }
     }
 

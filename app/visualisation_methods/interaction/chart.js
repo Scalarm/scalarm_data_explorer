@@ -1,4 +1,7 @@
 window.interaction_main = function(i, param_x, param_y, data) {
+	if($("#interactionModal").length == 0) {
+		create_chart_div('interaction', i);
+	}
 	var chart = new Highcharts.Chart({
 		chart: {
 			renderTo: $('#interaction_chart_'+ i + " .chart")[0]

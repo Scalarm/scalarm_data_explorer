@@ -1,4 +1,8 @@
 window.threeD_main = function(i, param_x, param_y, param_z, data, type_of_x, type_of_y, type_of_z, categories_for_x, categories_for_y, categories_for_z) {
+    if($("#three_dModal").length == 0) {
+        create_chart_div('three_d', i);
+    }
+
     var min_z
     var max_z
 
