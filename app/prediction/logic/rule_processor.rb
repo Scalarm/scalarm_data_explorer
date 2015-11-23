@@ -1,4 +1,3 @@
-require_relative 'file_reader'
 require_relative 'hints_matcher'
 require_relative 'algorithm_matcher_filter'
 require_relative '../model/notes'
@@ -17,7 +16,6 @@ class RuleProcessor
 
 =begin
   def suggest (prediction, labeledData)
-    Rails.logger.debug(@fileReader)
     RuleProcessor.suggest(prediction, @fileReader.lines, transformTextDataInfo(@fileReader.textData), labeledData)
   end
 

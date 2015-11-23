@@ -1,5 +1,5 @@
 =define_helper_functions
-%a.text-left{ style: "text-align: left;", id: "prediction"} Prediction
+%a{ id: "prediction"} Assistant
 %ul{id: "searchList", style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
@@ -63,7 +63,7 @@
         $('body').append(div);
         $('#'+ predictionModalName + 'Modal').html(window.loaderHTML);
         $('#'+ predictionModalName + 'Modal').foundation('reveal', 'open');
-        var url = "#{@prefix}/predictions";
+        var url = "#{@prefix}/predictions?experiment_id=#{@experiment.id}";
 
         var handler = function(data) {
           $('#'+ predictionModalName + 'Modal').html(data);

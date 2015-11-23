@@ -1,24 +1,48 @@
 class PredictionsController < ApplicationController
-  require (Rails.root.join('app','prediction',"logic","text_reader"))
+
   require (Rails.root.join('app','prediction',"logic","rule_processor"))
   require (Rails.root.join('app','prediction',"model","result_aggregator"))
   require (Rails.root.join('app','prediction',"model","consts","text_data"))
   require (Rails.root.join('app','prediction',"model","consts","labeled_data"))
   require (Rails.root.join('app','prediction',"model","consts","prediction"))
-  require (Rails.root.join('app','prediction',"model","consts","number_of_samples"))
+
+  before_filter :load_experiment
 
   def index
-
     render :index, layout: false
   end
 
   def show
 
-    #data = params[:prediction_file]
-    number_of_lines = params[:number_of_lines].to_i
+
+=begin
+    query_fields = {_id: 0}
+    query_fields[:values] = 1
+    query_fields[:result] = 1
+    sim_check = simulations.where(
+        {is_done: true},
+        {fields: query_fields}
+    ).first
+
+    input_params = sim_check["values"].split(',')
+    input_params.each do |parameter|
+      unless parameter.match(/ ^[-+]?[0-9]*\.?[0-9]+$/)
+        text_data_sym = TextData.yes
+      end
+    end
+    sim_check["result"].each do |moes|
+      if moes.kind_of?(String)l
+        text_data_sym = TextData.yes
+    end
+
+=end
+
     text_data = params[:text_data]
     to_predict = params[:to_predict]
     labeled_data = params[:labeled_data]
+
+    simulations = @experiment.simulation_runs
+    number_of_lines =  simulations.count
 
     text_data_sym=TextData.notRelevant
     case text_data
@@ -29,6 +53,7 @@ class PredictionsController < ApplicationController
       else
         text_data_sym = TextData.notRelevant
     end
+
 
     to_predict_sym = Prediction.noInfo
     case to_predict
@@ -54,14 +79,16 @@ class PredictionsController < ApplicationController
         labeled_data_sym = LabeledData.noInfo
     end
 
-    rule_processor = RuleProcessor.new
-    results = rule_processor.suggest(to_predict_sym,number_of_lines,text_data_sym,labeled_data_sym)
-    Rails.logger.debug("results: #{results.hints}")
-    Rails.logger.debug("results: #{results.algorithms}")
-    Rails.logger.debug("results: #{results.notes}")
+    results = RuleProcessor.new.suggest(to_predict_sym,number_of_lines,text_data_sym,labeled_data_sym)
+    algorithms = []
+    results.algorithms.each do |algorithm_matcher|
+      algorithm_spec = algorithm_matcher.algorithm.name.to_s + " - " + algorithm_matcher.algorithm.description.to_s
+      algorithms.push(algorithm_spec)
+    end
+    @prediction_results = { hints: results.hints, algorithms: algorithms, notes: results.notes }
+    render :show, layout: false
   end
 
   def evaluate
-    Rails.logger.debug("Jetses w Evaluates!")
   end
 end

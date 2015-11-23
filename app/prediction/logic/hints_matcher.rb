@@ -18,7 +18,6 @@ class HintsMatcher
   end
 
   def gatherHints
-    Rails.logger.debug()
     @hints = PredictionHints.getHints(@prediction) +
               LabeledDataHints.getHints(@labeledData) +
               TextDataHints.getHints(@textData) +
