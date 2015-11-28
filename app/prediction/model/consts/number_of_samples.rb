@@ -1,29 +1,29 @@
 class NumberOfSamples
 
-  @@lessThan50 = :lessThan50
-  @@moreThan50LessThan10k = :moreThan50LessThan10k
-  @@moreThan50LessThan100k = :moreThan50LessThan100k
-  @@moreThan10k = :moreThan10k
-  @@moreThan100k = :moreThan100k
+  @@less_than_50 = :less_than_50
+  @@more_than_50_less_than_10k = :more_than_50_less_than_10k
+  @@more_than_50_less_than_100k = :more_than_50_less_than_100k
+  @@more_than_10k = :more_than_10k
+  @@more_than_100k = :more_than_100k
 
-  def self.lessThan50
-    @@lessThan50
+  def self.less_than_50
+    @@less_than_50
   end
 
-  def self.moreThan50LessThan10k
-    @@moreThan50LessThan10k
+  def self.more_than_50_less_than_10k
+    @@more_than_50_less_than_10k
   end
 
-  def self.moreThan50LessThan100k
-    @@moreThan50LessThan100k
+  def self.more_than_50_less_than_100k
+    @@more_than_50_less_than_100k
   end
 
   def self.moreThan10k
-    @@moreThan10k
+    @@more_than_10k
   end
 
-  def self.moreThan100k
-    @@moreThan100k
+  def self.more_than_100k
+    @@more_than_100k
   end
 
 end

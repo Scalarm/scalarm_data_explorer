@@ -8,31 +8,10 @@ require_relative '../model/result_aggregator'
 
 class RuleProcessor
 
-=begin
-  def initialize(fileReader)
-    @fileReader = fileReader
-  end
-=end
-
-=begin
-  def suggest (prediction, labeledData)
-    RuleProcessor.suggest(prediction, @fileReader.lines, transformTextDataInfo(@fileReader.textData), labeledData)
-  end
-
-  def transformTextDataInfo(textData)
-    textData ? LabeledData.yes : LabeledData.no
-  end
-
-  def suggest (fileName, prediction, labeledData)
-    fileReader = FileReader.new(fileName)
-    RuleProcessor.suggest(prediction, fileReader.lines, transformTextDataInfo(fileReader.textData), labeledData)
-  end
-=end
-
   def suggest (prediction, lines, text_data, labeled_data)
     hints = HintsMatcher.new(prediction, lines, text_data, labeled_data).gatherHints
-    algorithms = AlgorithmMatcherFilter.new(AlgorithmMatchers.getAlgorithmsMatchers).filter(prediction, lines, text_data, labeled_data)
-    ResultAggregator.new(hints, algorithms, Notes.getGeneralNotes)
+    algorithms = AlgorithmMatcherFilter.new(AlgorithmMatchers.get_algorithms_matchers).filter(prediction, lines, text_data, labeled_data)
+    ResultAggregator.new(hints, algorithms, Notes.get_general_notes)
   end
 
 end

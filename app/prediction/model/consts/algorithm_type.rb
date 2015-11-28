@@ -3,7 +3,7 @@ class AlgorithmType
   @@classification = :classification
   @@clustering = :clustering
   @@regression = :regression
-  @@dimensionalityReduction = :dimensionalityReduction
+  @@dimensionalityReduction = :dimensionality_reduction
   @@unknown = :unknown
 
   def self.classification
@@ -18,7 +18,7 @@ class AlgorithmType
     @@regression
   end
 
-  def self.dimensionalityReduction
+  def self.dimensionality_reduction
     @@dimensionalityReduction
   end
 

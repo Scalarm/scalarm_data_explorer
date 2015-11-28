@@ -1,7 +1,7 @@
 =define_helper_functions
 - labeled_data_source = ['yes', 'no', 'no information']
 - text_data_source = ['yes', 'no', 'not relevant']
-- prediction_objects= ['category - with known number of categories', 'category - with unknown number of categories', 'structure', 'quantity', 'no information']
+- prediction_objects= ['category - with known number of categories', 'category - with unknown number of categories', 'structure', 'quantity', 'anything']
 %section#prediction_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Suggest charts for data analysis"
@@ -14,7 +14,7 @@
           %option{:value => output}=output
   .row
     .small-5.columns
-      %label.inline="Data source have text fields?"
+      %label.inline="String-type parameters in simulation input?"
     .small-7.columns
       %select.texts
         -text_data_source.each do |output|

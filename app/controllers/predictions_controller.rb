@@ -1,10 +1,10 @@
 class PredictionsController < ApplicationController
 
-  require (Rails.root.join('app','prediction',"logic","rule_processor"))
-  require (Rails.root.join('app','prediction',"model","result_aggregator"))
-  require (Rails.root.join('app','prediction',"model","consts","text_data"))
-  require (Rails.root.join('app','prediction',"model","consts","labeled_data"))
-  require (Rails.root.join('app','prediction',"model","consts","prediction"))
+  require (Rails.root.join('app', 'prediction', "logic", "rule_processor"))
+  require (Rails.root.join('app', 'prediction', "model", "result_aggregator"))
+  require (Rails.root.join('app', 'prediction', "model", "consts", "text_data"))
+  require (Rails.root.join('app', 'prediction', "model", "consts", "labeled_data"))
+  require (Rails.root.join('app', 'prediction', "model", "consts", "prediction"))
 
   before_filter :load_experiment
 
@@ -14,81 +14,56 @@ class PredictionsController < ApplicationController
 
   def show
 
-
-=begin
-    query_fields = {_id: 0}
-    query_fields[:values] = 1
-    query_fields[:result] = 1
-    sim_check = simulations.where(
-        {is_done: true},
-        {fields: query_fields}
-    ).first
-
-    input_params = sim_check["values"].split(',')
-    input_params.each do |parameter|
-      unless parameter.match(/ ^[-+]?[0-9]*\.?[0-9]+$/)
-        text_data_sym = TextData.yes
-      end
-    end
-    sim_check["result"].each do |moes|
-      if moes.kind_of?(String)l
-        text_data_sym = TextData.yes
-    end
-
-=end
-
     text_data = params[:text_data]
     to_predict = params[:to_predict]
     labeled_data = params[:labeled_data]
 
     simulations = @experiment.simulation_runs
-    number_of_lines =  simulations.count
+    number_of_lines = simulations.count
 
-    text_data_sym=TextData.notRelevant
+    text_data_sym=TextData.not_relevant
     case text_data
       when "yes"
         text_data_sym = TextData.yes
       when "no"
         text_data_sym = TextData.no
       else
-        text_data_sym = TextData.notRelevant
+        text_data_sym = TextData.not_relevant
     end
 
 
-    to_predict_sym = Prediction.noInfo
+    to_predict_sym = Prediction.anything
     case to_predict
       when "category - with known number of categories"
-        to_predict_sym = Prediction.categoryWithKnownNumberOfCategories
+        to_predict_sym = Prediction.category_known_number_of_categories
       when "quantity"
         to_predict_sym = Prediction.quantity
       when "structure"
         to_predict_sym = Prediction.structure
       when "category - with unknown number of categories"
-        to_predict_sym = Prediction.categoryWithUnknownNumberOfCategories
+        to_predict_sym = Prediction.category_unknown_number_of_categories
       else
-        to_predict_sym = Prediction.noInfo
+        to_predict_sym = Prediction.anything
     end
 
-    labeled_data_sym = LabeledData.noInfo
+    labeled_data_sym = LabeledData.no_info
     case labeled_data
       when "yes"
         labeled_data_sym = LabeledData.yes
       when "no"
         labeled_data_sym = LabeledData.no
       else
-        labeled_data_sym = LabeledData.noInfo
+        labeled_data_sym = LabeledData.no_info
     end
 
-    results = RuleProcessor.new.suggest(to_predict_sym,number_of_lines,text_data_sym,labeled_data_sym)
+    results = RuleProcessor.new.suggest(to_predict_sym, number_of_lines, text_data_sym, labeled_data_sym)
     algorithms = []
     results.algorithms.each do |algorithm_matcher|
       algorithm_spec = algorithm_matcher.algorithm.name.to_s + " - " + algorithm_matcher.algorithm.description.to_s
       algorithms.push(algorithm_spec)
     end
-    @prediction_results = { hints: results.hints, algorithms: algorithms, notes: results.notes }
+    @prediction_results = {"Hints" => results.hints, "Recommended algorithms" => algorithms, "Notes" => results.notes}
     render :show, layout: false
   end
 
-  def evaluate
-  end
 end

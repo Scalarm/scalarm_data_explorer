@@ -2,7 +2,7 @@ class LabeledData
 
   @@yes = :yes
   @@no = :no
-  @@noInfo = :noInfo
+  @@anything = :anything
 
   def self.yes
     @@yes
@@ -12,8 +12,8 @@ class LabeledData
     @@no
   end
 
-  def self.noInfo
-    @@noInfo
+  def self.no_info
+    @@anything
   end
 
 end

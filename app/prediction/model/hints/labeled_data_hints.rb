@@ -4,20 +4,13 @@ require_relative '../consts/labeled_data'
 class LabeledDataHints
 
   @@hints = Hash[
-      LabeledData.yes => [ "[LabeledData][Available] You are probably interested in classification" ],
-      LabeledData.no => [ "[LabeledData][NotAvailable] You are probably interested in clustering" ],
-      LabeledData.noInfo => [ "[LabeledData][NoInfo] You should check [Prediction] suggestion" ]
+      LabeledData.yes => [ "You are probably interested in classification because you have labels in source data" ],
+      LabeledData.no => [ "You are probably interested in clustering because you don't have labels in source data" ],
+      LabeledData.no_info => [ "You should check Prediction suggestion" ]
   ]
 
-  def self.getHints(labeledData)
-    @@hints[labeledData]
+  def self.get_hints(labeled_data)
+    @@hints[labeled_data]
   end
 
 end
-
-
-########################################################################################################################
-raise "Wrong prediction on available labeled data" unless LabeledDataHints.getHints(LabeledData.yes) == [ "[LabeledData][Available] You are probably interested in classification" ]
-raise "Wrong prediction on unavailable labeled data" unless LabeledDataHints.getHints(LabeledData.no) == [ "[LabeledData][NotAvailable] You are probably interested in clustering" ]
-raise "Wrong prediction on labeled data when not specified" unless LabeledDataHints.getHints(LabeledData.noInfo) == [ "[LabeledData][NoInfo] You should check [Prediction] suggestion" ]
-

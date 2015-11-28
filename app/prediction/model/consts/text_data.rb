@@ -2,7 +2,7 @@ class TextData
 
   @@yes = :yes
   @@no = :no
-  @@notRelevant = :notRelevant
+  @@not_relevant = :not_relevant
 
   def self.yes
     @@yes
@@ -12,8 +12,8 @@ class TextData
     @@no
   end
 
-  def self.notRelevant
-    @@notRelevant
+  def self.not_relevant
+    @@not_relevant
   end
 
 end

@@ -1,17 +1,17 @@
 class Prediction
 
-  @@categoryWithKnownNumberOfCategories = :categoryWithKnownNumberOfCategories
-  @@categoryWithUnknownNumberOfCategories = :categoryWithUnknownNumberOfCategories
+  @@category_known_number_of_categories = :category_known_number_of_categories
+  @@category_unknown_number_of_categories = :category_unknown_number_of_categories
   @@quantity = :quantity
   @@structure = :structure
-  @@noInfo = :noInfo
+  @@anything = :anything
 
-  def self.categoryWithKnownNumberOfCategories
-    @@categoryWithKnownNumberOfCategories
+  def self.category_known_number_of_categories
+    @@category_known_number_of_categories
   end
 
-  def self.categoryWithUnknownNumberOfCategories
-    @@categoryWithUnknownNumberOfCategories
+  def self.category_unknown_number_of_categories
+    @@category_unknown_number_of_categories
   end
 
   def self.quantity
@@ -22,8 +22,8 @@ class Prediction
     @@structure
   end
 
-  def self.noInfo
-    @@noInfo
+  def self.anything
+    @@anything
   end
 
 end
