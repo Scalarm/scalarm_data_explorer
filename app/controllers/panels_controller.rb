@@ -5,6 +5,19 @@ class PanelsController < ApplicationController
   include ERB::Util
   before_filter :load_experiment, only: [:show, :index]
 
+
+=begin
+  apiDoc:
+  @api {get} /panels/:id Main panel rendering
+  @apiName panels#index
+  @apiGroup Panels
+  @apiDescription Returns main panel with all available analysis methods
+
+  @apiParam {String} id ID of experiment
+
+  @apiSuccess render panel view
+
+=end
   # TODO: will be removed some day
   def index
     handle_panel_for_experiment

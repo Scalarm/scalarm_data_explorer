@@ -1,7 +1,21 @@
 class ClusterInfosController < ApplicationController
   before_filter :load_experiment, only: :show
   include Scalarm::ServiceCore::ParameterValidation
-  #Id -> experimentId; simulations => 2,4,6,1,7
+
+=begin
+apiDoc:
+  @api {get} /cluster_infos/:id Cluster description
+  @apiName cluster_infos#show
+  @apiGroup ClusterInfos
+  @apiDescription Returns statistical information about cluster
+
+  @apiParam {String} id ID of experiment
+  @apiParam {String} simulations ids of simulation runs separated with comma
+
+  @apiSuccess Render view with statistic data about cluster
+
+=end
+
   def show
     begin
       simulations = params[:simulations].split(',').map { |s| s.to_i }

@@ -2,7 +2,19 @@ class ModalsController < ApplicationController
   before_filter :load_experiment, only: :show
 
   ##
-  # id -> modal ID
+=begin
+apiDoc:
+  @api {get} /modals/:id Modal description
+  @apiName modals#show
+  @apiGroup Modals
+  @apiDescription Returns modal window content
+
+  @apiParam {String} id chart method name
+  @apiParam {String} experiment_id ID of experiment
+  @apiSuccess Render draw function and chart modal
+
+=end
+
   def show
     # get config
     analysisMethodsConfig = AnalysisMethodsConfig.new
