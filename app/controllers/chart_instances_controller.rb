@@ -4,6 +4,37 @@ class ChartInstancesController < ApplicationController
   include ERB::Util
   include Scalarm::ServiceCore::ParameterValidation
 
+
+=begin
+apiDoc:
+  @api {get} /chart_instances/:id Chart rendering
+  @apiName chart_instances#show
+  @apiGroup ChartInstances
+  @apiDescription Return html rendered from file (located at /app/visualisation_methods/<chart_name>/chart in application) which add new window to modal with generated chart.
+  When called, firstly validates chart name (:id) and then escapes all other parameters for safety.
+  Next, invoke visualization class method handler (located at /app/visualisation_methods/plugin in application) to prepare data for loaded draw function content.
+  Rendered view contain a hide button and JavaScript function which handle button clicks.
+
+
+  @apiParam {String} id chart method name
+  @apiParam {String} chart_id unique id for rendered chart
+
+  @apiParam {String} param_x parameter id for chart x dimension
+  @apiParam {String} param_y parameter id for chart y dimension
+  @apiParam {String} param_z parameter id for chart z dimension - used in 3D
+  @apiParam {String} output selected output moes parameter id - used in interaction, pareto
+
+  @apiParam {List} array list of moes names - used in clustering
+  @apiParam {String} clusters number of cluster - used in k-meas
+  @apiParam {String} subclusters number of subcluster - used in k-means
+
+
+  @apiParam {List} input_parameters list with all experiment input parameter
+  @apiParam {List} moes list with  experiment moes
+
+
+=end
+
   def show
     analysisMethodsConfig = AnalysisMethodsConfig.new
     methods = analysisMethodsConfig.get_method_names
@@ -17,7 +48,7 @@ class ChartInstancesController < ApplicationController
         chart_id: :integer
     )
 
-    chart_id = params[:id].to_s #nazwa metody
+    chart_name = params[:id].to_s #nazwa metody
 
     filter = {is_done: true, is_error: {'$exists' => false}}
     fields = {fields: {result: 1}}
@@ -26,7 +57,7 @@ class ChartInstancesController < ApplicationController
     params[:input_parameters] = @experiment.get_parameter_ids
     params[:moes] = first_simulation_run.blank? ? [] : first_simulation_run.result
     # class ogolna klasa z utilsami
-    Utils::require_plugin(chart_id)
+    Utils::require_plugin(chart_name)
 
     #from 4.2 Rails version ... params html safety
     #params.transform_values {|v| ERB::Util.h(v)}
@@ -44,12 +75,12 @@ class ChartInstancesController < ApplicationController
 
     chart_file_content = ''
     if params[:stand_alone] == 'true'
-      chart_file_content = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id,"chart.js"), layout: false
+      chart_file_content = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_name,"chart.js"), layout: false
       chart_file_content = '<script>'.to_s.html_safe + chart_file_content + '</script>'.to_s.html_safe
     end
 
-    @content = Utils::generate_content_with_plugin(chart_id, @experiment, params)
-    chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, 'chart.html.haml'), layout: layout_value
+    @content = Utils::generate_content_with_plugin(chart_name, @experiment, params)
+    chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_name, 'chart.html.haml'), layout: layout_value
     render :html => (chart_header + chart_file_content + @content.to_s.html_safe), content_type: 'text/html', layout: false
   end
 end

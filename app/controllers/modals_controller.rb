@@ -1,12 +1,26 @@
 class ModalsController < ApplicationController
   before_filter :load_experiment, only: :show
 
-  ##
-  # id -> modal ID
+=begin
+apiDoc:
+  @api {get} /modals/:id Modal window rendering
+  @apiName modals#show
+  @apiGroup Modals
+  @apiDescription Returns html with prepared modal window for particular chart.
+  When called, validates chart name (:id).
+  Then uses visualisation method plugin (located at /app/visualisation_methods in application) to render modal with HTML and JavaScript (draw function) content intended for particular experiment (:experiment_id).
+  Modal content also contains JS functions which handle button clicks e.g. load chart or refresh.
+
+  @apiParam {String} id chart method name
+  @apiParam {String} experiment_id ID of experiment
+
+
+=end
+
   def show
     # get config
-    analysisMethodsConfig = AnalysisMethodsConfig.new
-    methods = analysisMethodsConfig.get_method_names
+    analysis_methods_config = AnalysisMethodsConfig.new
+    methods = analysis_methods_config.get_method_names
     # validating chart_id (name of method)
     validate(
         id: Proc.new do |param_name, value|
