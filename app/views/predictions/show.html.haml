@@ -1,7 +1,6 @@
 #predictResults.reveal-modal(data-reveal="")
 %a.close-reveal-modal &#215
 %h2.details_label{:style => 'margin-top: 15px; text-align: center;', :id => "", :href => "#"}
-  Analysis hints:
   %ul{id: "predictList"}
     %dl{:id => "prediction", :style=> "text-align: left;"}
       - @prediction_results.each do |key, value|
