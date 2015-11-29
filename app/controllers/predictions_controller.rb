@@ -8,10 +8,34 @@ class PredictionsController < ApplicationController
 
   before_filter :load_experiment
 
+=begin
+apiDoc:
+  @api {get} /predictions prediction modal view
+  @apiName predictions#index
+  @apiGroup Predictions
+  @apiDescription Returns modal view for chart predictions
+
+=end
+
   def index
     render :index, layout: false
   end
 
+
+=begin
+apiDoc:
+  @api {get} /predictions/:id  prediction main view
+  @apiName predictions#show
+  @apiGroup Predictions
+
+  @apiParam {String} id ID of experiment
+  @apiParam {String} text_data Are string-type parameters in input?
+  @apiParam {String} to_predict what to predict
+  @apiParam {String} labeled_data data have labels?
+
+  @apiDescription Returns chart predictions hints as rendered html modal
+
+=end
   def show
 
     text_data = params[:text_data]
