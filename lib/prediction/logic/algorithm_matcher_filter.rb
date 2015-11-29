@@ -1,6 +1,3 @@
-require_relative '../model/algorithm_matchers'
-
-
 class AlgorithmMatcherFilter
 
   attr_reader :algorithm_matchers

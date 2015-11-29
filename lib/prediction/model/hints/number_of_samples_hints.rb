@@ -7,10 +7,10 @@ class NumberOfSamplesHints
       NumberOfSamples.less_than_50 => [ "You definately need more data!" ],
 
       NumberOfSamples.more_than_50_less_than_10k => [ "You can try with 'MiniBatch KMeans'",
-                                                 "You can try with 'kernel approximation'" ],
+                                                 "You can try with 'Kernel Approximation'" ],
 
       NumberOfSamples.more_than_50_less_than_100k => [ "You can try with 'SGD Classifier'",
-                                                  "You can try with 'kernel approximation' if SGD Classifier' will not work",
+                                                  "You can try with 'Kernel Approximation' if SGD Classifier' will not work",
                                                   "You can try with 'SGD Regressor'" ],
 
       NumberOfSamples.moreThan10k => [ "You can try with 'KMeans'",

@@ -1,11 +1,5 @@
 class PredictionsController < ApplicationController
 
-  require (Rails.root.join('app', 'prediction', "logic", "rule_processor"))
-  require (Rails.root.join('app', 'prediction', "model", "result_aggregator"))
-  require (Rails.root.join('app', 'prediction', "model", "consts", "text_data"))
-  require (Rails.root.join('app', 'prediction', "model", "consts", "labeled_data"))
-  require (Rails.root.join('app', 'prediction', "model", "consts", "prediction"))
-
   before_filter :load_experiment
 
 =begin

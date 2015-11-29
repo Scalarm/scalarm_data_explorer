@@ -1,11 +1,3 @@
-require_relative 'hints_matcher'
-require_relative 'algorithm_matcher_filter'
-require_relative '../model/notes'
-require_relative '../model/consts/prediction'
-require_relative '../model/consts/labeled_data'
-require_relative '../model/result_aggregator'
-
-
 class RuleProcessor
 
   def suggest (prediction, lines, text_data, labeled_data)
