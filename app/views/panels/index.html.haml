@@ -2,9 +2,9 @@
 %dl.accordion{id:"prediction_table"}
   %li.accordion-navigation{id:"prediction_accordion"}
     %a.group_title.tip-right.text-left{href: "#", id: "prediction", "title"=>"<div style=float:left;padding:10px;>Helps you choose method for analysis</div><div style=width:35%;float:right;></div> ", "data-reveal-id"=>"prediction_tooltip", "data-tooltip"=>"",  style: "text-align: left; padding: 6px"}
-      %i.fa.fa-lightbulb-o{style: "color: 333; padding-left: 3px; padding-right: 3px"}
+      %i.fa.fa-lightbulb-o{style: "color: 333; padding-: 3px; padding-right: 3px"}
       %span  Assistant
-    %ul{id: "searchList", style:"list-style-type: circle;"}
+%ul{id: "searchList", style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
       - accordion_id = group["name"].dup.gsub!(/\s+/, "")

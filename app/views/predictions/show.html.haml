@@ -1,18 +1,17 @@
 #predictResults.reveal-modal(data-reveal="")
 %a.close-reveal-modal &#215
-%h2
-  %h3.details_label{:style => 'margin-top: 15px', :id => "", :href => "#"}
-    Chart prediction:
-    %ul{id: "predictList"}
-      %dl{:id => "prediction", :style=> "text-align: left;"}
-        - @prediction_results.each do |key, value|
-          %h2.prediction_label{:style => 'margin-top: 5px', :id => "#{key.to_s}", :href => "#"}
-            #{key}
-            %ul.content{:id => "#{key.to_s}", :style => "background: none; text-align: left;"}
-              - @prediction_results["#{key.to_s}"].each do |key, index|
-                %li
-                  %span{:style => "margin-top: 8px"}
-                    #{key}
+%h2.details_label{:style => 'margin-top: 15px; text-align: center;', :id => "", :href => "#"}
+  Analysis hints:
+  %ul{id: "predictList"}
+    %dl{:id => "prediction", :style=> "text-align: left;"}
+      - @prediction_results.each do |key, value|
+        %h3.prediction_label{:style => 'margin-top: 5px', :id => "#{key.to_s}", :href => "#"}
+          #{key}
+          %ul.content{:id => "#{key.to_s}", :style => "background: none; text-align: left;"}
+            - @prediction_results["#{key.to_s}"].each do |key, index|
+              %li
+                %span{:style => "margin-top: 8px"}
+                  #{key}
 
 
 :javascript
