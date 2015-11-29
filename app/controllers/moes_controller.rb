@@ -3,6 +3,19 @@ class MoesController < ApplicationController
   before_filter :load_experiment, only: :show
   include ERB::Util
 
+=begin
+apiDoc:
+  @api {get} /moes/:id Moes description
+  @apiName moes#show
+  @apiGroup Moes
+  @apiDescription Returns json with experiment moes
+
+
+  @apiParam {String} id ID of experiment
+  @apiSuccess {json} render json with experiment moes result
+
+=end
+
   def show
 
     filter = {is_done: true, is_error: {'$exists' => false}}

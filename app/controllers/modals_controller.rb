@@ -1,7 +1,6 @@
 class ModalsController < ApplicationController
   before_filter :load_experiment, only: :show
 
-  ##
 =begin
 apiDoc:
   @api {get} /modals/:id Modal description

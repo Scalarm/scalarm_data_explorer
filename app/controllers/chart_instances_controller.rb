@@ -13,7 +13,6 @@ apiDoc:
   @apiDescription Returns rendered chart
 
   @apiParam {String} id chart method name
-  @apiParam {String} base_url defined in config service url
   @apiParam {String} chart_id unique id for rendered chart
 
   @apiParam {String} param_x parameter for chart x dimension
