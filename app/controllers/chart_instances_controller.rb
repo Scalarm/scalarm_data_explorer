@@ -15,10 +15,10 @@ apiDoc:
   @apiParam {String} id chart method name
   @apiParam {String} chart_id unique id for rendered chart
 
-  @apiParam {String} param_x parameter for chart x dimension
-  @apiParam {String} param_y parameter for chart y dimension
-  @apiParam {String} param_z parameter for chart z dimension
-  @apiParam {String} output selected output moes parameter - used in interaction, pareto
+  @apiParam {String} param_x parameter id for chart x dimension
+  @apiParam {String} param_y parameter id for chart y dimension
+  @apiParam {String} param_z parameter id for chart z dimension - used in 3D
+  @apiParam {String} output selected output moes parameter id - used in interaction, pareto
 
   @apiParam {List} array list of moes names - used in clustering
   @apiParam {String} clusters number of cluster - used in k-meas
@@ -27,7 +27,7 @@ apiDoc:
 
   @apiParam {List} input_parameters list with all experiment input parameter
   @apiParam {List} moes list with  experiment moes
-  @apiSuccess Render hmtl div with chart content
+
 
 =end
 
@@ -43,7 +43,7 @@ apiDoc:
         end
     )
 
-    chart_id = params[:id].to_s #nazwa metody
+    chart_name = params[:id].to_s #nazwa metody
 
     filter = {is_done: true, is_error: {'$exists' => false}}
     fields = {fields: {result: 1}}
@@ -52,7 +52,7 @@ apiDoc:
     params[:input_parameters] = @experiment.get_parameter_ids
     params[:moes] = moes.blank? ? [] : moes.result
     # class ogolna klasa z utilsami
-    Utils::require_plugin(chart_id)
+    Utils::require_plugin(chart_name)
 
     #from 4.2 Rails version ... params html safety
     #params.transform_values {|v| ERB::Util.h(v)}
@@ -67,8 +67,8 @@ apiDoc:
     else
       layout_value = true
     end
-    @content = Utils::generate_content_with_plugin(chart_id, @experiment, params)
-    chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, 'chart.html.haml'), layout: layout_value
+    @content = Utils::generate_content_with_plugin(chart_name, @experiment, params)
+    chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_name, 'chart.html.haml'), layout: layout_value
     render :html => (chart_header + @content.to_s.html_safe), layout: false
   end
 end
