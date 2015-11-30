@@ -33,22 +33,6 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, values_with_in
                 }
         }}});
 
-    //nice feature but causes "udefined is not a function" on loading more than one chart
-    // Give the points a 3D feel by adding a radial gradient
-    // Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function (color) {
-    //     return {
-    //         radialGradient: {
-    //             cx: 0.4,
-    //             cy: 0.3,
-    //             r: 0.5
-    //         },
-    //         stops: [
-    //             [0, color],
-    //             [1, Highcharts.Color(color).brighten(-0.2).get('rgb')]
-    //         ]
-    //     };
-    // });
-    // Set up the chart
 	var chart = new Highcharts.Chart({
         chart: {
             renderTo: $('#three_d_chart_'+ i + " .chart")[0],
@@ -85,9 +69,6 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, values_with_in
                             getWithSession(url, {}, handler);
                             $('#extension-dialog').on("close", function() {
                                 $('#three_dModal').foundation('reveal', 'open');
-//                                var id = $("#extension-dialog.reveal-modal.open").find('h2').text().replace( /\D+/g, '');
-//                                if (id == simulation_id)
-//                                    $('#three_dModal').foundation('reveal', 'open');
                             })
                         }
                     }

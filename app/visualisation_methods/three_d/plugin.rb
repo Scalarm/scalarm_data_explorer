@@ -67,9 +67,6 @@ class ThreeD
   def types_of_all_parameters(simulation_runs, argument_ids)
     arguments_values = simulation_runs.first.values.split(',')
 
-    Rails.logger.debug('----------------')
-    Rails.logger.debug(simulation_runs.first)
-
     argument_ids.each_with_index do |data, index|
       item = arguments_values[index]
       a = item.to_i
@@ -270,8 +267,6 @@ class ThreeD
       end
     end
 
-    {:values => data, :values_with_index => values_and_index}
+    {values: data, values_with_index: values_and_index}
   end
-
-
 end
