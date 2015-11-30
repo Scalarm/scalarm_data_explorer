@@ -1,5 +1,4 @@
 window.sensitivity_main = function (i, series_to_plot, sorted_parameters_names, method_name) {
-
 	switch (method_name) {
 		case "morris":
 
@@ -37,14 +36,13 @@ window.sensitivity_main = function (i, series_to_plot, sorted_parameters_names, 
 					}
 				},
 				legend: {
-					layout: 'vertical',
 					align: 'right',
+					x: -30,
 					verticalAlign: 'top',
+					floating: true,
 					borderColor: '#CCC',
 					borderWidth: 1,
-					floating: true,
-					backgroundColor: '#FFFFFF',
-					x:-30
+					shadow: false
 				},
 				credits: {
 					enabled: false
@@ -117,6 +115,61 @@ window.sensitivity_main = function (i, series_to_plot, sorted_parameters_names, 
 				}
 			})
 
+
+			break;
+
+
+		case "pcc":
+
+			var chart = new Highcharts.Chart({
+				chart: {
+					renderTo: $('#sensitivity_chart_'+ i + " .chart")[0],
+					zoomType: 'xy'
+				},
+				title: {
+					text: null
+				},
+				xAxis: [{
+					categories: sorted_parameters_names
+				}],
+				yAxis: [{
+					labels: {
+						format: '{value}',
+						style: {
+							color: Highcharts.getOptions().colors[1]
+						}
+					},
+					title: {
+						text: null,
+						style: {
+							color: Highcharts.getOptions().colors[1]
+						}
+					}
+				}],
+
+				tooltip: {
+					shared: true
+				},
+
+				series: [{
+					name: 'Partial Rank Correlation Coefficients',
+					type: 'scatter',
+					data: series_to_plot["scatter_data"],
+					tooltip: {
+						pointFormat: '<span style="font-weight: bold; color: {series.color}">Partial Rank Correlation Coefficient</span>: <b>{point.y:.1f}</b> '
+					}
+				}, {
+					name: 'PRCC error',
+					type: 'errorbar',
+					data: series_to_plot["error_data"],
+					tooltip: {
+						pointFormat: '(error range: {point.low}-{point.high})<br/>'
+					}
+				}],
+				credits: {
+					enabled: false
+				}
+			})
 
 			break;
 

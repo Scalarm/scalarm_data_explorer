@@ -15,8 +15,10 @@
     %h3.subheader="Sensitivity design - MORRIS"
   -elsif se_results['sensitivity_analysis_method'] == "fast"
     %h3.subheader="Sensitivity design - FAST"
+  -elsif se_results['sensitivity_analysis_method'] == "pcc"
+    %h3.subheader="Sensitivity design - PCC"
 
-  - if !se_results.blank? && (se_results["sensitivity_analysis_method"] == 'morris' || se_results["sensitivity_analysis_method"] == 'fast')
+  - if !se_results.blank? && (se_results["sensitivity_analysis_method"] == 'morris' || se_results["sensitivity_analysis_method"] == 'fast' || se_results["sensitivity_analysis_method"] == 'pcc')
     .row
       .small-5.columns
         %label.inline=text_inline
