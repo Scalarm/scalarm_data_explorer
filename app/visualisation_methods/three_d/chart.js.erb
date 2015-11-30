@@ -63,10 +63,10 @@ window.threeD_main = function(i, param_x, param_y, param_z, data, values_with_in
 
                             var handler = function(data) {
                                 $('#extension-dialog').html(data);
-                                $('#extension-dialog').foundation('reveal', 'open');
                             }
                             $('#extension-dialog').html(window.loaderHTML);
-                            getWithSession(url, {}, handler);
+                            $('#extension-dialog').foundation('reveal', 'open');
+                            getWithSession(url, {}, handler, onErrorHandler);
                             $('#extension-dialog').on("close", function() {
                                 $('#three_dModal').foundation('reveal', 'open');
                             })
