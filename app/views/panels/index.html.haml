@@ -1,4 +1,9 @@
 =define_helper_functions
+%dl.accordion{id:"prediction_table"}
+  %li.accordion-navigation{id:"prediction_accordion"}
+    %a.group_title.tip-right.text-left{href: "#", id: "prediction", "title"=>"<div style=float:left;padding:10px;>Helps you choose method for analysis</div><div style=width:35%;float:right;></div> ", "data-reveal-id"=>"prediction_tooltip", "data-tooltip"=>"",  style: "text-align: left; padding: 6px"}
+      %i.fa.fa-lightbulb-o{style: "color: 333; padding-: 3px; padding-right: 3px"}
+      %span  Assistant
 %ul{id: "searchList", style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
@@ -55,23 +60,23 @@
         }
     });
 
-    $("#searchList").find("#basic").bind("click", function() {
-        if (!$("#content_basic").is(":visible"))
-          $("#content_basic").show();
-        else
-          $("#content_basic").hide();
-      });
+    $("#prediction").on("click", function(event){
+      var predictionModalName = $(event.currentTarget).attr('id');
+      if($("#"+ predictionModalName + "Modal").length==0){
+        var div = $("<div>", {id: predictionModalName + "Modal", class: "reveal-modal", "data-reveal": 'true', style:"max-width: 90rem;"});
+        $('body').append(div);
+        $('#'+ predictionModalName + 'Modal').html(window.loaderHTML);
+        $('#'+ predictionModalName + 'Modal').foundation('reveal', 'open');
+        var url = "#{@prefix}/predictions?experiment_id=#{@experiment.id}";
 
-    $("#searchList").find("#params").bind("click", function() {
-        $('#params').foundation('tooltips', 'generate', '<img src="http://..../.jpg" />');
-        if (!$("#content_params").is(":visible"))
-          $("#content_params").show();
-        else
-          $("#content_params").hide();
-      });
-
-
-
-
+        var handler = function(data) {
+          $('#'+ predictionModalName + 'Modal').html(data);
+        };
+        getWithSession(url, {}, handler, onErrorHandler);
+      }
+      else{
+        $('#'+ predictionModalName + 'Modal').foundation('reveal', 'open');
+      }
+    });
 
   });

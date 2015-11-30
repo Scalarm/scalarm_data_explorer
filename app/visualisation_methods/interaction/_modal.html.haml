@@ -48,7 +48,10 @@
 
     };
     reload_interaction_params();
-
+    var reload_modal_params = function(){
+      reload_interaction_params();
+      toastr.success('Parameters refreshed');
+    };
     var interaction_chart_counter = 0;
     var load_chart = function(){
       var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
@@ -71,7 +74,6 @@
       query_params += "&output="+outputParam;
       query_params += "&chart_id="+interaction_chart_counter;
 
-
       var url = "#{@prefix}/chart_instances/interaction?"+query_params;
 
       var handler = function(data) {
@@ -84,7 +86,7 @@
       interaction_chart_counter++;
 
     };
-    $("#interactionModal").find("button.refresh").bind("click", reload_interaction_params);
+    $("#interactionModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#interactionModal").find("button.radius").bind("click", function() {
       $('#busy_interaction').show();

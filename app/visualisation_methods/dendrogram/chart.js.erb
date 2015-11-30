@@ -68,7 +68,7 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
                 "click":  function(d) {
                     if (d.children) {
-                        show_cluster_info_modal(d.id, list_of_children(d).toString());
+                        show_cluster_info_modal(d.id, list_of_children(d));
                     }
                     else {
                         if (/^cl \d+$/.test(d.id)) {
@@ -202,9 +202,9 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
 
         var handler = function(data) {
             $('#extension-dialog').html(data);
-            $('#extension-dialog').foundation('reveal', 'open');
         }
         $('#extension-dialog').html(window.loaderHTML);
+        $('#extension-dialog').foundation('reveal', 'open');
         getWithSession(url, {}, handler);
         $('#extension-dialog').on("close", function() {
             var id = $("#extension-dialog.reveal-modal.open").find('h2').text().replace( /\D+/g, '');
@@ -218,21 +218,26 @@ dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
     }
 
     function show_cluster_info_modal(cluster_id, simulations) {
-        var url = "<%= @prefix %>/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations + "&chart_id=dendrogram";
+        if (simulations.length < 1500) {
+            var simulations_string = simulations.toString();
+            var url = "<%= @prefix %>/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations_string + "&chart_id=dendrogram";
 
-        var handler = function(data) {
-            $('#clusterInfo').html(data);
+            var handler = function(data) {
+                $('#clusterInfo').html(data);
+            }
+            $('#clusterInfo').html(window.loaderHTML);
             $('#clusterInfo').foundation('reveal', 'open');
+            getWithSession(url, {}, handler, onErrorHandler);
         }
-        $('#clusterInfo').html(window.loaderHTML);
-        getWithSession(url, {}, handler);
+        else
+            toastr.error('This cluster contains to many simulations to show cluster details');
     }
 
     function set_node_default_color(d) {
         if (!d.parent) {
             return "root";
         }
-        else if (!d.children && !(/^cl \d+$/.test(d.id))) {
+        else if (!d.children && (/^cl \d+$/.test(d.id))) {
             return "cluster";
         }
         else if (!d.children) {
