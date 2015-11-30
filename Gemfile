@@ -13,9 +13,10 @@ gem 'rinruby'
 gem 'bson'
 gem 'bson_ext'
 gem 'mongo', '~> 1.12'
-gem 'mongo_session_store-rails4',
-    git: 'git://github.com/kliput/mongo_session_store.git',
-    branch: 'issue-31-mongo_store-deserialization'
+# Disableing due to bugs
+#gem 'mongo_session_store-rails4',
+#    git: 'git://github.com/kliput/mongo_session_store.git',
+#    branch: 'issue-31-mongo_store-deserialization'
 
 
 # Use SCSS for stylesheets
@@ -68,6 +69,7 @@ end
 
 group :test do
   gem 'mocha'
+  gem 'ci_reporter_minitest'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -79,5 +81,4 @@ gem 'scalarm-database', '>= 0.3.3', git: 'git://github.com/Scalarm/scalarm-datab
 
 # for local development - set path to scalarm-core
 # gem 'scalarm-service_core', path: '/Users/jliput/Scalarm/scalarm-service_core'
-gem 'scalarm-service_core', '~> 0.8.1', git: 'git://github.com/Scalarm/scalarm-service_core.git'
-
+gem 'scalarm-service_core', '~> 1.1.1', git: 'git://github.com/Scalarm/scalarm-service_core.git'

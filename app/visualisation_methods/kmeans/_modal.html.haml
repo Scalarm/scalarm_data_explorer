@@ -1,23 +1,9 @@
-- parameters = @experiment.get_parameter_ids
--# parameters = %w(a b)
-- parameters_labels = parameters
-- filter = {is_done: true, is_error: {'$exists'=> false}}
-- fields = {fields: {result: 1}}
-- result = @experiment.simulation_runs.where(filter, fields).first
-- count_of_cluster = [2,3,4,5,6,7,8,9,10,11,12]
-- outputs=[]
-- if result.blank?
-  - outputs = ["No results found in completed simulation runs"]
-- else
-  - outputs = result.result.keys
-
 =define_helper_functions
-
-
+- count_of_cluster = [2,3,4,5,6,7,8,9,10,11,12]
 %section#kmeans_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="K-means clustering"
-  %h3 #{}
+
   .row
     .small-5.columns
       %label.inline="Select number of clusters"
@@ -33,17 +19,8 @@
         -count_of_cluster.each do |output|
           %option{:value => output}=output
   .row
-    -if result.blank?
-      %label.inline #{outputs.to_sentence}
-    -else
-      %label.inline="Select parameters of clustering:"
-      .moes_infos
-        -outputs.each do |output|
-          %span.small-2.columns.end
-            %label
-              %input{:type => "checkbox", :style => "margin-right:5px;", :id => "#{output}"}
-              #{output}
-
+    %label.inline="Select parameters of clustering:"
+    .moes_infos
 
   .row
     %ul.inline-list
@@ -70,27 +47,21 @@
     /* function from global variable moes_info_json create html checkbox and then replacing exiting with new ones*/
     window.reload_kmeans_params = function(){
       $('#busy_kmeans').show();
-
+      reload_checkbox();
+      
       if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
         moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
         moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
       }
-
-      var new_checkbox ="";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.type == "moes_parameter")
-          new_checkbox = new_checkbox + "<span class='small-2 columns end'><label><input id='"+ escapeHtml(param.id) +"' style='margin-right:5px;' type='checkbox'>"+escapeHtml(param.label)+"</label></span> ";
-      }
-
-      /* append new values*/
-      $(" .moes_infos").each(function(){
-        $(this).html(new_checkbox);
-      });
+      
       $('#busy_kmeans').hide();
-      toastr.success("Moes refreshed");
     };
     reload_kmeans_params();
+
+    var reload_modal_params = function(){
+      reload_kmeans_params();
+      toastr.success('Moes refreshed');
+    };
 
     var chart_counter = 0;
     var load_chart = function() {
@@ -131,7 +102,7 @@
       chart_counter++;
     };
 
-   $("#kmeansModal").find("button.refresh").bind("click", reload_kmeans_params);
+   $("#kmeansModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#kmeansModal").find("button.radius.load").bind("click", function() {
       if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");

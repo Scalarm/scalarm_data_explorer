@@ -1,44 +1,25 @@
 =define_helper_functions
 
-- parameters = @experiment.get_parameter_ids
--# parameters = %w(a b)
-
-- filter = {is_done: true, is_error: {'$exists'=> false}}
-- fields = {fields: {result: 1}}
-- result = @experiment.simulation_runs.where(filter, fields).first
-- outputs=[]
-- if result.blank?
-  - outputs = ["No results found in completed simulation runs"]
-- else
-  - outputs = result.result.keys
-
 %section#interaction_chart_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Interaction chart"
-  %h3 #{}
+
   .row
     .small-5.columns
       %label.inline="Select first parameter"
     .small-7.columns
       %select(id ="firstParam" class="param_info_list")
-        -parameters.each do |parameter|
-          %option{:value => parameter}=parameter # TODO: label
-
   .row
     .small-5.columns
       %label.inline="Select second parameter"
     .small-7.columns
       %select(id ="secondParam" class="param_info_list")
-        -parameters.each do |parameter|
-          %option{:value => parameter}=parameter
 
   .row
     .small-5.columns
       %label.inline="Select output parameter"
     .small-7.columns
       %select(id ="outputParam" class="moe_info_list")
-        -outputs.each do |output|
-          %option{:value => output}=output
 
   .row
     %ul.inline-list
@@ -48,8 +29,6 @@
         %button.radius Load chart
       %li
         %img(src="#{image_url("loading.gif")}" id='busy_interaction' class='loading_chart_gif' size='16x16' style='display: none' )
-
-
 
 
 .charts
@@ -62,45 +41,21 @@
     /* function from global variable moes_info_json create html selectbox with moe and params values and then replacing exiting values with new ones*/
     window.reload_interaction_params = function(){
       $("#busy_interaction").show();
-
+      
       if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
         moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
         moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
       }
-
-      var new_moe_select ="";
-      var new_param_select ="";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.type == "input_parameter")
-          new_param_select = new_param_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
-        if (param.type == "moes_parameter")
-          new_moe_select = new_moe_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
-      }
-
-      /* replace old values with new ones (moes) */
-      $(".moe_info_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(new_moe_select);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-
-      /* replace old values with new ones (input parameters) */
-      $(".param_info_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(new_param_select);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-
+      
+      reload_selectbox_parameters();
       $('#busy_interaction').hide();
-      toastr.success("Parameters refreshed");
+
     };
     reload_interaction_params();
-
+    var reload_modal_params = function(){
+      reload_interaction_params();
+      toastr.success('Parameters refreshed');
+    };
     var interaction_chart_counter = 0;
     var load_chart = function(){
       var interaction_chart_div = $("<div id=\"interaction_chart_"+interaction_chart_counter+"\">")[0];
@@ -124,7 +79,6 @@
       query_params += "&chart_id="+interaction_chart_counter;
       query_params += "&stand_alone=false";
 
-
       var url = "#{@prefix}/chart_instances/interaction?"+query_params;
 
       var handler = function(data) {
@@ -137,7 +91,7 @@
       interaction_chart_counter++;
 
     };
-    $("#interactionModal").find("button.refresh").bind("click", reload_interaction_params);
+    $("#interactionModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#interactionModal").find("button.radius").bind("click", function() {
       $('#busy_interaction').show();

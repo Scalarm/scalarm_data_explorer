@@ -1,58 +1,24 @@
-- parameters = @experiment.get_parameter_ids
-
-- parameters_labels = parameters
-- filter = {is_done: true, is_error: {'$exists'=> false}}
-- fields = {fields: {result: 1}}
-- result = @experiment.simulation_runs.where(filter, fields).first
-- outputs=[]
-- if result.blank?
-  - outputs = ["No results found in completed simulation runs"]
-- else
-  - outputs = result.result.keys
+=define_helper_functions
 
 %section#threeD_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="3d scatter plot charts"
-  %h3 #{}
+
   .row
     .small-5.columns
       %label.inline="Select first parameter"
     .small-7.columns
       %select(id="firstParam" class ="moes_params_list")
-        %optgroup{:label => "Parameters"}
-          -parameters_labels.each do |parameter|
-            %option{value:parameter} #{parameter}
-
-        %optgroup{:label => "MoEs"}
-          -outputs.each do |output|
-            %option{value:output} #{output}
-
   .row
     .small-5.columns
       %label.inline="Select second parameter"
     .small-7.columns
       %select(id="secondParam" class ="moes_params_list")
-        %optgroup{:label => "Parameters"}
-          -parameters.each do |parameter|
-            %option{value:parameter} #{parameter}
-
-        %optgroup{:label => "MoEs"}
-          -outputs.each do |output|
-            %option{value:output} #{output}
-
   .row
     .small-5.columns
       %label.inline="Select third parameter"
     .small-7.columns
       %select(id="thirdParam" class ="moes_params_list")
-        %optgroup{:label => "Parameters"}
-          -parameters.each do |parameter|
-            %option{value:parameter} #{parameter}
-
-
-        %optgroup{:label => "MoEs"}
-          -outputs.each do |output|
-            %option{value:output} #{output}
 
   .row
     %ul.inline-list
@@ -62,9 +28,6 @@
         %button.radius Load chart
       %li
         %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_3d' size='16x16' style='display: none' )
-
-
-
 
 .charts
   .scripts
@@ -76,37 +39,20 @@
     /* function from global variable moes_info_json create html selectbox with moe and params values and then replacing exiting values with new ones*/
     window.reload_three_d_params = function(){
       $("#busy_3d").show();
-
+      
       if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
         moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
         moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
       }
-
-      //moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
-      var new_select ="<optgroup label='Parameters'>";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.id == "delimiter")
-          new_select = new_select +"</optgroup> <optgroup label='Moes'>";
-        else
-          new_select = new_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
-      }
-      new_select = new_select +"</optgroup>";
-
-      /* replace old values with new ones (input parameters and moes) */
-      $(".moes_params_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(new_select);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
+      
+      reload_selectbox_params_and_moes();
       $('#busy_3d').hide();
-      toastr.success("Parameters refreshed");
-
     };
     reload_three_d_params();
-
+    var reload_modal_params = function(){
+      reload_three_d_params();
+      toastr.success('Parameters refreshed');
+    };
     var three_d_chart_counter = 0;
     var load_chart = function() {
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
@@ -115,9 +61,9 @@
       var x_axis = $("#three_dModal select#firstParam option:selected").val();
       var y_axis = $("#three_dModal select#secondParam option:selected").val();
       var z_axis = $("#three_dModal select#thirdParam option:selected").val();
-      x_axis = escapeHtml(x_axis)
-      y_axis = escapeHtml(y_axis)
-      z_axis = escapeHtml(z_axis)
+      x_axis = escapeHtml(x_axis);
+      y_axis = escapeHtml(y_axis);
+      z_axis = escapeHtml(z_axis);
 
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
@@ -139,10 +85,7 @@
 
     };
 
-    $("#three_dModal").find("button.refresh").bind("click", reload_three_d_params);
-
-
-
+    $("#three_dModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#three_dModal").find("button.radius").bind("click", function() {
       $("#busy_3d").show();

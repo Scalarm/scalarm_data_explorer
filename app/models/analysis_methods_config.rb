@@ -1,4 +1,6 @@
 require 'json'
+include Scalarm::ServiceCore::ParameterValidation
+
 class AnalysisMethodsConfig
   attr_reader :content
 
@@ -42,7 +44,7 @@ class AnalysisMethodsConfig
           group["methods"] = [info]
         end
       else
-        raise "No such group: " + group_name + "(method: " + method_name + ") "
+        raise SecurityError.new('No such group: " + group_name + "(method: " + method_name + ")')
       end
     end
     groups

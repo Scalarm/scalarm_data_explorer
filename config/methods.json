@@ -1,5 +1,5 @@
 {
-    "methods": ["lindev", "three_d", "pareto", "interaction", "dendrogram", "kmeans"],
+    "methods": ["lindev", "three_d", "pareto", "interaction", "dendrogram", "kmeans", "sensitivity", "boxplot"],
 
     "groups": {
 
@@ -10,13 +10,13 @@
                 "id": "experiment-analysis-modal",
                 "em_class": "histogram-analysis",
                 "image": "histogram_icon.png",
-                "description": "A histogram analysis shows results frequency distributions"
+                "description": "A histogram analysis shows results frequency distributions."
             }, {
                 "name": "Scatter plot",
                 "id": "experiment-analysis-modal",
                 "em_class": "bivariate-analysis",
                 "image": "scatter_icon.png",
-                "description": "Analysis of two variables relationship creates a scatter plot"
+                "description": "Analysis of two variables relationship creates a scatter plot."
             }]
         },
         "params": {
@@ -26,7 +26,7 @@
                 "id": "experiment-analysis-modal",
                 "em_class": "rtree-analysis",
                 "image": "regression_icon.png",
-                "description": "The classification of objects by dividing the found set of conditions"
+                "description": "The method grows a tree by binary recursive partitioning using Analysis of Variance (anova) model."
             }]
         }
     }

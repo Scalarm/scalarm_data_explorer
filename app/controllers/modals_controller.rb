@@ -1,8 +1,6 @@
 class ModalsController < ApplicationController
   before_filter :load_experiment, only: :show
 
-
-
   ##
   # id -> modal ID
   def show
@@ -13,7 +11,7 @@ class ModalsController < ApplicationController
     validate(
         id: Proc.new do |param_name, value|
           unless methods.include? value
-            raise "Wrong chart name"
+            raise SecurityError.new("Wrong chart name")
           end
         end
     )
@@ -34,7 +32,4 @@ class ModalsController < ApplicationController
     #render both to site
     render :html => modal_content + '<script>'.to_s.html_safe + chart_file_content + '</script>'.to_s.html_safe
   end
-
-
-
 end

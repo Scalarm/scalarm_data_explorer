@@ -21,3 +21,11 @@
 
 en:
   hello: "Hello world"
+  sensitivity_analysis:
+    morris:
+      standard_deviation: "Standard deviation"
+      mean: "Mean"
+      absolute_mean: "Absolute mean"
+    fast:
+      first_order: "Main effect"
+      total_order: "Interactions"

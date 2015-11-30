@@ -1,53 +1,19 @@
 =define_helper_functions
 
-- parameters = @experiment.get_parameter_ids
--# parameters = %w(a b)
-- parameters_labels = parameters
-
-
-- #experiment_id = params[:id].to_s
-- #experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment_id)
-- filter = {is_done: true, is_error: {'$exists'=> false}}
-- fields = {fields: {result: 1}}
-- result = @experiment.simulation_runs.where(filter, fields).first
-- outputs=[]
-- if result.blank?
-  - outputs = ["No results found in completed simulation runs"]
-- else
-  - outputs = result.result.keys
-
 %section#lindev_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Line charts with standard deviation"
-  %h3 #{}
+
   .row
     .small-5.columns
       %label.inline="Select parameter on X"
     .small-7.columns
       %select(id="firstParam" class ="moes_params_list")
-        %optgroup{:label => "Parameters"}
-          -parameters.each do |parameter|
-            %option{value:parameter} #{parameter}
-
-
-        %optgroup{:label => "MoEs"}
-          -outputs.each do |output|
-            %option{value:output} #{output}
-
   .row
     .small-5.columns
       %label.inline="Select parameter on Y"
     .small-7.columns
       %select(id="secondParam" class ="moes_params_list")
-        %optgroup{:label => "Parameters"}
-          -parameters.each do |parameter|
-            %option{value:parameter} #{parameter}
-
-
-        %optgroup{:label => "MoEs"}
-          -outputs.each do |output|
-            %option{value:output} #{output}
-
 
   .row
     %ul.inline-list
@@ -70,39 +36,24 @@
     /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
     window.reload_lindev_params = function(){
       $("#busy_lindev").show();
-
+      
       if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
         moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
         moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
       }
-
-      var new_select ="<optgroup label='Parameters'>";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        if (param.id == "delimiter")
-            new_select = new_select +"</optgroup> <optgroup label='Moes'>";
-          else
-            new_select = new_select + "<option value='"+escapeHtml(param.id)+"'>"+escapeHtml(param.label)+"</option> ";
-      }
-      new_select = new_select +"</optgroup>";
-
-      /* replace old values with new ones (moes) */
-      $(".moes_params_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(new_select);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
+      
+      reload_selectbox_params_and_moes();
       $('#busy_lindev').hide();
-      toastr.success("Parameters refreshed");
     };
     reload_lindev_params();
-
+    var reload_modal_params = function(){
+      reload_lindev_params();
+      toastr.success('Parameters refreshed');
+    };
     var chart_counter = 0;
     var load_chart = function() {
 
-      var chart_div = $("<div id=\"chart_"+chart_counter+"\">")[0];
+      var chart_div = $("<div id=\"lindev_chart_"+chart_counter+"\">")[0];
       $("#lindevModal .charts").prepend(chart_div);
       var x_axis = $("#lindevModal select#firstParam option:selected").val();
       var y_axis = $("#lindevModal select#secondParam option:selected").val();
@@ -130,7 +81,7 @@
       chart_counter++;
 
     };
-    $("#lindevModal").find("button.refresh").bind("click", reload_lindev_params);
+    $("#lindevModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#lindevModal").find("button.radius").bind("click", function() {
       $("#busy_lindev").show();
