@@ -33,7 +33,7 @@
         %button.predict_chart Show hints
       %li
         %a
-          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_prediction' size='16x16' style='display: none' )
+          =loading_gif('busy_prediction')
 
 #predictResults.reveal-modal(data-reveal="")
 

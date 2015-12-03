@@ -31,7 +31,7 @@
         %li
           %button.radius Load chart
         %li
-          %img(src="#{image_url("loading.gif")}" id='busy_sensitivity' class='loading_chart_gif' size='16x16' style='display: none' )
+          =loading_gif('busy_sensitivity')
   -else
     .row
       .small-5.columns

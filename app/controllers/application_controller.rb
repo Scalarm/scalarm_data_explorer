@@ -18,6 +18,9 @@ class ApplicationController < ActionController::Base
   rescue_from MissingParametersError, with: :security_exception_handler
 
   PREFIX = '/'
+  attr_reader :prefix
+  # make prefix accessible in helpers to use full path
+  helper_method :prefix
   before_filter :load_prefix
 
   before_filter :check_request_origin
