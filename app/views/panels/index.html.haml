@@ -1,9 +1,4 @@
 =define_helper_functions
-%dl.accordion{id:"prediction_table"}
-  %li.accordion-navigation{id:"prediction_accordion"}
-    %a.group_title.tip-right.text-left{href: "#", id: "prediction", "title"=>"<div style=float:left;padding:10px;>Helps you choose analysis method based on results and your preferences</div><div style=width:35%;float:right;></div> ", "data-reveal-id"=>"prediction_tooltip", "data-tooltip"=>"",  style: "text-align: left; padding: 6px"}
-      %i.fa.fa-lightbulb-o{style: "color: 333; padding-: 3px; padding-right: 3px"}
-      %span  Assistant
 %ul{id: "searchList", style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
@@ -22,6 +17,11 @@
               %li
                 %a.tip-right.text-left{href:"#method"+method["name"], "class" => 'Modal',  "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{prefixed_image_url(method["image"])}/></div>", "id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
                   %span= method["name"]
+%dl.accordion{id:"prediction_table"}
+  %li.accordion-navigation{id:"prediction_accordion"}
+    %a.group_title.tip-right.text-left{href: "#", id: "prediction", "title"=>"<div style=float:left;padding:10px;>Helps you choose analysis method based on results and your preferences</div><div style=width:35%;float:right;></div> ", "data-reveal-id"=>"prediction_tooltip", "data-tooltip"=>"",  style: "text-align: left; padding: 6px"}
+      %i.fa.fa-lightbulb-o{style: "color: 333; padding-: 3px; padding-right: 3px"}
+      %span Further analysis...
 
 :javascript
   $(function(){

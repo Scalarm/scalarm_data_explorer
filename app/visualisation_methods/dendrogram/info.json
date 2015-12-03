@@ -1,7 +1,7 @@
 {
   "name": "Hierarchical clustering",
   "id": "dendrogram",
-  "group": "params",
+  "group": "data_mining",
   "image": "dendrogram_icon.png",
   "description": "Displays a dendrogram of clusters containing simulation runs with similar output attributes."
 }
