@@ -89,30 +89,29 @@ class Sensitivity
   #       "moe2":{
   #         "parameter1":{
   #           "original":0.21,
-  #           "min_c_i":0.15,
-  #           "max_c_i": 0.26
+  #           "min_ci":0.15,
+  #           "max_ci": 0.26
   #         },
   #         "parameter2":{
   #           "original":0.41,
-  #           "min_c_i":0.35,
-  #           "max_c_i": 0.56
+  #           "min_ci":0.35,
+  #           "max_ci": 0.56
   #         }
   #       },
   #       "moe1":{
   #         "parameter1":{
   #           "original":0.21,
-  #           "min_c_i":0.15,
-  #           "max_c_i": 0.26
+  #           "min_ci":0.15,
+  #           "max_ci": 0.26
   #         },
   #         "parameter2":{
   #           "original":0.41,
-  #           "min_c_i":0.35,
-  #           "max_c_i": 0.56
+  #           "min_ci":0.35,
+  #           "max_ci": 0.56
   #         }
   #       }
   #     }
   #   }
-
 
   def handler
     if parameters["id"] && parameters["chart_id"] && parameters["output"]
@@ -167,7 +166,7 @@ class Sensitivity
   def morris_visualization(output_hash_results)
     @method_name = "morris"
     extract_morris_series(output_hash_results)
-    do_normalization
+    normalize
   end
 
   # Call methods in order to prepare visualization of fast method
@@ -199,7 +198,7 @@ class Sensitivity
   # * *Outputs*:
   #   {"parameter1":{ "standard_deviation":0.81,"absolute_mean":0.55,"mean": 0.56},
   #   "parameter2":{ "standard_deviation":0.41, "absolute_mean":0.15, "mean": 0.16} ->
-  #   -> @sorted_parameters_names == [parameter2, parameter1]
+  #   sorted_parameters_names = [parameter2, parameter1]
   #
   def sort_parameters_names(output_hash_results)
     sorted_parameters_names = {}
@@ -224,8 +223,8 @@ class Sensitivity
   # * *Outputs*:
   #   {"parameter1":{ "standard_deviation":0.21,"absolute_mean":0.15,"mean": 0.26},
   #   "parameter2":{ "standard_deviation":0.41, "absolute_mean":0.35, "mean": 0.56} ->
-  #   -> @plot_series ==
-  #   == {name: "standard_deviation", data: [0.41, 0.21], legendIndex: 1},
+  #   -> plot_series =
+  #   {name: "standard_deviation", data: [0.41, 0.21], legendIndex: 1},
   #   {name: "absolute_mean", data: [0.35, 0.15], legendIndex: 2}
   #   {name: "mean", data: [0.56, 0.26], legendIndex: 3}}
   #
@@ -253,8 +252,8 @@ class Sensitivity
   # * *Outputs*:
   #   {"parameter1":{ "first_order":0.21,"total_order":0.25},
   #   "parameter2":{ "first_order":0.35, "total_order":0.41} ->
-  #   -> @plot_series ==
-  #   == {name: "Main effect", data: [0.35, 0.21], legendIndex: 1}
+  #   -> plot_series =
+  #   {name: "Main effect", data: [0.35, 0.21], legendIndex: 1}
   #   {name: "Interactions", data: [0.06, 0.04], legendIndex: 2}}
   def extract_fast_series(output_hash_results)
     @sorted_parameters_names = (@sorted_parameters_names).reverse
@@ -286,9 +285,9 @@ class Sensitivity
   # * *Outputs*:
   #   {"parameter1":{ "original":0.21,"min_ci":0.15,"max_ci": 0.26},
   #   "parameter2":{ "original":0.41, "min_ci":0.35, "max_ci": 0.56} ->
-  #   -> @plot_series ==
-  #   == @plot_series["error_data"] = [[0.15, 0.26], [0.35, 0.56]]
-  #   == @plot_series["scatter_data"] = [0.21, 0.41]
+  #   -> @plot_series =
+  #   plot_series["error_data"] = [[0.15, 0.26], [0.35, 0.56]]
+  #   plot_series["scatter_data"] = [0.21, 0.41]
   #
   def extract_pcc_series(output_hash_results)
     scatter_data = []
@@ -314,7 +313,7 @@ class Sensitivity
   # * *Outputs*:
   #   {"parameter1":{ "original":0.21,"min_ci":0.15,"max_ci": 0.26},
   #   "parameter2":{ "original":0.41, "min_ci":0.35, "max_ci": 0.56} ->
-  #   -> @parameters_names == [parameter1, parameter2]
+  #   -> parameters_names = [parameter1, parameter2]
   #
   def extract_categories_x_axis(output_hash_output_results)
     @parameters_names = output_hash_output_results.keys
@@ -328,7 +327,7 @@ class Sensitivity
   # * *Outputs*:
   #   {"parameter1":{ "original":0.21,"min_ci":0.15,"max_ci": 0.26},
   #   "parameter2":{ "original":0.41, "min_ci":0.35, "max_ci": 0.56} ->
-  #   -> @series_names == [original, min_ci, max_ci]
+  #   -> series_names = [original, min_ci, max_ci]
   #
   def extract_categories_series(output_hash_results)
     @series_names = output_hash_results[output_hash_results.keys[0]].keys
@@ -340,12 +339,12 @@ class Sensitivity
   #   {{name: "standard_deviation",  data:[1, 2, 7], legendIndex: 1},
   #   {name: "mean",  data:[1, 1, 1], legendIndex: 2},
   #   {name: "absolute_mean", data:[1, 2, 2], legendIndex: 3}} ->
-  #   -> @plot_series ==
-  #   == {{name: "Standard deviation",  data:[0.1, 0.2, 0.7], legendIndex: 1},
+  #   -> plot_series =
+  #   {{name: "Standard deviation",  data:[0.1, 0.2, 0.7], legendIndex: 1},
   #   {name: "Mean",  data:[0.33, 0.33, 0.33], legendIndex: 2},
   #   {name: "Absolute mean", data:[0.2, 0.4, 0.4], legendIndex: 3}}
   #
-  def do_normalization
+  def normalize
     series_to_plot = []
     @plot_series.each do |single_of_series_name|
       total_sum = single_of_series_name[:data].inject(0) {|sum, i|  sum + i.abs }
