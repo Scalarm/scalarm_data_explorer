@@ -1,12 +1,24 @@
 class ModalsController < ApplicationController
   before_filter :load_experiment, only: :show
 
-  ##
-  # id -> modal ID
+=begin
+apiDoc:
+  @api {get} /modals/:id Modal description
+  @apiName modals#show
+  @apiGroup Modal
+  @apiDescription When called it validate chart name and next render as hmtl modal content and JavaScript draw function to site
+  Modal content contain also JavaScript functions which handle button clicks e.g. load chart or refresh.
+
+  @apiParam {String} id chart method name
+  @apiParam {String} experiment_id ID of experiment
+
+
+=end
+
   def show
     # get config
-    analysisMethodsConfig = AnalysisMethodsConfig.new
-    methods = analysisMethodsConfig.get_method_names
+    analysis_methods_config = AnalysisMethodsConfig.new
+    methods = analysis_methods_config.get_method_names
     # validating chart_id (name of method)
     validate(
         id: Proc.new do |param_name, value|
