@@ -10,13 +10,13 @@
 %section#sensitivity_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   -if se_results.blank?
-    %h3.subheader="Sensitivity design"
+    %h3.subheader="Sensitivity analysis"
   -elsif se_results['sensitivity_analysis_method'] == "morris"
-    %h3.subheader="Sensitivity design - MORRIS"
+    %h3.subheader="Sensitivity analysis - MORRIS"
   -elsif se_results['sensitivity_analysis_method'] == "fast"
-    %h3.subheader="Sensitivity design - FAST"
+    %h3.subheader="Sensitivity analysis - FAST"
   -elsif se_results['sensitivity_analysis_method'] == "pcc"
-    %h3.subheader="Sensitivity design - PCC"
+    %h3.subheader="Sensitivity analysis - PCC"
 
   - if !se_results.blank? && (se_results["sensitivity_analysis_method"] == 'morris' || se_results["sensitivity_analysis_method"] == 'fast' || se_results["sensitivity_analysis_method"] == 'pcc')
     .row
