@@ -22,7 +22,7 @@ class AnalysisMethodsConfig
   ##
   # return information about method from method's catalog
   def get_groups(stand_alone)
-    if stand_alone == false || stand_alone.nil?
+    if stand_alone == 'false' || stand_alone.nil?
       groups = @content["groups"]
     else
       groups = {"basic"=>{"name"=>"Variate analysis", "methods"=>[]},

@@ -16,17 +16,6 @@ class PanelsControllerTest < ActionController::TestCase
   end
 
   test "should get show" do
-    # require 'scalarm/database'
-    #
-    # experiment = Scalarm::Database::Model::Experiment.new(a: 1)
-    # experiment.save
-    # @experiment = Scalarm::Database::Model::Experiment.find_by_id(experiment.id)
-    # get :show, id: experiment.id
-    #
-    # puts response.body
-    # assert_response :success
-
-
     stub_authentication
     experiment1_id = BSON::ObjectId.new
     PanelsController.any_instance.stubs(:handle_panel_for_experiment)
@@ -56,11 +45,6 @@ class PanelsControllerTest < ActionController::TestCase
     end
     Scalarm::Database::Model::Experiment.stubs(:visible_to).with(@user).returns(visible_experiments)
 
-    puts panels.groups
-    puts @groups
-
     get :index, id: experiment.id
-    puts experiment.id
-    # assert_response :success
   end
 end

@@ -3,7 +3,6 @@ require 'test_helper'
 require 'mocha'
 require 'db_helper'
 
-
 class ChartInstancesControllerTest < ActionController::TestCase
 
   def setup
@@ -39,43 +38,28 @@ class ChartInstancesControllerTest < ActionController::TestCase
 
 
   test "should get show success" do
-    ChartInstancesController.any_instance.expects(:require_plugin)
-    ChartInstancesController.any_instance.expects(:generate_content_with_plugin).with('dendrogram', @experiment, includes('chart_id' , 'output')).returns('<script>alert(\'1\')</script>')
-
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product', stand_alone: 'true'
     assert_response :success
   end
 
   # there should be section with id like name of method in id
   test "should load appropriate type of chart" do
-    ChartInstancesController.any_instance.expects(:require_plugin)
-    ChartInstancesController.any_instance.expects(:generate_content_with_plugin).with('dendrogram', @experiment, includes('chart_id' , 'output')).returns('<script>alert(\'1\')</script>')
-
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product', stand_alone: 'true'
     assert_equal 'dendrogram_chart_form', response.body[/\<section\s+class='panel\s+radius\s+plot'\s+id='(.*?)'>/,1]
   end
 
-  test "should load css if stand_alone = false" do
-    ChartInstancesController.any_instance.expects(:require_plugin)
-    ChartInstancesController.any_instance.expects(:generate_content_with_plugin).with('dendrogram', @experiment, includes('chart_id' , 'output')).returns('<script>alert(\'1\')</script>')
-
+  test "should load css if stand_alone = true" do
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product', stand_alone: 'true'
     assert_includes response.body, '/assets/application.css', nil
   end
 
-  test "should not load css if stand_alone = true" do
-    ChartInstancesController.any_instance.expects(:require_plugin)
-    ChartInstancesController.any_instance.expects(:generate_content_with_plugin).with('dendrogram', @experiment, includes('chart_id' , 'output')).returns('<script>alert(\'1\')</script>')
-
+  test "should not load css if stand_alone = false" do
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product', stand_alone: 'false'
     refute_includes response.body, '/assets/application.css', nil
   end
 
   test "should not load css if stand_alone is not defined" do
-    ChartInstancesController.any_instance.expects(:require_plugin)
-    ChartInstancesController.any_instance.expects(:generate_content_with_plugin).with('lindev', @experiment, includes('chart_id' , 'output')).returns('<script>alert(\'1\')</script>')
-
-    get :show, id: 'lindev', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product'
+    get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product'
     refute_includes response.body, '/assets/application.css', nil
   end
 end
