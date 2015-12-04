@@ -30,8 +30,8 @@ class ThreeDTest < MiniTest::Test
     @arguments_ids.stubs(:index).with('parameter1').returns(true)
     @arguments_ids.stubs(:index).with('parameter2').returns(true)
     @arguments_ids.stubs(:index).with('product').returns(false)
-    assert_equal [[0.0, 8.0, 0.0], [2.0, 7.0, 14.0]], @three_d.get3d('parameter1', 'parameter2', 'product', @simulation_runs, @arguments_ids)
-    assert_equal [], @three_d.get3d('parameter1', 'parameter2', 'product', [], @arguments_ids)
+    assert_equal [[0.0, 8.0, 0.0], [2.0, 7.0, 14.0]], @three_d.get3d('parameter1', 'parameter2', 'product', @simulation_runs, @arguments_ids)[:values]
+    assert_equal [], @three_d.get3d('parameter1', 'parameter2', 'product', [], @arguments_ids)[:values]
   end
 
   def test_get_points
