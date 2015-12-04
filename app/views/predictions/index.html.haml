@@ -4,7 +4,11 @@
 - prediction_objects= ['category - with known number of categories', 'category - with unknown number of categories', 'structure', 'quantity', 'anything']
 %section#prediction_charts_form.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
-  %h3.subheader="Suggest charts for data analysis"
+  %h3.subheader='Data analysis advisor'
+  .row
+    .small-12.colums
+      %p
+        Advisor provides suggestions related to data mining and machine learning analysis methods based on user preferences.
   .row
     .small-5.columns
       %label.inline="What do you want to predict?"
@@ -33,7 +37,7 @@
         %button.predict_chart Show hints
       %li
         %a
-          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_prediction' size='16x16' style='display: none' )
+          =loading_gif('busy_prediction')
 
 #predictResults.reveal-modal(data-reveal="")
 

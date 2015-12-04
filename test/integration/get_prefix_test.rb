@@ -59,25 +59,36 @@ class GetPrefixTest < ActionDispatch::IntegrationTest
 
   # Also "https://" will be as IS address prefix
   test '@prefix should be set to random value from IS if no base_url in configuration given' do
+    ## Given
     addresses = ['one', 'two']
     urls = addresses.collect {|a| "https://#{a}"}
     information_service = mock 'information_service' do
       stubs(:get_list_of).with('data_explorers').returns(addresses)
     end
+    # Override test base_url config
+    Rails.application.secrets.stubs(:base_url).returns(nil)
     InformationService.stubs(:instance).returns(information_service)
 
+    ## When
     get '/foo', format: :json
 
+    ## Then
     assert_response :success, "Not success response: #{body}"
     assert_includes urls, body.to_s, body
   end
 
-  test '@prefix controller variable should be set to PREFIX const if there is no other prefix cantidates' do
+  test '@prefix controller variable should be set to PREFIX const if there is no other prefix candidates' do
+    ## Given
     Utils.stubs(:random_service_public_url).with('data_explorers')
         .returns(nil)
 
+    # Override test base_url config
+    Rails.application.secrets.stubs(:base_url).returns(nil)
+
+    ## When
     get '/foo', format: :json
 
+    ## Then
     assert_response :success, body
     assert_equal ApplicationController::PREFIX, body.to_s, body
   end

@@ -21,6 +21,10 @@
         },
         "params": {
             "name": "Parameters influence",
+            "methods": []
+        },
+        "data_mining": {
+            "name": "Data mining",
             "methods": [{
                 "name": "Regression trees",
                 "id": "experiment-analysis-modal",
