@@ -90,10 +90,7 @@ $.prototype.disable = function () {
 
 
 function create_chart_div(method_name, id_chart) {
-    if (method_name == 'lindev' || method_name == 'dendrogram')
-        var method_chart_div = $("<div id=\"" + "chart_" + id_chart + "\">")[0];
-    else
-        var method_chart_div = $("<div id=\"" + method_name + "_chart_" + id_chart + "\">")[0];
+    var method_chart_div = $("<div id=\"" + method_name + "_chart_" + id_chart + "\">")[0];
     var chart_div = document.createElement('div');
     chart_div.className = 'chart';
     chart_div.style.marginLeft = '20%';

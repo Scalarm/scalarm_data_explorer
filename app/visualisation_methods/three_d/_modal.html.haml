@@ -32,6 +32,9 @@
 .charts
   .scripts
 
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
 :javascript
 
   $(function(){

@@ -1,7 +1,9 @@
 dendrogram_main = function(i, param_x, data, experiment_id, prefix) {
+    prefix = "<%= Utils.random_service_public_url('experiment_managers')%>"
     if($("#dendrogramModal").length == 0) {
         create_chart_div('dendrogram', i);
     }
+
     var root = JSON.parse(data);
 
     var si = 30;

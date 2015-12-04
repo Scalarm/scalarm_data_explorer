@@ -28,9 +28,10 @@
 .charts
   .scripts
 
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
 :javascript
-
-
   $(function(){
 
     /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */

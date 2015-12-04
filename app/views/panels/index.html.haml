@@ -23,6 +23,8 @@
                 %a.tip-right.text-left{href:"#method"+method["name"], "class" => 'Modal',  "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src=#{image_url(method["image"])}/></div>", "id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
                   %span= method["name"]
 
+#clusterInfo.reveal-modal(data-reveal="")
+
 :javascript
   $(function(){
     $(document).foundation();
@@ -47,7 +49,8 @@
 
         $('#'+ modalIdName + 'Modal').html(window.loaderHTML);
         $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
-        var url = "#{@prefix}/modals/" + modalIdName + "?experiment_id=#{@experiment.id}&base_url=" + encodeURIComponent("#{@prefix}");
+
+        var url = "#{@prefix}/modals/" + modalIdName + "?experiment_id=#{@experiment.id}&base_url=" + encodeURIComponent("#{@prefix}") + "&stand_alone=" + "false" + "&moes_info_exist=" + "false";
         var handler = function(data) {
           $('#'+ modalIdName + 'Modal').html(data);
 
@@ -69,13 +72,15 @@
         $('#'+ predictionModalName + 'Modal').foundation('reveal', 'open');
         var url = "#{@prefix}/predictions?experiment_id=#{@experiment.id}";
 
-    $("#searchList").find("#params").bind("click", function() {
-        $('#params').foundation('tooltips', 'generate', '<img src="http://..../.jpg" />');
-        if (!$("#content_params").is(":visible"))
-          $("#content_params").show();
-        else
-          $("#content_params").hide();
-      });
+        var handler = function(data) {
+          $('#'+ predictionModalName + 'Modal').html(data);
+        };
+        getWithSession(url, {}, handler, onErrorHandler);
+      }
+      else{
+        $('#'+ predictionModalName + 'Modal').foundation('reveal', 'open');
+      }
+    });
 
     $("#searchList").on("click", "a.group_title", function (){
       var accordion_id = "#accordion" + $(this).text().replace(/\s/g, '');

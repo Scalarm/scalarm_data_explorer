@@ -26,12 +26,21 @@
 .charts
   .scripts
 
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
 :javascript
   $(function(){
 
     /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
     window.reload_boxplot_params = function(){
       $("#busy_boxplot").show();
+
+      if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
+      }
+
       reload_selectbox_allowed_params_and_moes(#{Utils::param_ids_with_less_than_n_values(@experiment, 10)});
       $('#busy_boxplot').hide();
     };

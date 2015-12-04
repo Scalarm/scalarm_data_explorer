@@ -40,8 +40,15 @@ class ChartInstancesController < ApplicationController
     else
       layout_value = true
     end
+
+    chart_file_content = ''
+    if params[:stand_alone] == 'true'
+      chart_file_content = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id,"chart.js"), layout: false
+      chart_file_content = '<script>'.to_s.html_safe + chart_file_content + '</script>'.to_s.html_safe
+    end
+
     @content = Utils::generate_content_with_plugin(chart_id, @experiment, params)
     chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, 'chart.html.haml'), layout: layout_value
-    render :html => (chart_header + @content.to_s.html_safe), content_type: 'text/html', layout: false
+    render :html => (chart_header + chart_file_content + @content.to_s.html_safe), content_type: 'text/html', layout: false
   end
 end
