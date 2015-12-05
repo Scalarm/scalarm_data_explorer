@@ -80,7 +80,7 @@ apiDoc:
       algorithm_spec = algorithm_matcher.algorithm.name.to_s + " - " + algorithm_matcher.algorithm.description.to_s
       algorithms.push(algorithm_spec)
     end
-    @prediction_results = {"Hints" => results.hints, "Recommended algorithms" => algorithms, "Notes" => results.notes}
+    @prediction_results = {recommended_algorithms: algorithms, hints: results.hints, notes: results.notes}
     render :show, layout: false
   end
 
