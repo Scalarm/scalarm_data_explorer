@@ -5,9 +5,10 @@ class ModalsController < ApplicationController
 apiDoc:
   @api {get} /modals/:id Modal description
   @apiName modals#show
-  @apiGroup Modal
-  @apiDescription When called it validate chart name and next render as hmtl modal content and JavaScript draw function to site
-  Modal content contain also JavaScript functions which handle button clicks e.g. load chart or refresh.
+  @apiGroup Modals
+  @apiDescription When called, validates chart name (:id).
+  Then use visualisation methods plugin (located at /app/visualisation_methods in application) to render modal with HTML and JavaScript (draw function) content intended for particular experiment (:experiment_id).
+  Modal content also contains JS functions which handle button clicks e.g. load chart or refresh.
 
   @apiParam {String} id chart method name
   @apiParam {String} experiment_id ID of experiment

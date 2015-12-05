@@ -7,7 +7,9 @@ apiDoc:
   @api {get} /cluster_infos/:id Cluster description
   @apiName cluster_infos#show
   @apiGroup ClusterInfos
-  @apiDescription Returns html or json with statistical information about simulation runs for input and output parameters.
+  @apiDescription When called, it validates 'simulations' parameter and then create list of integer values from this variable.
+  Next, it initialize ClusterInfos class and invoke 'evaluate' class method which firstly create result set and then calculate statistical factors.
+  Returns html or json with statistical information about simulation runs for input and output parameters.
   Json contain calculated mean, variance, skewness, kurtosis, median, standard_deviation, upper/lower quartiles, argument ranges
 
   @apiParam {String} id ID of experiment

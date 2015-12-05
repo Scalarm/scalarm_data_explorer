@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   get 'status' => 'status#status'
 
-  resources :panels, only: [:index, :show]
+  resources :panels, only: [:show]
   resources :moes, only: [:show]
   resources :chart_instances, only: [:show]
   resources :cluster_infos, only: [:show]
