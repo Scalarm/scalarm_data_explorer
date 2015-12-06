@@ -10,8 +10,10 @@ apiDoc:
   @api {get} /chart_instances/:id Chart rendering
   @apiName chart_instances#show
   @apiGroup ChartInstances
-  @apiDescription When called, firstly validates chart name (:id) and then escape all other parameters for safety. Next, invoke visualisation class method handler (located at /app/visualisation_methods/plugin in application) to prepare data for loaded draw function content.
-  Return html header rendered from file (located at /app/visualisation_methods/<chart_name>/chart in application) which add new window to modal with generated chart. It also has a hide button with JavaScript function which handle click event.
+  @apiDescription Return html rendered from file (located at /app/visualisation_methods/<chart_name>/chart in application) which add new window to modal with generated chart.
+  When called, firstly validates chart name (:id) and then escapes all other parameters for safety.
+  Next, invoke visualization class method handler (located at /app/visualisation_methods/plugin in application) to prepare data for loaded draw function content.
+  Rendered view contain a hide button and JavaScript function which handle button clicks.
 
 
   @apiParam {String} id chart method name

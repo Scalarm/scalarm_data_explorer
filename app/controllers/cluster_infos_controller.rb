@@ -4,20 +4,20 @@ class ClusterInfosController < ApplicationController
 
 =begin
 apiDoc:
-  @api {get} /cluster_infos/:id Cluster description
+  @api {get} /cluster_infos/:id Cluster statistical description
   @apiName cluster_infos#show
   @apiGroup ClusterInfos
-  @apiDescription When called, it validates 'simulations' parameter and then create list of integer values from this variable.
-  Next, it initialize ClusterInfos class and invoke 'evaluate' class method which firstly create result set and then calculate statistical factors.
-  Returns html or json with statistical information about simulation runs for input and output parameters.
-  Json contain calculated mean, variance, skewness, kurtosis, median, standard_deviation, upper/lower quartiles, argument ranges
+  @apiDescription Returns html or json with statistical information about simulation runs for input and output parameters.
+  When called, it validates 'simulations' parameter and then creates list of integer values from this variable.
+  Next, it initializes ClusterInfos class and invokes 'evaluate' class method which firstly creates result set and then calculates statistical factors.
+  Json contain 2 fields status (ok / error) and data (hash) with calculated mean, variance, skewness, kurtosis, median, standard_deviation, upper/lower quartiles, argument ranges for all experiment parameters.
 
   @apiParam {String} id ID of experiment
   @apiParam {String} simulations ids of simulation runs separated with comma
   @apiParam {String} cluster_id ID (name) of cluster
   @apiParam {String} chart_name name of method
 
-  @apiSuccessExample {json} Success-Response
+  @apiSuccessExample {json} Success-Response with 4 parameters: 2 input -> parameter1, parameter2 and 2 output -> product, product_2
   {
     "status":"ok",
     "data":{
