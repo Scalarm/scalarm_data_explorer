@@ -14,6 +14,9 @@ class AlgorithmMatchers
       AlgorithmMatcher.new(Algorithm.new('Naive Bayes', AlgorithmType.classification, "if 'Linear SVC' not working"),
                            AlgorithmAttributes.new(Prediction.category_unknown_number_of_categories, NumberOfSamples.more_than_100k, TextData.yes, LabeledData.yes)),
 
+      AlgorithmMatcher.new(Algorithm.new('Regression Tree', AlgorithmType.classification, "if 'Linear SVC' not working"),
+                           AlgorithmAttributes.new(Prediction.category_unknown_number_of_categories, NumberOfSamples.more_than_50_less_than_100k, TextData.not_relevant, LabeledData.no)),
+
       AlgorithmMatcher.new(Algorithm.new('KNeighbors Classifier', AlgorithmType.classification,  "if 'Linear SVC' not working"),
                            AlgorithmAttributes.new(Prediction.category_unknown_number_of_categories, NumberOfSamples.more_than_100k, TextData.no, LabeledData.yes)),
 
@@ -25,6 +28,9 @@ class AlgorithmMatchers
 
       AlgorithmMatcher.new(Algorithm.new('KMeans', AlgorithmType.clustering, "first choice algorithm in a class"),
                            AlgorithmAttributes.new(Prediction.category_known_number_of_categories, NumberOfSamples.moreThan10k, TextData.not_relevant, LabeledData.no)),
+
+      AlgorithmMatcher.new(Algorithm.new('Hierarchical clustering', AlgorithmType.clustering, "first choice algorithm in a class"),
+                           AlgorithmAttributes.new(Prediction.category_unknown_number_of_categories, NumberOfSamples.more_than_50_less_than_100k, TextData.not_relevant, LabeledData.no_info)),
 
       AlgorithmMatcher.new(Algorithm.new('Spectral Clustering GMM', AlgorithmType.clustering, "if 'KMeans' not working"),
                            AlgorithmAttributes.new(Prediction.category_known_number_of_categories, NumberOfSamples.moreThan10k, TextData.not_relevant, LabeledData.no)),
