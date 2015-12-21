@@ -50,7 +50,7 @@
         $('#'+ modalIdName + 'Modal').html(window.loaderHTML);
         $('#'+ modalIdName + 'Modal').foundation('reveal', 'open');
 
-        var url = "#{@prefix}/modals/" + modalIdName + "?experiment_id=#{@experiment.id}&base_url=" + encodeURIComponent("#{@prefix}") + "&stand_alone=" + "false" + "&moes_info_exist=" + "false";
+        var url = "#{@prefix}/modals/" + modalIdName + "?experiment_id=#{@experiment.id}&base_url=" + encodeURIComponent("#{@prefix}") + "&stand_alone=" + "false" + "&moes_info_exist=" + "true";
         var handler = function(data) {
           $('#'+ modalIdName + 'Modal').html(data);
 

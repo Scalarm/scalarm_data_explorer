@@ -1,5 +1,4 @@
 class ThreeD
-
   attr_accessor :experiment
   attr_accessor :parameters
 
@@ -73,7 +72,7 @@ class ThreeD
       b = item.to_f
 
       if item.eql? a.to_s
-        @types_of_parameters_for_input[data] = "integer"
+        @types_of_parameters_for_input[data] =  "integer"
       elsif item.eql? b.to_s
         @types_of_parameters_for_input[data] = "float"
       elsif item.is_a? String
@@ -167,8 +166,9 @@ class ThreeD
   end
 
   #
-  # return array of points
-  # point is array of values: [x,y,z]
+  # return {values: data, values_with_index: values_and_index}
+  # data - array of points [x,y,z]
+  # values with index - array of {:index=>1, "param_x"=>1, "param_y"=>1, "parm_z"=>3}, index = id of simulation run
   def get3d(param_x, param_y, param_z, simulation_runs, argument_ids)
     values_and_index = []
     simulation_runs = simulation_runs.map do |data|
@@ -181,6 +181,7 @@ class ThreeD
       data = get_points(data_sim, param_y, argument_ids, data, index)
       data = get_points(data_sim, param_z, argument_ids, data, index)
     end
+    Rails.logger.debug(values_and_index)
     {values: data, values_with_index: values_and_index}
   end
 
