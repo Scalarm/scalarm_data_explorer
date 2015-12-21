@@ -58,6 +58,15 @@ class DendrogramTest < MiniTest::Test
     assert_equal nil, @dendrogram.create_hash({'1'=>[-2,-3]}, 4, 0)
   end
 
+  def test_create_json
+    assert_equal "{\"id\":\"1\",\"children\":[{\"id\":\"2\"},{\"id\":\"3\"}]}", @dendrogram.create_json({'1'=>[-2,-3]}, 1)
+    assert_equal nil, @dendrogram.create_json({'1'=>[-2,-3]}, 3)
+    assert_equal nil, @dendrogram.create_json({'1'=>[2,-3]}, 4)
+    assert_equal "{\"id\":\"1\",\"children\":[{\"id\":\"2\",\"children\":[{\"id\":\"4\"},{\"id\":\"5\"}]},{\"id\":\"3\"}]}", @dendrogram.create_json({'1'=>[2,-3], '2'=>[-4,-5]}, 1)
+    assert_equal "{\"id\":\"1\",\"children\":[{\"id\":\"3\",\"children\":[{\"id\":\"4\"},{\"id\":\"5\"}]},{\"id\":\"2\"}]}", @dendrogram.create_json({'1'=>[-2,3], '3'=>[-4,-5]}, 1)
+    assert_equal "{\"id\":\"1\",\"children\":[{\"id\":\"2\",\"children\":[{\"id\":\"6\"},{\"id\":\"7\"}]},{\"id\":\"3\",\"children\":[{\"id\":\"4\"},{\"id\":\"5\"}]}]}", @dendrogram.create_json({'1'=>[2,3], '2'=>[-6,-7], '3'=>[-4,-5]}, 1)
+  end
+
   def test_get_the_best_depth
     assert_equal 1, @dendrogram.get_the_best_depth({'1'=>[-2,-3]}, 1, ({'id'=>1, 'depth'=>0, 'children'=>[{'id'=>2}, {'id'=>3}]}))
     data = {'1'=>[-2,3], '3'=>[-1,4], '4'=>[5,6], '5'=>[-7,-8], '6'=>[-9,-10]}
