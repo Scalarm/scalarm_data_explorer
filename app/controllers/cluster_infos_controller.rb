@@ -19,10 +19,15 @@ class ClusterInfosController < ApplicationController
         v.map! { |array_value| ERB::Util.h(array_value) } : v.kind_of?(Hash) ?
             v.update(v) { |k_s, v_s| ERB::Util.h(v_s) } : ERB::Util.h(v) }
 
+    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
+      layout_value = false
+    else
+      layout_value = true
+    end
 
     respond_to do |format|
-      format.html { render layout: false }
-      format.json { render json: {status: 'ok', data: @content} }
+      format.html { render layout: layout_value }
+      format.json { render json: {status: 'ok', data: @content } }
 
     end
   end

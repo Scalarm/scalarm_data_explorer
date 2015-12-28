@@ -22,6 +22,18 @@ module Utils
     random_address.nil? ? nil : "https://#{random_address}"
   end
 
+  def self.require_plugin(chart_id)
+    path = Rails.root.join('app','visualisation_methods',"#{chart_id}","plugin")
+    require(path)
+  end
+
+  def self.generate_content_with_plugin(chart_id, experiment, params)
+    handler = chart_id.camelize.constantize.new
+    handler.experiment = experiment
+    handler.parameters = params
+    handler.handler
+  end
+
   ##
   # check which parameters and moes have no more than n values and return array of ids
   def self.param_ids_with_less_than_n_values(experiment, n)

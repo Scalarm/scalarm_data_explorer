@@ -18,13 +18,18 @@ class ModalsController < ApplicationController
     #get method name
     chart_id = params[:id].to_s
 
+    # set layout
+    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
+      layout_value = false
+    else
+      layout_value = true
+    end
+
     # get modal file to string
-    modal_content = render_to_string :file => Rails.root.join('app', 'visualisation_methods', chart_id, "_modal.html.haml"), layout: false
+    modal_content = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, "_modal.html.haml"), layout: layout_value
     # get draw function body to string
-    chart_file_content = render_to_string :file => Rails.root.join('app', 'visualisation_methods', chart_id, "chart.js"), layout: false
+    chart_file_content = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id,"chart.js"), layout: false
     #render both to site
     render :html => modal_content + '<script>'.to_s.html_safe + chart_file_content + '</script>'.to_s.html_safe
   end
-
-
 end

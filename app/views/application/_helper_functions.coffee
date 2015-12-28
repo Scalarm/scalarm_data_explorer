@@ -114,3 +114,31 @@ window.reload_selectbox_parameters = ->
     return
 
 
+
+
+window.getMoesInfoJson = (input_params, output_params) =>
+  moes_info_json_tmp = []
+  for i in [0..input_params.length-1]
+    moes_info_json_tmp.push({label: input_params[i], id: input_params[i], type: "input_parameter"})
+  moes_info_json_tmp.push({ label: "-----------", id: "nil", type: "" })
+  for i in [0..output_params.length-1]
+    moes_info_json_tmp.push({label: output_params[i], id: output_params[i], type: "moes_parameter"})
+  moes_info_json_tmp
+
+
+window.getMoeInfo = (output_params, values) =>
+  moes_info_tmp = {"moes": "", "moes_and_params": "", "params": "", "moes_types": [], "moes_names": [], "inputs_types": "", "inputs_names": ""}
+  for i in [0..output_params.length-1]
+    moes_info_tmp["moes_names"].push(output_params[i])
+    if typeof values[i] == 'string'
+      type = 'string'
+    else
+      if !!(values[i] % 1)
+        type = 'float'
+      else
+        type = 'integer'
+    moes_info_tmp["moes_types"].push(type)
+
+  moes_info_tmp
+
+

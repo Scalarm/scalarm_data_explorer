@@ -19,19 +19,26 @@
         %button.radius.load Load chart
       %li
     %a
-      %img(src="#{image_url("loading.gif")}" id='busy_dendrogram' class='loading_chart_gif' size='16x16' style='display: none' )
+      =loading_gif('busy_dendrogram')
 
 .charts
   .scripts
 
-#clusterInfo.reveal-modal(data-reveal="")
-
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
 :javascript
   $(function(){
 
     /* function from global variable moes_info_json create html checkbox and then replacing exiting with new ones*/
     window.reload_dendrogram_params = function(){
       $('#busy_dendrogram').show();
+      
+      if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
+      }
+      
       reload_checkbox();
       $('#busy_dendrogram').hide();
 
@@ -68,10 +75,10 @@
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
         $(chart_div).html(data);
       };
-      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}"}, handler, onErrorHandler);
+      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}", base_url: "#{@prefix}"}, handler, onErrorHandler);
       chart_counter++;
     };
-    $("#dendrogramModal").find("button.refresh").bind("click", reload_modal_params);
+    $("#dendrogramModal").find("button.refresh").bind("click", reload_dendrogram_params);
 
     $("#dendrogramModal").find("button.radius.load").bind("click", function() {
       if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");

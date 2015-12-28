@@ -21,8 +21,15 @@ class AnalysisMethodsConfig
 
   ##
   # return information about method from method's catalog
-  def get_groups
-    groups = @content["groups"]
+  def get_groups(stand_alone)
+    if stand_alone == 'false' || stand_alone.nil?
+      groups = @content["groups"]
+    else
+      groups = {"basic"=>{"name"=>"Variate analysis", "methods"=>[]},
+                "params"=>{"name"=>"Parameters influence", "methods"=>[]}}
+    end
+
+
     methods = get_method_names
     methods.each do |method_name|
       json = File.read("app/visualisation_methods/#{method_name}/info.json")

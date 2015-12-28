@@ -16,7 +16,7 @@ class PanelsController < ApplicationController
 
   def handle_panel_for_experiment
 
-    panels = Panels.new
+    panels = Panels.new(params[:stand_alone])
     @methods = panels.methods
     @groups = panels.groups
 
@@ -24,7 +24,13 @@ class PanelsController < ApplicationController
       raise 'No experiment'
     end
 
-    render :index, :layout => false
+    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
+      layout_value = false
+    else
+      layout_value = true
+    end
+
+    render :index, :layout => layout_value
   end
 
 end

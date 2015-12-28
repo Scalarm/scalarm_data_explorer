@@ -1,3 +1,5 @@
+
+/* Add imports of custom sass/scss files here */
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
@@ -12,4 +14,40 @@
  *
  *= require_tree .
  *= require_self
+
+ //= require foundation_and_overrides
+
+ *= require foundation_and_overrides
+ *= require toastr
+
+
+
  */
+ @import 'foundation-icons';
+ @import 'font-awesome';
+ @import 'foundation_and_overrides';
+
+.hidden {
+  display: none;
+}
+
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.log-box {
+  max-height: 350px;
+  overflow-y: scroll;
+  font-size: 12px;
+  font-family: monospace
+}
+
+.toast-top-right {
+  top: 100px;
+  right: 12px;
+}

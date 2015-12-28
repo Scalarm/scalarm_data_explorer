@@ -1,26 +1,31 @@
 window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, secondLevel, experiment_id, prefix) {
+    if($("#kmeansModal").length == 0) {
+        create_chart_div('kmeans', i);
+    }
 
     function openViewer() {
         return function(){
             var clucter_id = this.id;
-            var simulations = this.indexes.join();
+            var simulations = this.indexes;
 
             show_cluster_info_modal(clucter_id, simulations);
-
-
-
         }
     }
 
     function show_cluster_info_modal(cluster_id, simulations) {
-        var url = "<%= @prefix %>/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations + "&chart_id=kmeans";
+        if (simulations.length < 1500) {
+            var simulations_string = simulations.toString();
+            var url = "<%= @prefix %>/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations_string + "&chart_id=kmeans";
 
-        var handler = function(data) {
-            $('#clusterInfo').html(data);
+            var handler = function(data) {
+                $('#clusterInfo').html(data);
+            };
+            $('#clusterInfo').html(window.loaderHTML);
             $('#clusterInfo').foundation('reveal', 'open');
+            getWithSession(url, {}, handler, onErrorHandler);
+        } else {
+            toastr.error('This cluster contains to many simulations to show cluster details');
         }
-        $('#clusterInfo').html(window.loaderHTML);
-        getWithSession(url, {}, handler);
     }
 
     var empty_subcluster;

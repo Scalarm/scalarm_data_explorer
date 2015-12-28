@@ -1,5 +1,5 @@
 {
-    "methods": ["lindev", "three_d", "pareto", "interaction", "dendrogram", "kmeans", "morris", "boxplot"],
+    "methods": ["lindev", "three_d", "pareto", "interaction", "dendrogram", "kmeans", "sensitivity", "boxplot"],
 
     "groups": {
 
@@ -21,6 +21,10 @@
         },
         "params": {
             "name": "Parameters influence",
+            "methods": []
+        },
+        "data_mining": {
+            "name": "Data mining",
             "methods": [{
                 "name": "Regression trees",
                 "id": "experiment-analysis-modal",

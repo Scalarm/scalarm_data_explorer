@@ -92,4 +92,11 @@ class BoxplotTest < MiniTest::Test
     assert_equal ({"whisker_bottom"=>-1.0, "q1"=>2.0, "med"=>3.0, "q3"=>4.0, "whisker_upper"=>7.0}), @boxplot.get_statictics([1,2,3,4,5])
     assert_equal ({"whisker_bottom"=>1.0, "q1"=>1.0, "med"=>1.0, "q3"=>1.0, "whisker_upper"=>1.0}), @boxplot.get_statictics([1])
   end
+
+  def test_param_ids_with_less_than_n_values
+    assert_equal ([]), Utils.param_ids_with_less_than_n_values(@experiment, 0)
+    assert_equal (["product"]), Utils.param_ids_with_less_than_n_values(@experiment, 1)
+    assert_equal (["parameter1", "product"]), Utils.param_ids_with_less_than_n_values(@experiment, 3)
+    assert_equal (["parameter1", "parameter2", "product"]), Utils.param_ids_with_less_than_n_values(@experiment, 8)
+  end
 end

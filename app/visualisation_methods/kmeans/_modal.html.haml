@@ -33,14 +33,15 @@
         %button.radius.load Load chart
       %li
         %a
-          %img(src="#{image_url("loading.gif")}" class="loading_chart_gif" id='busy_kmeans' size='16x16' style='display: none' )
+          =loading_gif('busy_kmeans')
 
 
 .charts
   .scripts
 
-#clusterInfo.reveal-modal(data-reveal="")
-
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
 :javascript
   $(function(){
 
@@ -48,6 +49,12 @@
     window.reload_kmeans_params = function(){
       $('#busy_kmeans').show();
       reload_checkbox();
+      
+      if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
+      }
+      
       $('#busy_kmeans').hide();
     };
     reload_kmeans_params();
@@ -83,6 +90,7 @@
       query_params += "&chart_id="+chart_counter;
       query_params += "&clusters="+numb_cluster;
       query_params += "&subclusters="+numb_subcluster;
+      query_params += "&stand_alone=false";
 
       var url = "#{@prefix}/chart_instances/kmeans?"+query_params;
       var handler = function(data) {

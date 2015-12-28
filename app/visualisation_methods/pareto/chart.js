@@ -3,6 +3,11 @@ window.pareto_main = function (i, data) {
 		if(prev.value<cur.value) return cur;
 		else return prev;
 	});
+
+	if($("#paretoModal").length == 0) {
+		create_chart_div('pareto', i);
+	}
+
 	var chart = new Highcharts.Chart({
 		chart: {
 			renderTo: $('#pareto_chart_'+ i + " .chart")[0],

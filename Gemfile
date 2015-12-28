@@ -41,9 +41,14 @@ gem 'jquery-ui-rails'
 gem 'jquery-tmpl-rails'
 gem 'jit-rails'
 gem 'haml'
+gem 'foundation-rails'
+gem 'foundation-icons-sass-rails'
+gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-rails.git'
+gem 'font-awesome-sass', '4.1'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-gem 'foundation-rails'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
@@ -76,4 +81,4 @@ gem 'scalarm-database', '1.2', git: 'git://github.com/Scalarm/scalarm-database.g
 
 # for local development - set path to scalarm-core
 # gem 'scalarm-service_core', path: '/Users/jliput/Scalarm/scalarm-service_core'
-gem 'scalarm-service_core', '~> 1.0', git: 'git://github.com/Scalarm/scalarm-service_core.git'
+gem 'scalarm-service_core', '~> 1.1.1', git: 'git://github.com/Scalarm/scalarm-service_core.git'

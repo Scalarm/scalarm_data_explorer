@@ -5,7 +5,6 @@ class Kmeans
   include Scalarm::ServiceCore::ParameterValidation
 
   def handler
-
     if parameters["id"] && parameters["array"]
       object = {}
       data, subclusters = get_data_for_kmeans
@@ -50,7 +49,7 @@ class Kmeans
 
     #getting data
     moes = Array(parameters["array"])
-    simulation_ind, result_data = create_data_result
+    simulation_ind, result_data = create_data_result(experiment = @experiment)
     result_data = result_data.sort_by { |x, y| x }
     result_hash = {}
     result_data.map { |row| result_hash[row[0]]=row[1] }
@@ -92,7 +91,7 @@ EOF
       subclusters[counter] = subcluster_moes
     end
 
-    result_subcluster =create_subclusters(simulation_ind, subclusters, clusters)
+    result_subcluster = create_subclusters(simulation_ind, subclusters, clusters)
 
     # parsing subcluster data into {cluster_id => { subcluster_id => simulation_ids}} form
     subclusters_data = {}
@@ -100,7 +99,6 @@ EOF
       subclusters_data[k] = grouping_hash(v, parameters[:subclusters])
     end
     return clusters, subclusters_data
-
   end
 
   ##
@@ -110,7 +108,6 @@ EOF
     moes = Array(parameters["array"])
     header += moes
     header
-
   end
 
   ##
@@ -124,11 +121,9 @@ EOF
     data_hash
   end
 
-
   ##
   # create second level chart data (sublcasters)
   # from 1 level gather sim_id and then create hash: level1 => {level2=>sim_ids}
-
   def create_subclusters(simulation_ind, subcluster, cluster)
     moes = Array(parameters["array"])
     hash = {}
@@ -180,7 +175,7 @@ EOF
 
   end
 
-  def create_data_result(with_index=true, with_params=false, with_moes=true)
+  def create_data_result(with_index=true, with_params=false, with_moes=true, experiment)
     moes = Array(parameters["array"])
     data_array = []
     simulation_ind = []
@@ -189,7 +184,7 @@ EOF
     query_fields[:index] = 1 if with_index
     query_fields[:result] = 1 if with_moes
 
-    @experiment.simulation_runs.where(
+    experiment.simulation_runs.where(
         {is_done: true, is_error: {'$exists' => false}},
         {fields: query_fields}
     ).each do |simulation_run|
@@ -205,5 +200,4 @@ EOF
 
     return simulation_ind, data_array
   end
-
 end
