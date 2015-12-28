@@ -72,7 +72,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # for local development - set path to scalarm-database
 # gem 'scalarm-database', path: '/home/jliput/Scalarm/scalarm-database'
-gem 'scalarm-database', '>= 0.3.3', git: 'git://github.com/Scalarm/scalarm-database.git'
+gem 'scalarm-database', '1.2', git: 'git://github.com/Scalarm/scalarm-database.git'
 
 # for local development - set path to scalarm-core
 # gem 'scalarm-service_core', path: '/Users/jliput/Scalarm/scalarm-service_core'

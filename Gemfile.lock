@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/Scalarm/scalarm-database.git
-  revision: e1b2c4e5ca028a88796f62b18a409aa3081a9027
+  revision: bfb8f5e6cd357b349d573f6ed9c6eb8c765b6223
   specs:
-    scalarm-database (0.3.3)
+    scalarm-database (1.2)
       activesupport
       bson
       bson_ext
@@ -198,7 +198,7 @@ DEPENDENCIES
   rails (~> 4.1.12)
   rinruby
   sass-rails (~> 5.0)
-  scalarm-database (>= 0.3.3)!
+  scalarm-database (= 1.2)!
   scalarm-service_core (~> 1.0)!
   sdoc (~> 0.4.0)
   spring
@@ -207,3 +207,6 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.6
