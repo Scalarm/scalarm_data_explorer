@@ -13,7 +13,8 @@ class ChartInstancesController < ApplicationController
           unless methods.include? value
             raise SecurityError.new("Wrong chart name")
           end
-        end
+        end,
+        chart_id: :integer
     )
 
     chart_id = params[:id].to_s #nazwa metody

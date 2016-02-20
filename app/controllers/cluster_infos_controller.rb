@@ -3,6 +3,10 @@ class ClusterInfosController < ApplicationController
   include Scalarm::ServiceCore::ParameterValidation
   #Id -> experimentId; simulations => 2,4,6,1,7
   def show
+    validate(
+        chart_id: :security_default
+    )
+
     begin
       simulations = params[:simulations].split(',').map { |s| s.to_i }
     rescue => e
