@@ -21,13 +21,15 @@ apiDoc:
     # get config
     analysis_methods_config = AnalysisMethodsConfig.new
     methods = analysis_methods_config.get_method_names
-    # validating chart_id (name of method)
+    # TODO: using _validate_boolean which is defined in ApplicationController - maybe it will be moved to libs
     validate(
+        # validating chart_id (name of method)
         id: Proc.new do |param_name, value|
           unless methods.include? value
             raise SecurityError.new("Wrong chart name")
           end
-        end
+        end,
+        moes_info_exist: [:optional, :_validate_boolean]
     )
     #get method name
     chart_id = params[:id].to_s

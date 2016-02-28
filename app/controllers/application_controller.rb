@@ -27,6 +27,8 @@ class ApplicationController < ActionController::Base
   before_filter :cors_preflight_check
   after_filter :add_cors_header
 
+  before_filter :validate_common_params
+
   def authentication_failed
     Rails.logger.debug('[authentication] failed -> 401')
     @user_session.destroy unless @user_session.nil?
@@ -110,6 +112,23 @@ class ApplicationController < ActionController::Base
                },
                status: 500
       end
+    end
+  end
+
+  # Some request params are common for multiple (or all) controllers.
+  # Validate them here, if they exists in query.
+  def validate_common_params
+    validate(
+        stand_alone: [:optional, :_validate_boolean]
+    )
+  end
+
+  # TODO: move this validator to common libraries
+  # Check if value of param named name is stringified boolean, boolean or nil
+  # If not, raise ValidationError
+  def _validate_boolean(name, value)
+    unless [nil, 'true', 'false', true, false].include?(value)
+      raise ValidationError.new(name, value, 'Only valid values are "true" or "false"')
     end
   end
 
