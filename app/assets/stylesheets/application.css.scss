@@ -1,6 +1,6 @@
 
-/* Add imports of custom sass/scss files here */
-/*
+/* Add imports of custom sass/scss files here *
+ *
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
  *
@@ -12,20 +12,14 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require_tree .
+ * Note, that require_tree imports foundation_and_overrides, which imports foundation
+ *
  *= require_self
-
- //= require foundation_and_overrides
-
- *= require foundation_and_overrides
+ *= require_tree .
  *= require toastr
-
-
-
+ *= require foundation-icons
+ *= require font-awesome
  */
- @import 'foundation-icons';
- @import 'font-awesome';
- @import 'foundation_and_overrides';
 
 .hidden {
   display: none;
