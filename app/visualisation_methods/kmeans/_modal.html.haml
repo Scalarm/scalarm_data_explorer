@@ -1,0 +1,128 @@
+=define_helper_functions
+- count_of_cluster = [2,3,4,5,6,7,8,9,10,11,12]
+%section#kmeans_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="K-means clustering"
+
+  .row
+    .small-5.columns
+      %label.inline="Select number of clusters"
+    .small-7.columns
+      %select.numbClust
+        -count_of_cluster.each do |output|
+          %option{:value => output}=output
+  .row
+    .small-5.columns
+      %label.inline="Select number of subclusters"
+    .small-7.columns
+      %select.numbSubclust
+        -count_of_cluster.each do |output|
+          %option{:value => output}=output
+  .row
+    %label.inline="Select parameters of clustering:"
+    .moes_infos
+
+  .row
+    %ul.inline-list
+      %li
+        %button.radius.check_all#check Check / Uncheck all
+    %ul.inline-list
+      %li
+        %button.refresh Refresh moes
+      %li
+        %button.radius.load Load chart
+      %li
+        %a
+          =loading_gif('busy_kmeans')
+
+
+.charts
+  .scripts
+
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
+:javascript
+  $(function(){
+
+    /* function from global variable moes_info_json create html checkbox and then replacing exiting with new ones*/
+    window.reload_kmeans_params = function(){
+      $('#busy_kmeans').show();
+      reload_checkbox();
+      
+      if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
+      }
+      
+      $('#busy_kmeans').hide();
+    };
+    reload_kmeans_params();
+
+    var reload_modal_params = function(){
+      reload_kmeans_params();
+      toastr.success('Moes refreshed');
+    };
+
+    var chart_counter = 0;
+    var load_chart = function() {
+      var chart_div = $("<div id=\"kmeans_chart_"+chart_counter+"\">")[0];
+      $("#kmeansModal .charts").prepend(chart_div);
+      var selectedFiles =
+        $('#kmeansModal').find('input:checked').map(function () {
+            return $(this).attr('id')
+        });
+      var selected_parameters = selectedFiles.toArray();
+
+      for (i = 1; i <= selected_parameters.length; i++) {
+        selected_parameters[i-1] = escapeHtml(selected_parameters[i-1].trim());
+        if (type_of_parameter(selected_parameters[i-1].trim()) == 'string') {
+          toastr.error('Cannot plot for string type parameter - ' + selected_parameters[i-1].trim());
+          $("#busy_kmeans").hide();
+          return;
+        }
+      }
+
+      var numb_cluster = $("#kmeansModal .numbClust option:selected").val();
+      var numb_subcluster = $("#kmeansModal .numbSubclust option:selected").val();
+      var array = $("#kmeansModal select#moes_name option:selected").val();
+      var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&chart_id="+chart_counter;
+      query_params += "&clusters="+numb_cluster;
+      query_params += "&subclusters="+numb_subcluster;
+      query_params += "&stand_alone=false";
+
+      var url = "#{@prefix}/chart_instances/kmeans?"+query_params;
+      var handler = function(data) {
+        $("#busy_kmeans").hide();
+        var targetOffset = $(chart_div).offset().top;
+        $('html,body').animate({ scrollTop: targetOffset }, 1000);
+        $(chart_div).html(data);
+      };
+      getWithSession(url, {array: selected_parameters, chart_id: chart_counter, experiment_id: "#{@experiment.id.to_s}"}, handler, onErrorHandler);
+      chart_counter++;
+    };
+
+   $("#kmeansModal").find("button.refresh").bind("click", reload_modal_params);
+
+    $("#kmeansModal").find("button.radius.load").bind("click", function() {
+      if ($('input:checked').length == 0) toastr.error("Select moes and click Load chart.");
+      else {
+        $("#busy_kmeans").show();
+          load_chart();
+      }
+    });
+
+    $("#kmeansModal button.radius.check_all#check").on('click', function () {
+      if ($("#kmeansModal input:checkbox").length ==  $("#kmeansModal input:checked").length) {
+        $("#kmeansModal input:checkbox").prop('checked', false);
+      }
+      else $("#kmeansModal input:checkbox").prop('checked', true);
+    });
+
+    function type_of_parameter(parameter) {
+      var index_of_moe = window.moes_info.moes_names.indexOf(parameter);
+      return window.moes_info.moes_types[index_of_moe];
+    }
+
+  });

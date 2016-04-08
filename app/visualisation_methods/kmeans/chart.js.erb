@@ -1,0 +1,142 @@
+window.kmeans_main  = function(i,moes, cluster_data, subclusters, firstLevel, secondLevel, experiment_id, prefix) {
+    if($("#kmeansModal").length == 0) {
+        create_chart_div('kmeans', i);
+    }
+
+    function openViewer() {
+        return function(){
+            var clucter_id = this.id;
+            var simulations = this.indexes;
+
+            show_cluster_info_modal(clucter_id, simulations);
+        }
+    }
+
+    function show_cluster_info_modal(cluster_id, simulations) {
+        if (simulations.length < 1500) {
+            var simulations_string = simulations.toString();
+            var url = "<%= @prefix %>/cluster_infos/" + experiment_id + "?cluster_id=" + cluster_id + "&simulations=" + simulations_string + "&chart_id=kmeans";
+
+            var handler = function(data) {
+                $('#clusterInfo').html(data);
+            };
+            $('#clusterInfo').html(window.loaderHTML);
+            $('#clusterInfo').foundation('reveal', 'open');
+            getWithSession(url, {}, handler, onErrorHandler);
+        } else {
+            toastr.error('This cluster contains to many simulations to show cluster details');
+        }
+    }
+
+    var empty_subcluster;
+    var colors = Highcharts.getOptions().colors;
+    var clusters = [];
+    var subclust = [];
+       for(var j in cluster_data) {
+           empty_subcluster = false;
+           var color = colors[j % colors.length];
+           clusters.push({
+               y: cluster_data[j].length,
+               id: 'cluster_' + j,
+               visible: true,
+               indexes: cluster_data[j],
+               /*  means: cluster_data[j]["means"],
+                ranges: cluster_data[j]["ranges"],*/
+               color: color
+           });
+           var cluster_size = cluster_data[j].length;
+
+           /*check if subcluster exists*/
+           for (var k in subclusters[j]) {
+
+               if (subclusters[j][k].length == 0 ) {
+               empty_subcluster = true;
+                }else
+               if(subclusters[j][k][0] == null) {
+                   empty_subcluster = true;
+               }
+           }
+           if (!empty_subcluster) {
+               for (var k in subclusters[j]) {
+                   subcluster_size = subclusters[j][k].length;
+                   brightness = 0.2 - (1.0 * k / cluster_size) / 5;
+                   subclust.push({
+                       y: subcluster_size,
+                       id: 'cluster_' + j + 's' + k,
+                       visible: true,
+                       indexes: subclusters[j][k],
+                       /*    means: cluster_data[j]["subclusters"][k]["means"],
+                        ranges: cluster_data[j]["subclusters"][k]["ranges"],*/
+                       color: Highcharts.Color(color).brighten(brightness).get()
+                   });
+               }
+           }
+           else{
+               subclust.push({
+                   y: cluster_data[j].length,
+                   id: 'cluster_' + j + 's' + k,
+                   visible: true,
+                   indexes: cluster_data[j],
+                   color: color
+               });
+
+
+           }
+       }
+
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: $('#kmeans_chart_' + i + " .chart")[0],
+                type: 'pie'
+            },
+            title: {
+                text: JSON.stringify(moes) + ", " + firstLevel + ", " + secondLevel
+            },
+            plotOptions: {
+                pie: {
+                    shadow: false,
+                    center: ['50%', '50%']
+                }
+            },
+            series: [{
+                //name: 'Cluster size',
+                data: clusters,
+                size: '70%',
+                dataLabels: {
+                    formatter: function () {
+                        return null; //this.y > 5 ? this.point.name : null;
+                    }//,
+                    //color: 'white',
+                    //distance: -30
+                },
+                point: {
+                    events: {
+                        click: openViewer(this)
+                    }
+                }
+            }, {
+                data: subclust,
+                size: '100%',
+                innerSize: '70%',
+                dataLabels: {
+                    formatter: function () {
+                        return null; //this.y > 5 ? this.point.name : null;
+                    }//,
+                    //color: 'white',
+                    //distance: -30
+                },
+                point: {
+                    events: {
+                        click: openViewer(this)
+                    }
+                }
+            }],
+            tooltip: {
+                formatter: function () {
+                    // console.log(this);
+                    return "Cluster size: " + this.point.indexes.length + "<br/><b>Click for details</b>";
+                }
+            }
+        });
+
+};

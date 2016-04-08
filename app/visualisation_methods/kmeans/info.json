@@ -1,0 +1,8 @@
+{
+  "name": "K-means clustering",
+  "id": "kmeans",
+  "group": "data_mining",
+  "image": "k_means_icon.png",
+  "description": "Using k-means method creates bi-level pie chart containing simulation runs with similar output attributes."
+}
+

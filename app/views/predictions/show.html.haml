@@ -1,0 +1,39 @@
+:css
+  p.prediction_notes {
+    font-size: 0.9rem;
+  }
+
+#predictResults.reveal-modal(data-reveal="")
+%a.close-reveal-modal &#215
+%h2.details_label{:style => 'margin-top: 15px; text-align: center;', :id => "", :href => "#"}
+  %ul{id: "predictList"}
+    %dl{:id => "prediction", :style=> "text-align: left;"}
+      %h3.prediction_label= 'Recommended algorithms'
+      -if @prediction_results[:recommended_algorithms]
+        %ul.content#recommended_algorithms
+          - @prediction_results[:recommended_algorithms].each do |key, index|
+            %li= key
+      -else
+        %p= 'Sorry, no recommendations for current experiment results and options.'
+
+      %h3.hints_label= 'Hints'
+      -if @prediction_results[:hints]
+        %ul.content#hints
+          - @prediction_results[:hints].each do |key, index|
+            %li= key
+      -else
+        %p= 'Sorry, no hints for current experiment results and options.'
+
+      -if @prediction_results[:notes]
+        %hr
+        %p.prediction_notes= @prediction_results[:notes].join('. ') + '.'
+
+:javascript
+  $(function(){
+    $('#predictResults').foundation('reveal', 'close');
+
+
+    $("#predictResults").on("click", "a.close-reveal-modal", function (){
+      $("#predictionModal").foundation('reveal', 'open');
+    });
+  });

@@ -14,13 +14,20 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate, except: :status
   rescue_from Scalarm::ServiceCore::AuthenticationError, with: :authentication_failed
   rescue_from StandardError, with: :generic_exception_handler
+  rescue_from SecurityError, with: :security_exception_handler
+  rescue_from MissingParametersError, with: :security_exception_handler
 
   PREFIX = '/'
+  attr_reader :prefix
+  # make prefix accessible in helpers to use full path
+  helper_method :prefix
   before_filter :load_prefix
 
   before_filter :check_request_origin
   before_filter :cors_preflight_check
   after_filter :add_cors_header
+
+  before_filter :validate_common_params
 
   def authentication_failed
     Rails.logger.debug('[authentication] failed -> 401')
@@ -43,6 +50,10 @@ class ApplicationController < ActionController::Base
   # otherwise, exception will be raised
   # TODO: create special error classes to raise
   def load_experiment
+    validate(
+        experiment_id: [:security_default, :optional],
+        id: [:security_default, :optional]
+    )
     experiment_id = (params[:experiment_id] || params[:id])
     raise 'No experiment ID specified, cannot load experiment' unless experiment_id
     @experiment = Scalarm::Database::Model::Experiment.visible_to(current_user).find_by_id(experiment_id)
@@ -65,12 +76,29 @@ class ApplicationController < ActionController::Base
     @prefix = ERB::Util.h(find_prefix)
   end
 
+  def security_exception_handler (exception)
+    Rails.logger.warn("Exception caught in security_exception_handler: #{exception.message}")
+    Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
+    add_cors_header
+    respond_to do |format|
+      format.html do
+        render html: exception.to_s, status: 412
+      end
+
+      format.json do
+        render json: {
+                   status: 'error',
+                   reason: exception.to_s
+               },
+               status: 412
+      end
+    end
+  end
+
   def generic_exception_handler(exception)
     Rails.logger.warn("Exception caught in generic_exception_handler: #{exception.message}")
     Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
-
     add_cors_header
-
     respond_to do |format|
       format.html do
         #flash[:error] = exception.to_s
@@ -84,6 +112,23 @@ class ApplicationController < ActionController::Base
                },
                status: 500
       end
+    end
+  end
+
+  # Some request params are common for multiple (or all) controllers.
+  # Validate them here, if they exists in query.
+  def validate_common_params
+    validate(
+        stand_alone: [:optional, :_validate_boolean]
+    )
+  end
+
+  # TODO: move this validator to common libraries
+  # Check if value of param named name is stringified boolean, boolean or nil
+  # If not, raise ValidationError
+  def _validate_boolean(name, value)
+    unless [nil, 'true', 'false', true, false].include?(value)
+      raise ValidationError.new(name, value, 'Only valid values are "true" or "false"')
     end
   end
 

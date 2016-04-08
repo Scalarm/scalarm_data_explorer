@@ -1,7 +1,7 @@
 {
   "name": "3D chart",
-  "id": "threeDModal",
+  "id": "three_d",
   "group": "basic",
   "image": "3dchart_icon.png",
-  "description": "3D charts - scatter plot"
+  "description": "3D charts - scatter plot."
 }

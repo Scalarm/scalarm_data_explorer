@@ -1,0 +1,105 @@
+=define_helper_functions
+
+%section#boxplot_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  .row
+    .small-5.columns
+      %label.inline='Select parameter on X, this parameter is a class and can have max 10 values'
+    .small-7.columns
+      %select(id="firstParam" class ="allowed_moes_params_list")
+  .row
+    .small-5.columns
+      %label.inline='Select parameter on Y'
+    .small-7.columns
+      %select(class="moe_info_list" id ="secondParam")
+
+  .row
+    %ul.inline-list
+      %li
+        %button.refresh Refresh parameters
+      %li
+        %button.radius Load chart
+      %li
+        %a
+          =loading_gif('busy_boxplot')
+
+.charts
+  .scripts
+
+- filter = {is_done: true, is_error: {'$exists'=> false}}
+- fields = {fields: {result: 1}}
+- result = @experiment.simulation_runs.where(filter, fields).first
+:javascript
+  $(function(){
+
+    /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
+    window.reload_boxplot_params = function(){
+      $("#busy_boxplot").show();
+
+      if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
+      }
+
+      reload_selectbox_allowed_params_and_moes(#{Utils::param_ids_with_less_than_n_values(@experiment, 10)});
+      $('#busy_boxplot').hide();
+    };
+    reload_boxplot_params();
+
+    var chart_counter = 0;
+    var load_chart = function() {
+
+      var chart_div = $("<div id=\"boxplot_chart_"+chart_counter+"\">")[0];
+      $("#boxplotModal .charts").prepend(chart_div);
+      var x_axis = $("#boxplotModal select#firstParam option:selected").val();
+      var y_axis = $("#boxplotModal select#secondParam option:selected").val();
+      x_axis = escapeHtml(x_axis);
+      y_axis = escapeHtml(y_axis);
+
+      //if (check_if_string_parameter(y_axis) == true) return;
+
+      var query_params = "experiment_id=#{@experiment.id}";
+      query_params += "&param_x="+x_axis;
+      query_params += "&param_y="+y_axis;
+      query_params += "&chart_id="+chart_counter;
+
+      var url = "#{@prefix}/chart_instances/boxplot?"+query_params;
+
+      var handler = function(data) {
+        $("#busy_boxplot").hide();
+        var targetOffset = $(chart_div).offset().top;
+        $('html,body').animate({ scrollTop: targetOffset }, 1000);
+        $(chart_div).html(data);
+      };
+      getWithSession(url, {}, handler, onErrorHandler);
+      chart_counter++;
+    };
+
+    $("#boxplotModal").find("button.refresh").bind("click", reload_boxplot_params);
+
+    $("#boxplotModal").find("button.radius").bind("click", function() {
+      $("#busy_boxplot").show();
+      load_chart();
+    });
+
+    function type_of_parameter(parameter) {
+      var index_of_moe = window.moes_info.moes_names.indexOf(parameter)
+      if (index_of_moe != -1) {
+        return window.moes_info.moes_types[index_of_moe]
+      }
+      else {
+        var index_of_input = window.moes_info.inputs_names.indexOf(parameter)
+        return window.moes_info.inputs_types[index_of_input]
+      }
+    }
+
+    function check_if_string_parameter(name_of_parameter) {
+      if (type_of_parameter(name_of_parameter) == 'string') {
+        toastr.error('Cannot plot for string type parameter - ' + name_of_parameter);
+        $("#busy_boxplot").hide();
+        return true;
+      }
+    }
+
+  });
+

@@ -1,8 +1,13 @@
 window.lindev_main = function(i, param_x, param_y, data) {
+    if($("#lindevModal").length == 0) {
+        create_chart_div('lindev', i);
+    }
+
+
     var chart = new Highcharts.Chart({
         chart: {
             zoomType: 'xy',
-            renderTo: $('#chart_'+ i + " .chart")[0]
+            renderTo: $('#lindev_chart_'+ i + " .chart")[0]
         },
         credits: {
             enabled: false

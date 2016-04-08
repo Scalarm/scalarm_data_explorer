@@ -1,8 +1,8 @@
 {
   "name": "Hierarchical clustering",
-  "id": "dendrogramModal",
-  "group": "params",
+  "id": "dendrogram",
+  "group": "data_mining",
   "image": "dendrogram_icon.png",
-  "description": "Method of cluster analysis which builds a hierarchy of clusters and shows it on dendrogram"
+  "description": "Displays a dendrogram of clusters containing simulation runs with similar output attributes."
 }
 

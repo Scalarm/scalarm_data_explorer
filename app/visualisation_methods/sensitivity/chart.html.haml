@@ -1,0 +1,15 @@
+%section.panel.radius.plot
+  %h3.subheader Sensitivity analysis - #{params["output"]}
+  .row
+  %span.button.hide{id: "sensitivity_hide_#{params['chart_id']}"} Hide chart
+  %br
+    .chart
+
+:javascript
+  $(function() {
+    var div_id = "#sensitivity_chart_#{params['chart_id']}";
+    $("#sensitivity_hide_#{params['chart_id']}").on('click', function() {
+      $(div_id).remove();
+    });
+  });
+

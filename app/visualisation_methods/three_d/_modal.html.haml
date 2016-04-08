@@ -1,96 +1,79 @@
-- parameters = @experiment.get_parameter_ids
+=define_helper_functions
 
-- parameters_labels = parameters
+%section#threeD_charts_form.panel.radius.analysis-chart
+  %a.close-reveal-modal &#215
+  %h3.subheader="3d scatter plot charts"
+
+  .row
+    .small-5.columns
+      %label.inline="Select first parameter"
+    .small-7.columns
+      %select(id="firstParam" class ="moes_params_list")
+  .row
+    .small-5.columns
+      %label.inline="Select second parameter"
+    .small-7.columns
+      %select(id="secondParam" class ="moes_params_list")
+  .row
+    .small-5.columns
+      %label.inline="Select third parameter"
+    .small-7.columns
+      %select(id="thirdParam" class ="moes_params_list")
+
+  .row
+    %ul.inline-list
+      %li
+        %button.refresh Refresh parameters
+      %li
+        %button.radius Load chart
+      %li
+        =loading_gif('busy_3d')
+
+.charts
+  .scripts
+
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
 - result = @experiment.simulation_runs.where(filter, fields).first
-- outputs=[]
-- if result.blank?
-  - outputs = ["No results found in completed simulation runs"]
-- else
-  - outputs = result.result.keys
-
-#threeDModal.reveal-modal(data-reveal="true")
-  %section#threeD_charts_form.panel.radius.analysis-chart
-    %a.close-reveal-modal &#215
-    %h3.subheader="3d scatter plot charts"
-    %h3 #{}
-    .row
-      .small-5.columns
-        %label.inline="Select first parameter"
-      .small-7.columns
-        %select(id="firstParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters_labels.each do |parameter|
-              %option{value:parameter} #{parameter}
-
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
-
-    .row
-      .small-5.columns
-        %label.inline="Select second parameter"
-      .small-7.columns
-        %select(id="secondParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters.each do |parameter|
-              %option{value:parameter} #{parameter}
-
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
-
-    .row
-      .small-5.columns
-        %label.inline="Select third parameter"
-      .small-7.columns
-        %select(id="thirdParam" class ="moes_params_list")
-          %optgroup{:label => "Parameters"}
-            -parameters.each do |parameter|
-              %option{value:parameter} #{parameter}
-
-
-          %optgroup{:label => "MoEs"}
-            -outputs.each do |output|
-              %option{value:output} #{output}
-
-    .row
-      %ul.inline-list
-        %li
-          %button.refresh Refresh parameters
-        %li
-          %button.radius Load chart
-        %li
-          %img(src="#{image_url("loading.gif")}" id='busy_3d' class='loading_chart_gif' size='16x16' style='display: none' )
-
-
-
-
-  .charts
-    .scripts
-
 :javascript
 
   $(function(){
 
-    $("#threeDModal").foundation("reveal", "close");
-
+    /* function from global variable moes_info_json create html selectbox with moe and params values and then replacing exiting values with new ones*/
+    window.reload_three_d_params = function(){
+      $("#busy_3d").show();
+      
+      if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
+        moes_info_json = getMoesInfoJson(#{@experiment.get_parameter_ids}, #{result.result.keys});
+        moes_info = getMoeInfo(#{result.result.keys}, #{result.result.values});
+      }
+      
+      reload_selectbox_params_and_moes();
+      $('#busy_3d').hide();
+    };
+    reload_three_d_params();
+    var reload_modal_params = function(){
+      reload_three_d_params();
+      toastr.success('Parameters refreshed');
+    };
     var three_d_chart_counter = 0;
-    var scripts_loaded = false;
     var load_chart = function() {
-
       var three_d_chart_div = $("<div id=\"three_d_chart_"+three_d_chart_counter+"\">")[0];
-      $("#threeDModal .charts").prepend(three_d_chart_div);
+      $("#three_dModal .charts").prepend(three_d_chart_div);
       //TODO - if there's nothing to select -> do nothing
-      var x_axis = $("#threeDModal select#firstParam option:selected").val();
-      var y_axis = $("#threeDModal select#secondParam option:selected").val();
-      var z_axis = $("#threeDModal select#thirdParam option:selected").val();
+      var x_axis = $("#three_dModal select#firstParam option:selected").val();
+      var y_axis = $("#three_dModal select#secondParam option:selected").val();
+      var z_axis = $("#three_dModal select#thirdParam option:selected").val();
+      x_axis = escapeHtml(x_axis);
+      y_axis = escapeHtml(y_axis);
+      z_axis = escapeHtml(z_axis);
+
       var query_params = "experiment_id=#{@experiment.id}";
       query_params += "&param_x="+x_axis;
       query_params += "&param_y="+y_axis;
       query_params += "&param_z="+z_axis;
       query_params += "&chart_id="+three_d_chart_counter;
+      query_params += "&stand_alone=false";
 
       var url = "#{@prefix}/chart_instances/three_d?"+query_params;
 
@@ -105,47 +88,11 @@
 
     };
 
-    $("#threeDModal").find("button.refresh").bind("click", function() {
+    $("#three_dModal").find("button.refresh").bind("click", reload_modal_params);
+
+    $("#three_dModal").find("button.radius").bind("click", function() {
       $("#busy_3d").show();
-      //moes_info_json is global array of json with info (label id type of) parameters (EM global variable)
-      var new_select ="<optgroup label='Parameters'>";
-      for (var iter in moes_info_json){
-        var param = moes_info_json[iter];
-        console.debug(param);
-        if (param.type =="")
-          new_select = new_select +"</optgroup> <optgroup label='Moes'>"
-        else
-          new_select = new_select + "<option value='"+param.id+"'>"+param.label+"</option> ";
-      }
-      new_select = new_select +"</optgroup>"
-      update_params_names(new_select);
-      $('#busy_3d').hide();
-      toastr.success("Parameters refreshed");
-     });
-
-    var update_params_names = function(data){
-      $(".moes_params_list").each(function(){
-        selected_option = $(this).find(":selected").val();
-        $(this).html(data);
-        $(this).find("option").filter(function(){
-          return $(this).val() == selected_option
-        }).attr('selected', true)
-      });
-    };
-
-
-    $("#threeDModal").find("button.radius").bind("click", function() {
-      $("#busy_3d").show();
-      if(!scripts_loaded) {
-        var url = "#{@prefix}/script_tags/three_d";
-        var handler = function(data) {
-          scripts_loaded = true;
-          $("#threeDModal").find(".scripts").html(data);
-          load_chart();
-        };
-       getWithSession(url, {}, handler);
-      }
-      else
-        load_chart();
+      load_chart();
     });
+
   });

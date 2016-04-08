@@ -1,6 +1,7 @@
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
+require 'ci/reporter/rake/minitest'
 require File.expand_path('../config/application', __FILE__)
 
 Rails.application.load_tasks
@@ -9,6 +10,9 @@ Rails.application.load_tasks
 
 LOCAL_MONGOS_PATH = 'bin/mongos'
 
+namespace :ci do
+  task :all => ['ci:setup:minitest', 'test']
+end
 
 namespace :service do
   desc 'Start the service'
@@ -164,7 +168,7 @@ end
 # TODO
 def install_r_libraries
   puts 'Checking R libraries...'
-  Rails.configuration.r_interpreter.eval(
+  R.eval(
       ".libPaths(c(\"#{Dir.pwd}/r_libs\", .libPaths()))
     if(!require(e1071, quietly=TRUE)){
       install.packages(\"e1071\", repos=\"http://cran.rstudio.com/\")
