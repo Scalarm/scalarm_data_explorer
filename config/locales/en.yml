@@ -26,6 +26,13 @@ en:
       standard_deviation: "Standard deviation"
       mean: "Mean"
       absolute_mean: "Absolute mean"
+      normalized_standard_deviation: "Normalized standard deviation"
+      normalzed_mean: "Normalized mean"
+      normalized_absolute_standard_deviation: "Normalized absolute standard deviation"
+      normalized_absolute_mean: "Normalized absolute mean"
     fast:
       first_order: "Main effect"
       total_order: "Interactions"
+    sobol:
+      sensitivity_indices: "Sensitivity indices"
+      total_effect_indices: "Total effect indices"
