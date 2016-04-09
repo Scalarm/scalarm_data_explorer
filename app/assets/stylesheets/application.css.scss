@@ -14,18 +14,11 @@
  *
  *= require_tree .
  *= require_self
-
- //= require foundation_and_overrides
-
  *= require foundation_and_overrides
  *= require toastr
-
-
-
+ *= require foundation-icons
+ *= require font-awesome
  */
- @import 'foundation-icons';
- @import 'font-awesome';
- @import 'foundation_and_overrides';
 
 .hidden {
   display: none;
