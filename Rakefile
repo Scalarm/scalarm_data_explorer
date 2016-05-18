@@ -91,7 +91,7 @@ namespace :service do
   task :validate do
     begin
       _validate_service
-    rescue Exception => e
+    rescue => e
       puts "Error on validation, please read documentation and run service:setup"
       raise
     end
