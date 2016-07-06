@@ -14438,7 +14438,7 @@ extend(Chart.prototype, {
 		// create the layer at the first call
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement(DIV, {
-				className: PREFIX + 'loading'
+				className: 'loading'
 			}, extend(loadingOptions.style, {
 				zIndex: 10,
 				display: NONE

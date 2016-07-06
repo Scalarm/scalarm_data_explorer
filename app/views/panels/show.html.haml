@@ -12,11 +12,11 @@
           - group["methods"].each do |method|
             - if method["em_class"]
               %li
-                %a.tip-right.text-left{href: "#", "em-class" => method["em_class"], "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src='#{prefixed_image_url(method["image"])}' /></div> ", "data-reveal-id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;" "text-align: left;"}
+                %a.tip-right.text-left{href: "#", "em-class" => method["em_class"], "title"=> analysis_method_tooltip(method['description'], method['image']), "data-reveal-id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;" "text-align: left;"}
                   %span= method["name"]
             - else
               %li
-                %a.tip-right.text-left{href:"#method"+method["name"], "class" => 'Modal',  "title"=>"<div style=width:65%;float:left;padding-top:10px;>#{method["description"]}</div><div style=width:35%;float:right;><img src='#{prefixed_image_url(method["image"])}' /></div>", "id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
+                %a.tip-right.text-left{href:"#method"+method["name"], "class" => 'Modal', "title"=>analysis_method_tooltip(method['description'], method['image']), "id"=>method["id"], "data-tooltip"=>"", style:"padding: 0px;"}
                   %span= method["name"]
 
 %dl.accordion{id:"prediction_table"}
