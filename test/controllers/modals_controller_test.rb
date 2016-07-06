@@ -50,12 +50,11 @@ class ModalsControllerTest < ActionController::TestCase
 
 
   test "Should render modal content" do
-    pareto_content = "<section class='panel radius analysis-chart' id='pareto_charts_form'>"
+    pareto_content = "<section class='panel radius analysis-chart' id='paretoModal'>"
     pareto_header = "<h3 class='subheader'>Pareto chart</h3>"
     get :show, id: 'pareto', experiment_id: @experiment.id.to_s, using_em: 'false'
     assert_includes(response.body, pareto_content, "Not valid modal content")
     assert_includes(response.body, pareto_header, "Not valid modal header")
-
   end
 
 
