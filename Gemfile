@@ -1,23 +1,13 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.1.15'
+gem 'rails', '~> 4.2.6'
 
 # use puma as the app server
 gem 'puma'
 
 # wrapper for R interpreter
 gem 'rinruby'
-
-# sessions stored in mongodb
-gem 'bson'
-gem 'bson_ext'
-gem 'mongo', '~> 1.12'
-# Disableing due to bugs
-#gem 'mongo_session_store-rails4',
-#    git: 'git://github.com/kliput/mongo_session_store.git',
-#    branch: 'issue-31-mongo_store-deserialization'
-
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -37,16 +27,13 @@ gem 'jquery-ui-rails'
 gem 'jquery-tmpl-rails'
 gem 'jit-rails'
 gem 'haml'
-gem 'foundation-rails'
+gem 'foundation-rails', '5.4.5'
 gem 'foundation-icons-sass-rails'
 gem 'jquery-datatables-rails', git: 'git://github.com/rweng/jquery-datatables-rails.git'
-gem 'font-awesome-sass', '4.1'
+gem 'font-awesome-sass', '4.4'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-
-# Use Unicorn as the app server
-# gem 'unicorn'
 
 #for mathematical functions
 gem 'descriptive_statistics'
@@ -77,8 +64,8 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # for local development - set path to scalarm-database
 # gem 'scalarm-database', path: '/home/jliput/Scalarm/scalarm-database'
-gem 'scalarm-database', '~> 1.4', git: 'git://github.com/Scalarm/scalarm-database.git'
+gem 'scalarm-database', '~> 2.0.0', git: 'git://github.com/Scalarm/scalarm-database.git'
 
 # for local development - set path to scalarm-core
 # gem 'scalarm-service_core', path: '/Users/jliput/Scalarm/scalarm-service_core'
-gem 'scalarm-service_core', '~> 1.3', git: 'git://github.com/Scalarm/scalarm-service_core.git'
+gem 'scalarm-service_core', '~> 2.0.0', git: 'git://github.com/Scalarm/scalarm-service_core.git'

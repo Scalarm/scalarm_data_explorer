@@ -50,17 +50,21 @@ class ChartInstancesControllerTest < ActionController::TestCase
   test "should load css if stand_alone = true" do
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product', stand_alone: 'true'
 
-    assert response.body.include?('/assets/application.css')
+    assert_response :success
+    assert response.body.include?('/assets/application')
   end
 
   test "should not load css if stand_alone = false" do
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product', stand_alone: 'false'
-    assert (not response.body.include? '/assets/application.css')
+
+    assert_response :success
+    assert (not response.body.include? '/assets/application')
   end
 
   test "should not load css if stand_alone is not defined" do
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product'
 
-    assert (not response.body.include? '/assets/application.css')
+    assert_response :success
+    assert (not response.body.include? '/assets/application')
   end
 end

@@ -8,21 +8,19 @@ class ModalsControllerTest < ActionController::TestCase
     stub_authentication
     experiment1_id = BSON::ObjectId.new
 
-    @simulation_run = mock do
-      stubs(:result).returns({result: {product: 3618.0}})
-      stubs(:is_done).returns(true)
-    end
+    @simulation_run = mock()
+    @simulation_run.stubs(:result).returns({result: {product: 3618.0}})
+    @simulation_run.stubs(:is_done).returns(true)
 
     # inside the bloc mock do can not use instance variable
     @simulation_runs = mock
     @simulation_runs.stubs(:where).returns([@simulation_run])
 
-    @experiment = mock 'experiment' do
-      stubs(:id).returns(experiment1_id)
-      stubs(:start_at).returns(Time.now)
-      stubs(:completed?).returns(true)
-      stubs(:get_parameter_ids).returns(['a'])
-    end
+    @experiment = mock('experiment')
+    @experiment.stubs(:id).returns(experiment1_id)
+    @experiment.stubs(:start_at).returns(Time.now)
+    @experiment.stubs(:completed?).returns(true)
+    @experiment.stubs(:get_parameter_ids).returns(['a'])
     @experiment.stubs(:simulation_runs).returns(@simulation_runs)
 
     @visible_experiments = mock
@@ -33,7 +31,6 @@ class ModalsControllerTest < ActionController::TestCase
 
   def teardown
     super
-
   end
 
 
