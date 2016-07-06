@@ -1,6 +1,6 @@
 =define_helper_functions
 - count_of_cluster = [2,3,4,5,6,7,8,9,10,11,12]
-%section#kmeans_charts_form.panel.radius.analysis-chart
+%section#kmeansModal.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="K-means clustering"
 
@@ -36,8 +36,8 @@
           =loading_gif('busy_kmeans')
 
 
-.charts
-  .scripts
+  .charts
+    .scripts
 
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}

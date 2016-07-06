@@ -1,8 +1,6 @@
 =define_helper_functions
 
-
-
-%section#pareto_charts_form.panel.radius.analysis-chart
+%section#paretoModal.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Pareto chart"
 
@@ -21,8 +19,8 @@
       %li
         =loading_gif('busy_pareto')
 
-.charts
-  .scripts
+  .charts
+    .scripts
 
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}

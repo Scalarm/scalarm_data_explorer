@@ -1,6 +1,6 @@
 =define_helper_functions
 
-%section#threeD_charts_form.panel.radius.analysis-chart
+%section#three_dModal.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="3d scatter plot charts"
 
@@ -29,8 +29,8 @@
       %li
         =loading_gif('busy_3d')
 
-.charts
-  .scripts
+  .charts
+    .scripts
 
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}

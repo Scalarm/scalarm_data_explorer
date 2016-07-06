@@ -7,7 +7,7 @@
 -elsif se_results['sensitivity_analysis_method'] != "morris" && se_results['sensitivity_analysis_method'] != "fast"
   - text_inline = "Cannot plot results for non sensitivity method"
 
-%section#sensitivity_charts_form.panel.radius.analysis-chart
+%section#sensitivityModal.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   -if se_results.blank?
     %h3.subheader="Sensitivity analysis"
@@ -38,8 +38,8 @@
         %label.inline=text_inline
 
 
-.charts
-  .scripts
+  .charts
+    .scripts
 
 :javascript
 

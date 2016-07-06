@@ -1,6 +1,6 @@
 =define_helper_functions
 
-%section#boxplot_charts_form.panel.radius.analysis-chart
+%section#boxplotModal.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   .row
     .small-5.columns
@@ -23,8 +23,8 @@
         %a
           =loading_gif('busy_boxplot')
 
-.charts
-  .scripts
+  .charts
+    .scripts
 
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}

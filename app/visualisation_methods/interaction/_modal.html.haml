@@ -1,6 +1,6 @@
 =define_helper_functions
 
-%section#interaction_chart_form.panel.radius.analysis-chart
+%section#interactionModal.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Interaction chart"
 
@@ -31,8 +31,8 @@
         =loading_gif('busy_interaction')
 
 
-.charts
-  .scripts
+  .charts
+    .scripts
 
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}

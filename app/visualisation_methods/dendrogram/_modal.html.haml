@@ -1,6 +1,6 @@
 =define_helper_functions
 
-%section#dendrogram_charts_form.panel.radius.analysis-chart
+%section#dendrogramModal.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Dendrogram for hierarchical clustering"
 
@@ -21,8 +21,8 @@
     %a
       =loading_gif('busy_dendrogram')
 
-.charts
-  .scripts
+  .charts
+    .scripts
 
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
