@@ -1,6 +1,6 @@
 =define_helper_functions
 
-%section#lindev_charts_form.panel.radius.analysis-chart
+%section#lindevModal.panel.radius.analysis-chart
   %a.close-reveal-modal &#215
   %h3.subheader="Line charts with standard deviation"
 
@@ -25,17 +25,17 @@
         %a
           =loading_gif('busy_lindev')
 
-.charts
-  .scripts
+  .charts
+    .scripts
 
 - filter = {is_done: true, is_error: {'$exists'=> false}}
 - fields = {fields: {result: 1}}
 - result = @experiment.simulation_runs.where(filter, fields).first
 :javascript
-  $(function(){
 
+  $(function(){
     /* function from global variable moes_info_json create html selectbox with input parameter and moe values and then replacing exiting values with new ones */
-    window.reload_lindev_params = function(){
+    window.reload_lindev_params = function() {
       $("#busy_lindev").show();
       
       if (("#{params[:stand_alone]}" == "true") || ("#{params[:stand_alone]}" == "false" && "#{params[:moes_info_exist]}" == "false")) {
@@ -46,16 +46,20 @@
       reload_selectbox_params_and_moes();
       $('#busy_lindev').hide();
     };
+
     reload_lindev_params();
+
     var reload_modal_params = function(){
       reload_lindev_params();
       toastr.success('Parameters refreshed');
     };
-    var chart_counter = 0;
-    var load_chart = function() {
 
-      var chart_div = $("<div id=\"lindev_chart_"+chart_counter+"\">")[0];
+    var chart_counter = 0;
+
+    var load_chart = function() {
+      var chart_div = $('<div></div>').attr('id', 'lindev_chart_' + chart_counter);
       $("#lindevModal .charts").prepend(chart_div);
+
       var x_axis = $("#lindevModal select#firstParam option:selected").val();
       var y_axis = $("#lindevModal select#secondParam option:selected").val();
       x_axis = escapeHtml(x_axis);
@@ -74,14 +78,17 @@
 
       var handler = function(data) {
         $("#busy_lindev").hide();
+
         var targetOffset = $(chart_div).offset().top;
         $('html,body').animate({ scrollTop: targetOffset }, 1000);
+
         $(chart_div).html(data);
       };
+
       getWithSession(url, {}, handler, onErrorHandler);
       chart_counter++;
-
     };
+
     $("#lindevModal").find("button.refresh").bind("click", reload_modal_params);
 
     $("#lindevModal").find("button.radius").bind("click", function() {
