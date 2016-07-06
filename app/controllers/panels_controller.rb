@@ -34,13 +34,7 @@ class PanelsController < ApplicationController
       raise "No experiment with id '#{params[:id]}' found"
     end
 
-    render :show, :layout => false
-  end
-
-  private
-
-  def standalone
-    params.include?(:stand_alone) and (params[:stand_alone] == 'true')
+    render :show, layout: false
   end
 
 end

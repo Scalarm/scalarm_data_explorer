@@ -132,5 +132,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  protected :authentication_failed
+  def standalone
+    params.include?(:stand_alone) and (params[:stand_alone] == 'true')
+  end
+
+  protected :authentication_failed, :standalone
+
 end

@@ -13,8 +13,6 @@ apiDoc:
 
   @apiParam {String} id chart method name
   @apiParam {String} experiment_id ID of experiment
-
-
 =end
 
   def show
@@ -35,11 +33,7 @@ apiDoc:
     chart_id = params[:id].to_s
 
     # set layout
-    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
-      layout_value = false
-    else
-      layout_value = true
-    end
+    layout_value = standalone
 
     # get modal file to string
     modal_content = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_id, "_modal.html.haml"), layout: layout_value
