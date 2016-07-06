@@ -87,7 +87,7 @@ apiDoc:
 
   def show
     validate(
-        chart_id: :security_default
+        id: :security_default
     )
 
     begin
@@ -106,14 +106,8 @@ apiDoc:
         v.map! { |array_value| ERB::Util.h(array_value) } : v.kind_of?(Hash) ?
             v.update(v) { |k_s, v_s| ERB::Util.h(v_s) } : ERB::Util.h(v) }
 
-    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
-      layout_value = false
-    else
-      layout_value = true
-    end
-
     respond_to do |format|
-      format.html { render layout: layout_value }
+      format.html { render layout: (not standalone) }
       format.json { render json: {status: 'ok', data: @content } }
 
     end

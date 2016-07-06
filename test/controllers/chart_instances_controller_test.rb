@@ -33,7 +33,6 @@ class ChartInstancesControllerTest < ActionController::TestCase
 
   def teardown
     super
-
   end
 
 
@@ -50,16 +49,18 @@ class ChartInstancesControllerTest < ActionController::TestCase
 
   test "should load css if stand_alone = true" do
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product', stand_alone: 'true'
-    assert_includes response.body, '/assets/application.css', nil
+
+    assert response.body.include?('/assets/application.css')
   end
 
   test "should not load css if stand_alone = false" do
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product', stand_alone: 'false'
-    refute_includes response.body, '/assets/application.css', nil
+    assert (not response.body.include? '/assets/application.css')
   end
 
   test "should not load css if stand_alone is not defined" do
     get :show, id: 'dendrogram', experiment_id: @experiment.id.to_s, chart_id: '0', output: 'product'
-    refute_includes response.body, '/assets/application.css', nil
+
+    assert (not response.body.include? '/assets/application.css')
   end
 end

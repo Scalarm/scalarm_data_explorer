@@ -55,9 +55,14 @@ class ApplicationController < ActionController::Base
         id: [:security_default, :optional]
     )
     experiment_id = (params[:experiment_id] || params[:id])
-    raise 'No experiment ID specified, cannot load experiment' unless experiment_id
+    if experiment_id.blank?
+      raise MissingParametersError, ['id']
+    end
+
     @experiment = Scalarm::Database::Model::Experiment.visible_to(current_user).find_by_id(experiment_id)
-    raise "Cannot get data for experiment with ID: #{experiment_id}" unless @experiment
+    unless @experiment
+      raise SecurityError, "Cannot get data for experiment with ID: #{experiment_id}"
+    end
   end
 
   ##
@@ -76,9 +81,10 @@ class ApplicationController < ActionController::Base
     @prefix = ERB::Util.h(find_prefix)
   end
 
-  def security_exception_handler (exception)
+  def security_exception_handler(exception)
+    Rails.logger.debug(exception)
     Rails.logger.warn("Exception caught in security_exception_handler: #{exception.message}")
-    Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
+    Rails.logger.debug("Exception backtrace:\n#{exception.backtrace}")
     add_cors_header
     respond_to do |format|
       format.html do
@@ -97,7 +103,8 @@ class ApplicationController < ActionController::Base
 
   def generic_exception_handler(exception)
     Rails.logger.warn("Exception caught in generic_exception_handler: #{exception.message}")
-    Rails.logger.debug("Exception backtrace:\n#{exception.backtrace.join("\n")}")
+    Rails.logger.debug("Exception backtrace:\n#{exception.backtrace}")
+    Rails.logger.debug(exception)
     add_cors_header
     respond_to do |format|
       format.html do

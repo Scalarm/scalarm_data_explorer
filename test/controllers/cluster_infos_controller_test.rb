@@ -35,7 +35,6 @@ class ClusterInfosControllerTest < ActionController::TestCase
 
   def teardown
     super
-
   end
 
   test "Should be success" do
@@ -75,14 +74,14 @@ class ClusterInfosControllerTest < ActionController::TestCase
   end
 
 
-  test "Should be error with no experiment id" do
-    get :show, id: "No experiment ", simulations: "1,2,3", using_em: 'false'
+  test "should return error when no experiment id is provided" do
+    get :show, id: '', simulations: "1,2,3", using_em: 'false'
     assert_response :precondition_failed, "Response should be error, but it is: #{response.body}"
   end
 
 
-  test "Should be error with no experiment id (JSON)" do
-    get :show, format: :json, id: "No experiment ", using_em: 'false'
+  test "should return error in the JSON format when no experiment id is provided" do
+    get :show, id: '', format: :json, using_em: 'false'
     assert_response :precondition_failed, "Response should be error, but it is: #{response.body}"
   end
 

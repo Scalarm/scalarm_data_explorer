@@ -66,21 +66,14 @@ apiDoc:
     #params html safety (< 4.2 version)
     params.update(params){ |k, v| v.kind_of?(Array)?v.map!{|array_value| ERB::Util.h(array_value)} :ERB::Util.h(v)}
 
-    # set layout
-    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
-      layout_value = false
-    else
-      layout_value = true
-    end
-
     chart_file_content = ''
-    if params[:stand_alone] == 'true'
+    if standalone
       chart_file_content = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_name,"chart.js"), layout: false
       chart_file_content = '<script>'.to_s.html_safe + chart_file_content + '</script>'.to_s.html_safe
     end
 
     @content = Utils::generate_content_with_plugin(chart_name, @experiment, params)
-    chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_name, 'chart.html.haml'), layout: layout_value
+    chart_header = render_to_string :file => Rails.root.join('app','visualisation_methods', chart_name, 'chart.html.haml'), layout: standalone
     render :html => (chart_header + chart_file_content + @content.to_s.html_safe), content_type: 'text/html', layout: false
   end
 end
