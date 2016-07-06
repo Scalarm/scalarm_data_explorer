@@ -1,8 +1,10 @@
 require 'scalarm/database/model'
 require 'scalarm/database/core'
 require 'erb'
+
 class PanelsController < ApplicationController
   include ERB::Util
+
   before_filter :load_experiment, only: [:show]
 
 =begin
@@ -16,8 +18,6 @@ class PanelsController < ApplicationController
   When assistant link is clicked it call prediction controller and create modal with selectable drop-downs.
 
   @apiParam {String} id ID of experiment
-
-
 =end
 
   def show
@@ -25,22 +25,22 @@ class PanelsController < ApplicationController
   end
 
   def handle_panel_for_experiment
+    panels = Panels.new(standalone)
 
-    panels = Panels.new(params[:stand_alone])
     @methods = panels.methods
     @groups = panels.groups
 
     if @experiment.nil?
-      raise 'No experiment'
-    end
-
-    if params[:stand_alone] == 'false' || params[:stand_alone].nil?
-      layout_value = false
-    else
-      layout_value = true
+      raise "No experiment with id '#{params[:id]}' found"
     end
 
     render :show, :layout => false
+  end
+
+  private
+
+  def standalone
+    params.include?(:stand_alone) and (params[:stand_alone] == 'true')
   end
 
 end

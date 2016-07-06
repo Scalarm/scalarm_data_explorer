@@ -4,36 +4,28 @@ include Scalarm::ServiceCore::ParameterValidation
 class AnalysisMethodsConfig
   attr_reader :content
 
-
   ##
   # read config from file
   def initialize
-
-    file = File.read("config/methods.json")
-    @content = JSON.parse(file)
+    @content = JSON.parse(File.read(File.join(Rails.root, 'config', 'methods.json')))
   end
-
 
   def get_method_names
-    @content["methods"]
+    @content['methods']
   end
-
 
   ##
   # return information about method from method's catalog
-  def get_groups(stand_alone)
-    if stand_alone == 'false' || stand_alone.nil?
-      groups = @content["groups"]
-    else
-      groups = {"basic"=>{"name"=>"Variate analysis", "methods"=>[]},
-                "params"=>{"name"=>"Parameters influence", "methods"=>[]}}
-    end
-
+  def get_groups(standalone)
+    groups = if standalone
+               JSON.parse(File.read(File.join(Rails.root, 'config', 'standalone_methods.json')))
+             else
+               @content['groups']
+             end
 
     methods = get_method_names
     methods.each do |method_name|
-      json = File.read("app/visualisation_methods/#{method_name}/info.json")
-      info = JSON.parse(json)
+      info = JSON.parse(File.read(File.join(Rails.root, 'app', 'visualisation_methods', method_name, 'info.json')))
 
       group_name = info["group"]
       group = groups[group_name]
@@ -44,10 +36,11 @@ class AnalysisMethodsConfig
           group["methods"] = [info]
         end
       else
-        raise SecurityError.new('No such group: " + group_name + "(method: " + method_name + ")')
+        raise SecurityError.new("No such group: '#{group_name}' (method: '#{method_name}')")
       end
     end
-    groups
 
+    groups
   end
+
 end

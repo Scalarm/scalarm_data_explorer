@@ -1,5 +1,6 @@
 =define_helper_functions
-%ul{id: "searchList", style:"list-style-type: circle;"}
+
+%ul#searchList{style:"list-style-type: circle;"}
   - @groups.each do |group_id, group|
     %dl.accordion{"data-accordion" => group_id, style: "text-align: left;"}
       - accordion_id = group["name"].dup.gsub!(/\s+/, "")

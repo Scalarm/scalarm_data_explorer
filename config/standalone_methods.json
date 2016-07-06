@@ -1,0 +1,14 @@
+{
+  "basic": {
+    "name": "Variate analysis",
+    "methods": []
+  },
+  "params": {
+    "name": "Parameters influence",
+    "methods": []
+  },
+  "data_mining": {
+    "name": "Data mining",
+    "methods": []
+  }
+}
