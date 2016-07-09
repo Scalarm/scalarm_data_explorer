@@ -33,5 +33,6 @@ module ScalarmDataExplorer
     # Do not swallow errors in after_commit/after_rollback callbacks.
     # ActiveRecord disabled
     # config.active_record.raise_in_transactional_callbacks = true
+    config.action_controller.asset_host = ENV['PUBLIC_DATA_EXPLORER_ADDRESS'] || '/'
   end
 end
