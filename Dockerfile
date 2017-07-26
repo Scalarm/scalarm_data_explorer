@@ -20,7 +20,7 @@ ADD . $SCALARM_HOME
 
 WORKDIR $SCALARM_HOME
 
-EXPOSE 3002
+EXPOSE 3001
 
 RUN bundle config git.allow_insecure true
 RUN bundle install
