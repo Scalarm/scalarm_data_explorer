@@ -1,4 +1,4 @@
-[![](https://images.microbadger.com/badges/version/scalarm/scalarm_data_explorer.svg)](https://microbadger.com/images/scalarm/scalarm_data_explorer "Get your own version badge on microbadger.com")   [![](https://images.microbadger.com/badges/image/scalarm/scalarm_data_explorer.svg)](https://microbadger.com/images/scalarm/scalarm_data_explorer "Get your own image badge on microbadger.com")
+[![Build Status](https://travis-ci.org/Dragner8/scalarm_data_explorer.svg?branch=master)](https://travis-ci.org/Dragner8/scalarm_data_explorer)   [![](https://images.microbadger.com/badges/version/scalarm/scalarm_data_explorer.svg)](https://microbadger.com/images/scalarm/scalarm_data_explorer "Get your own version badge on microbadger.com")   [![](https://images.microbadger.com/badges/image/scalarm/scalarm_data_explorer.svg)](https://microbadger.com/images/scalarm/scalarm_data_explorer "Get your own image badge on microbadger.com")
 
 
 ![Scalarm Logo](http://scalarm.com/images/scalarmNiebieskiemale.png)
