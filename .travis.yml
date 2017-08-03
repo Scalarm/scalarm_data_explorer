@@ -14,7 +14,6 @@ before_install:
   - gem install bundler
   - bundle install
   
-
 script:
   - export REPO=scalarm/scalarm_data_explorer
   - docker build . -f Dockerfile -t $REPO
