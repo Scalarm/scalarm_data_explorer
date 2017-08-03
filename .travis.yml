@@ -1,0 +1,38 @@
+sudo: required
+
+
+
+services:
+  - docker
+
+before_install:
+  - sudo apt-get install -y curl zip git sysstat r-base-core
+  - rvm install ruby-2.3.3
+  - gem install bundler
+  - bundle install
+  
+
+script:
+  - export REPO=scalarm/scalarm_data_explorer
+  - docker build . -f Dockerfile -t $REPO
+  
+before_deploy:
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS	
+  - docker tag $REPO $REPO:$TRAVIS_TAG
+
+deploy:
+  - provider: script
+    script: 
+      docker push $REPO 
+    on:
+      branch: master
+      tags: true
+      
+env:
+  global:
+    
+    - secure: "qv4AuWkGetfbzRSoQpjdZw2k3BYm4YQjRTfnaY1S8TFt8rj94t7QxOX9645ri/ZJEpRy7Bz1zbLUTaqkDd4NziivIkqnlBBU/sdtaMijDKnFauhY6QDt2mczOqNrkps6ewNRO57NkptaSkudk+XCBvWvQS/je6PuC6WjMT6K318/T8NeDfLwfr5dtGBWGPWI/dE2NpaWy07DmmCfGq5VXeaL2TT6JsKSMzJi21OaIdPi4qC4UwGfdrzIjvwif30Fwy+nvDykEEDnKW2MNH636Rb1X9SzVD3LKb0X/aiF2w6QPtMMjvbhsOZLR3loJkX2kSlWngXdYLzir1GMgx8s9Lc37uAddovld5z73DibLuOO3z1YqjofE+SIdnORcmein/JoTcZE+cfjDG7QnsGqTviqaWlsCpgs2LI5T7cn69pGfKagVKteoj6uNwQ3e7+gbaK+jOo2Kz/PEGth5MIVXmGgAw08hLtl2XCF47oLCDkIxkH6h9XpFjFjd8SZYPwEYasGD5KM5Qr0lFZLX636+7hTP+rgZS546W/Hyj0S4R8DoHJWanHRYoxAJeLBa8Mt9jDMAbOc3CtutLx0o0A4EMwmAqbt8MgjED2m8r4a38LTYdxoZ9i+e3YQ+GXsGbStVFD2VYXNYICc0Aa7pOAsvQ4x4akN45g1kf4KyziEWog="
+    - secure: "NZa79W6c6NSpyhUvR1jNz6ceHB64mB9GOV9ERG56Dn/KeNOi2AXnWIoMacvGeFNM+aaQV/8n8cA1MQ4fkPrEHptosC9v+bCDyKS11a/V3YEvRrHGNONCDhV15oz8PovnuF5uoCDtP/j2uw1Vody8+IoFcx+aOIi2PJHCNrQIxKfDHtTVLC9iHiE1KZfyNIqbS2N/tTXorH7qhjnqM5FWMUbv3Vp5pxlJiD67w1oDsqwDUnZU1vbIVVSHeMXh5C7+bA70047dKaZw49lKm+0f9Ri9Ch1v/uiRE9/4aVT05ytKxvUUMnELP7iCLGw93okpDcLPoYImSh40/d8d/l3ng/eaqthwaqQuMamrziuDUVP8Wr4Gnohv+QgQPnk6pi1rGUwM85Ja4GNhSomUMo9a6xV7v6J4E45cNpx5SY9dS/XJMyrQPhBYon23x/UwuCjKgb+HdmqhrqI9eDaiC2TY28rPnnnkLpZjPpcuEPqhu1x0YaijYuxj1waWMlA5BnIkJU10OkWDgFpYkR58pqpS2N0ju/Kjk1c9SSN34HySKGdVvlJKLVGx0Yg0AhANBjEb1DVl0LgfH4JW5JfRDstxGL+JU/9UdfcRks88RFFct8P8vK8SIhPYzq6vnD39vrZMGetQbkrqNnFXIKSrFffm3Byvclb5MF0T4nk9cqIqDvU="
+
+  
+  
