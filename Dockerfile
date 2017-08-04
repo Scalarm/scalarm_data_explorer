@@ -13,7 +13,7 @@ RUN curl -sSL https://get.rvm.io | bash -s stable
 RUN source /etc/profile.d/rvm.sh
 
 RUN rvm requirements
-RUN rvm install 2.1
+RUN rvm install 2.3
 RUN gem install bundler
 
 ADD . $SCALARM_HOME
